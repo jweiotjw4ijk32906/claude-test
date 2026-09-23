@@ -1,0 +1,90 @@
+<handover project="Mainframe" file="chat/mainframe.html" written="2026-09-23" audience="next Claude session">
+
+# MAINFRAME HANDOVER (machine-oriented; read fully before touching anything)
+
+<attachments_expected>
+The user attaches with this file: (1) mainframe.html (the whole app, ~1.21 MB, one file), (2) mainframe-database-rules-1.4.txt (~100 KB, generated). Treat the attached html as source of truth. If you have no attachments, the canonical copies are:
+- E:\Hype Site Concepts 2.0\chat\mainframe.html
+- E:\Hype Site Concepts 2.0\chat\mainframe-database-rules-1.4.txt
+- E:\Hype Site Concepts 2.0\chat\_tools\  (copies of test tooling; see §9)
+- C:\Users\SPEEDEMON\.claude\projects\E--Hype-Site-Concepts-2-0\memory\  (MEMORY.md index + system-monitor-node-chat.md + mainframe-effort-budget.md; read these too)
+</attachments_expected>
+
+## 0. USER + WORKING RULES (violating these has upset the user before)
+- User: friend-group chat owner, builds on a Chromebook (Chrome), opens the file from Files app via file://. Terse, typo-heavy, gets angry when a fix misses the real cause ("Still not fixed... just listen"). When they cite on-screen text, GREP EVERY occurrence of that text/logic (Court's "waiting for 4 players" lived in THREE places: renderLobby, statusBanner, playerStrip; only fixing one wasted 3 rounds).
+- EFFORT BUDGET: no over-testing, no repetitive verification, targeted checks only on what you changed. Don't invent content nobody asked for. Ship checkpoints fast: SendUserFile [mainframe.html + rules txt] with a short honest caption. User usage limit is tight (hit 98% repeatedly).
+- NEVER draw/generate character PORTRAITS or faces (user called it "random people slop"). Cards show series emblem/emoji until the user uploads real images. Drawn objects/scenes/props (SVG) are wanted. Avoid emoji overuse in UI; user wants designed art. Game-chat reactions are ONLY the words RIGGED and GG.
+- SECURITY: never enter passwords/credentials; user creates Firebase Auth users and publishes rules themselves (Firebase console). Don't help bypass school network blocks (school Chromebooks may block .web.app). Irreversible/outward actions need explicit yes.
+- Firebase philosophy: device-first, fetch only changes, completely free (Spark plan, NO Cloud Functions, no paid services), "not too strict" but only friends get in, newest HTML must be the only version that works (rules kill-switch).
+- User's standing disclaimer: high quality AND efficiency; preserve existing structure/aesthetics/features; avoid unnecessary rewrites; prioritize Chromebook/Chrome performance; don't burn usage on excessive testing; put effort into real polish; per-item notes on designs may demand extra quality.
+- "Don't stop until everything is done", auto-continue after limit resets. Final pass requested at the end: "go over every single thing again, enhance, unique feel per game".
+- Reply style: plain, short, say what's verified vs not. If you find a genuine problem, state it briefly then keep building.
+
+## 1. ENVIRONMENT
+- OS Windows 10, PowerShell 5.1 (no &&/||; use `;` and `if ($?)`). Work dir E:\Hype Site Concepts 2.0 (project not a git repo).
+- Tools available previously: Read/Edit/Write/Grep/Glob, PowerShell, Browser pane (mcp__Claude_Browser__*), SendUserFile. Read of mainframe.html must use offset/limit (huge). Line 5334-ish `const WORD_DATA` is one ~82 KB line: NEVER Read it; edit via node script only.
+- Never round-trip the html through PowerShell Get-Content -Raw/Set-Content (mangles UTF-8). Edit with the Edit tool or node scripts (fs, utf8).
+- Scratchpad (session-specific, will differ): patch scripts `once(from,to)` (throws unless exactly 1 match) / `upto(from,to,text)`; backups `mainframe.before-*.html`.
+
+## 2. RUNTIME / BACKEND
+- Client: single HTML file, vanilla JS in one IIFE (`'use strict'`), inline <style>, no build step. Firebase compat SDKs (RTDB + Auth) from CDN. Runs from file:// (origin null-ish) — no service worker, no hosting (Hosting/PWA promised earlier, NOT done, ask before starting).
+- Firebase project `mainframe-chat-edcbf`, user's personal account, Spark plan, Realtime Database. Config constants at top of script: DATABASE_URL, FIREBASE_API_KEY, KLIPY_KEY (GIF search). `RULES_PROBE='rules_1_4'`, `APP_DATE='Sep 22'`. Bump probe every release that changes rules semantics (kill-switch: probe node readable only under matching rules → old copies get `fail('outdated')`).
+- AUTH: real Firebase Auth email/password. `USERS=['302','808','838','111','user5','user6','user7']`; `ACCOUNT_IDS` maps id→email local part; email = `<id>@mainframe.example.com`; password = `'mf-'+typed`. `DEV_USER='302'`, `DEV_WORD='Ascension'` (typed on device → developer mode). SPARE_NAMES gives user5/6/7 display "User 5/6/7" until they pick a name (`profiles/<me>/n`, 1-16 chars, rules forbid another account's id/name). Requested passwords typed at login: user5=Epsilon, user6=Gamma, user7=Delta.
+- RULES: generated by `buildRules()` inside the html (do not hand-edit the txt). `signedInOnly` walker prefixes every `.read/.write` with `member` (auth email in the 7). `isMe(expr)` = act only as yourself. `dev` = isMe(DEV_USER). Rules regexes avoid `{n}` quantifiers. Games node validates only `type`,`host`,`updated` (other fields pass through → new game fields need no rule). `stats/$user` writable by any member. New node this run: `slotvs/$pair` (.read true, .write 'true', validate string ≤60 chars, key ≤130) — ANYONE can overwrite (needed for the ⇄ correction). Rule size ~100 KB (limit 256 KB).
+- DATA MODEL (paths): Main chat under `channels/` (global_terminal_node=messages, global_games, global_gamechat, global_reactions, global_votes, global_reads, global_snipes, global_files). Groups under `rooms/<64-hex id>/` found via `doors/<slow hash of name+password>`. Per-user: `settings/<me>`, `favgifs/<me>`, `profiles/<me>`, `avatars/<me>`, `notifications/<user>/<push>` {k:'invite',from,game,room,rname,gid,t} (owner-only read, 3-day expiry), `stats/<user>/<gameType>` {w,l,d,pl,dv,rr}, `status/$conn` presence {user,room,away,g,gid,scr,t}. Dev art: `gwpics/`,`gwpicv/`,`slotpics/<series>/<i>`,`slotpicv/...` (dev-only writes, version-gated device cache). `slotvs/<pair>` = Team Slots verdicts.
+- DEVICE CACHE: IndexedDB `mainframe-cache-4` (HISTORY_DB), localStorage keys `mainframe.*` (dev flags `mainframe.dev`, `mainframe.devSolo`; `mainframe.gameSetup.<type>`; `mainframe.slotvs`; `mainframe.slotpic.*`; blur/theme/etc). Sign-out wipes personal keys.
+- Game usage pattern: transactions on the single game node (`move(change,target,whilePaused)`); every accepted move bumps `s.v`; clients claim timeouts (`claim(t,what)` w/ CLAIM_GRACE_MS). Game chat lives outside the game node (`gamechat/<gid>`); reactions ride it.
+
+## 3. GAME ENGINE (ver 2) + CHECKLIST FOR ADDING A GAME
+Key fns: `beginPlay`, `GAME_BEGIN[type]`, `GAME_SETUP[type](cfg)`, `startGame(type,cfg,invitees)`, `rematch`, `joinSeat`, `leaveGame`, `passTurn`, `knockOut`+`*AfterOut`, `endGame`, `mostPoints`, `timeIsUp`, `checkTimers`, `claim`, `recordResult` (skips test games and court), `playSeat(g)`, `seatList/seatOf/activeSeats/isOut`, `yourTurn/onTurn`, `renderGame`, `GAME_VIEW[type](g,board)`, `gameButton`, `gameInput(name,make)` (survives re-render), `flyProp(html,fromEl,toEl,opts)` (fixed-position flying ghost, used by Uno), `fxBurst`.
+ADD-A-GAME TOUCHPOINTS (missing any = bug/throw): GAME_TYPES, GAME_ORDER, GAMES entry (flags: players[], clock, pick, notimer, noranked, openroom), GAME_SETUP, GAME_BEGIN, GAME_VIEW, GAME_ART (grid card SVG — missing it THROWS), GAME_SEAT_COLORS, GAME_MARK (icon), settingsParts, timeIsUp, claim('next') branch + checkTimers show-phase timer, yourTurn, onTurn, `showGameSetup` cfg defaults + UI cards, the whitelist object passed to `startGame` in showGameSetup's Create handler AND the one in `rematch` (explicit lists: a missed key writes `undefined` and Firebase rejects the whole set), `[data-game="x"]` CSS colour block, CSS. Also `*AfterOut` hook in knockOut, and `playSeat` if a phase needs "whoever still has to act" in dev test mode.
+DEV MODE: DEV_USER only. Card editors (Guess Who cards, Team Slots characters), "Play every seat" (`devSolo`+`devPlayAll`), quiet starts, rename anyone, browse/bin public chats, Records→"Reset it all" (wipes stats for all accounts). Test games (`state.test=true`): no chat invite (only visible to dev in top bar), no stats for anyone incl. opponents. `devSolo` auto-seats + starts games EXCEPT `openroom` games (Court).
+
+## 4. GAMES: STATE OF EACH (15 types)
+GAME_ORDER = ttt, c4, breach, imp, court, pool, hm, gw, slot, bs, uno, ll, wr, rps, bj.
+- ttt Infinite Tic-Tac-Toe, c4 Connect 4, breach (secret-code, hashed commits), hm Hangman (word stays on picker's device, sha256 commit), gw Guess Who (Marvel 24, secret pick on device; card emblems only), wr Wordle Race, rps (stone/paper/scissors SVG objects, NOT hands), bj Blackjack (pairwise settle) — done in earlier sessions.
+- ll Last Letter: dictionary `WORD_DATA` front-coded (each entry = uppercase letter char = shared-prefix length +65, then lowercase suffix; sorted). Now 24,403 words (+345 added this run). User says list is still too small → ENLARGE (decode with node, merge, re-encode, verify round-trip; helper scripts wordcheck.js/wordadd.js pattern).
+- bs Buckshot Roulette: first-person CSS 3D room (container-query cqw sizing, `perspective:1100px`, gun rotateY/translateZ to aim at camera). Big square, low murk.
+- slot Team Slots: see §5.
+- uno: 108-card deck (2-char codes), stacking optional, UNO call/catch. Redesigned: felt table mat, colour-in-play and wild picker are small real cards (no glow orbs), hand dims ONLY cards unplayable on your own turn (`.cant`), `flyProp` animations for play/draw/take-penalty, `.land`/`.pulse` for opponents' moves (keyed via `game.unoSeen`).
+- imp Guess The Word Imposter: rebuilt as a room (lamp, table, seated figures with avatars, bubbles above heads showing what each said, table shows every word). Side chat locked during round (`gameScreen.dataset.lock`), opens at reveal. 5 s cooldown between words shown as countdown.
+- pool: 8-ball. Only {angle,power,spin} written; every device re-simulates identically (`poolSim`, fixed 1/120 step) → assumes deterministic float math across Chrome devices (unverified across different hardware). Aim assist setting, cloth colours, ball-in-hand, fouls, group assignment, 8-ball win.
+- court: NOT a game — walk-in room (`GAMES.court.openroom/noranked/notimer`). Clicking tile calls `openCourtRoom()` → startGame with `players:{}` (opener NOT seated), `limit:0` (no clock), seats cap 4, starts when 3 seated (joinSeat special-case), 4th = lawyer. Notifies room via normal invite card + notification. No leaderboard/stats/competitive. Status banner/lobby/playerStrip special-cased. Role rotation per round; judge sees jury votes then rules. Not tested with real multi-account concurrency.
+
+## 5. TEAM SLOTS (latest work; user's spec locked)
+- Ratings REMOVED everywhere (character lists are names only; `ANIME_LIST` items `{n,a,i}`).
+- Draft: reel runs off shared clock; STOP picks; teams of size N (3-6).
+- Bracket = pure function `slotReplay(s)` of teams + `s.fight` log (`"win:aIdx:bIdx,..."`, win 0=team A wins). Stage 0: A[i] vs B[i]; winners go to "side" (gold highlight), losers `gone`. Next stages: surviving A winners vs surviving B winners in order, extras get byes; repeat until one side empty → that team wins the round (`slotSettle` sets `rwin`,`sc`, phase 'show').
+- Who's stronger = human verdict. Unknown pair → "Stronger" buttons (`slotPick`: transaction on `slotvs/<pair>` creates verdict only if absent, then `slotDecide(side, expectLogLen)`). Known pair (local cache `slotVs` or one `once` read) auto-resolves after 1.3 s (`slotDrive`). Pair key = sorted `series_nameslug` joined `__`; value = winner's key.
+- ⇄ button (top-left of each settled fight row): `slotFlipPick` overwrites `slotvs` verdict then `slotFlip(at, expect)` truncates log to that fight (flipped) and replays; known later pairs re-resolve automatically, unknown ask again; `sc` corrected by `slotSettle`.
+- Verified in mock: full 3v3 bracket, flip+replay, verdicts persisted. Effects: hover tilt/glow/shine (`.slot-card`, `.art-card`), sparks on primary clicks (`fxBurst`), reduced-motion respected.
+
+## 6. OTHER FEATURES DONE THIS RUN (don't redo)
+Rank colours (Epsilon dark, Gamma washed green, Delta washed blue, Beta bluer, Alpha red, Omega orange, Moyai gray, Ascended white, Omega Ascended bright orange, Moyai Ascended pearl multicolour w/ own badge style); casual (not competitive) default; RPS objects; leaderboard reset; GIF category covers = blurred looping GIF cached once; dev games private; Buckshot 3D; blur-strength preview; Team Slots UI + dev character editor; game-end at 30 s timer; Last Letter list +345; 3 spare accounts wired (needs Firebase users); hover/VFX pass; game-chat reactions trimmed to RIGGED/GG.
+
+## 7. USER ACTIONS STILL PENDING (Claude cannot do these)
+1. Firebase console → Authentication → Users → Add user: `user5@mainframe.example.com` pw `mf-Epsilon`; `user6@...` pw `mf-Gamma`; `user7@...` pw `mf-Delta`.
+2. Republish the attached rules file (added 7-member list + `slotvs`). Old rules also lock out the new accounts.
+
+## 8. TODO QUEUE (verbatim intents)
+- CHESS: "like chess.com but on premium mode, so free tips, free game reviews etc." (full rules engine incl. castling/en passant/promotion/check/mate/draws, drawn SVG pieces (objects OK), move hints/best-move tips, post-game review with evaluation/blunder marking — must run on-device (write a small engine/minimax in JS; no server, no paid API), only moves go to Firebase; clock optional).
+- GEORGE PHONE: "Gartic Phone replica with good modes, drawing tools, buckets, a drawing screen, prompts" plus a guess-the-drawing mode: "random people are selected, everyone watches and guesses, higher points = higher chance to win overall (like skribbl)". Canvas drawing on device; strokes must be sent compactly (batched/decimated paths) to respect Firebase budget; prompts wordlist needed.
+- PROFILE OVERHAUL (user marked "AFTER EVERYTHING ELSE IS MASTERED"): Discord-like: banner (image or animated), animated pfps, profile effects, frames (all uploaded), clickable profile pictures everywhere (left bar + chat) to open profile, bigger avatar OUTSIDE the bubble on the left like Discord; NO badges/bio — instead pick ONE ranked badge from one game showing rank, hover shows which game; profile box lets user upload a theme (banner image, area below banner, or one image fused across both); optional personal 4-letter "server tag" ("C4","TTT","BRCH").
+- LAST LETTER WORD LIST: still too small (user found "ender" missing; fixed that + 344 others; user expects far more). Add a much larger real dictionary.
+- FINAL PASS: revisit every game for unique feel/effects/quality ("make each game feel like a new side"). Also verify multi-device: Court (3 real accounts), Pool determinism, Uno with 4 humans, Imposter voting.
+- Ranks/leaderboard: leaderboard grid excludes court (`noranked`).
+- Hosting/PWA: promised earlier, unstarted; ASK first.
+- Known gaps/risks: `slotvs` is overwritable by any member by design; Court rooms never auto-expire if created and never joined (no `gone` timer at creation); game screens for Court still show generic Pause/Restart buttons; mock server can't test ServerValue.increment/queries/onDisconnect.
+
+## 9. TEST HARNESS (copies in chat/_tools; originals were in the session scratchpad)
+- `_tools/fbtest/server.js`: mock RTDB (firebase-server@1.1.0, needs its dist/index.js `asClient` patched — the patch is NOT in these copies; if the mock misbehaves, re-derive it or test against a throwaway real Firebase project) + stand-in Auth on 9099; serves the html at `http://localhost:8790/mock` (injects DATABASE_URL, test API key, KLIPY stand-in); endpoints `/dump`, `/setrules` (POST rules json), `/wipe`. Scripts contain hardcoded scratchpad paths → edit paths after copying. `npm i` in `_tools/fbtest` (firebase@8, firebase-server) and `_tools/lint` (eslint 8).
+- `_tools/fbtest/ruletest11.js <rules.json>` = 155 targaryen rule tests (all passed at handover). `_tools/dumprules4.js <out>` rebuilds rules from the page: it `eval`s a HARD-CODED constants list — add any new constant `buildRules()` reads (e.g. DEV_USER) or ReferenceError. `_tools/lint/run.js` = eslint (0 problems at handover).
+- Mock browser quirks: localhost/127.0.0.1/[::1] act as 3 devices; test passwords mf-goop/mf-tzan/mf-drem/mf-anon12 (user types goop etc.); after mock restart clear `firebase:*` localStorage keys; Enter key doesn't submit forms in tool (click button); `requestAnimationFrame` doesn't run while browser pane hidden (animations look dead; screenshot forces paint); long modals don't scroll by wheel (JS `.click()`); transactions before first value event get permission_denied on mock; the browser tool's `type` doesn't fire keydown (use `key` action). Set dev flags via localStorage `mainframe.dev=1`, `mainframe.devSolo=1`.
+- Workflow used: node patch script with `once`/`upto` → lint → `dumprules4.js rules-new.json` → `ruletest11.js` → copy to `chat/mainframe-database-rules-1.4.txt` → quick mock check → SendUserFile both files.
+
+## 10. CODE-STYLE FACTS
+- Helper `el(tag, class, text)`; `avatarEl(user,size)`, `nameEl(tag,cls,user)`/`nameOf(user)` (always use for names), `seatColor(type,seat)`, `gameButton(label,kind,run)`, `openModal`, `showToast`, `remember/recall/forget/loadJSON` (localStorage wrappers), `serverNow()`, `TIMESTAMP()`.
+- Big scenes are sized in `cqw` inside `container-type:inline-size` boxes (Buckshot, Imposter, Court, Team Slots) so they scale as one picture.
+- Comments in code explain WHY, plain prose; match surrounding density. CSS sections per game marked `/* ---- Game ---- */`. Container/`data-game` accent vars: `--g-accent --g-glow --g-on --g-bg1 --g-bg2`.
+
+</handover>
