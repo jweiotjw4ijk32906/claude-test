@@ -12262,7 +12262,32 @@
     s.pending = null;
     s.pause = null;
     s.resume = null;
+    s.drawOffer = null;
     return s;
+  }
+
+  // A mutual draw, offered by one side and settled by the other — one seat each, so it only
+  // makes sense once a game is down to its last two players. Any game can use it; the button
+  // shows up next to Leave (forfeit) whenever that's true. Chess offers it from its own side
+  // panel instead, in the same place its move list and tips live.
+  function offerDraw() {
+    move((s) => {
+      const seat = seatOf(s, me);
+      if (seat === -1 || isOut(s, seat) || s.status !== 'playing' || s.drawOffer != null) return null;
+      s.drawOffer = seat;
+      return s;
+    }, null, true);
+  }
+  function answerDraw(accept) {
+    move((s) => {
+      const seat = seatOf(s, me);
+      if (seat === -1 || s.drawOffer == null || s.drawOffer === seat) return null;
+      if (!accept) {
+        s.drawOffer = null;
+        return s;
+      }
+      return endGame(s, 'draw', 'agreed');
+    }, null, true);
   }
 
   // Someone left, was kicked or ran out of time: the last one standing wins
@@ -12927,6 +12952,7 @@
     s.pused = null;
     s.winner = null;
     s.why = null;
+    s.drawOffer = null;
     s.turn = 0;
     s.startedAt = TIMESTAMP();
     s.turnAt = TIMESTAMP();
@@ -13831,26 +13857,6 @@
       if (outcome) return endGame(s, outcome.winner === 'draw' ? 'draw' : seatList(s)[outcome.winner], outcome.why);
       return passTurn(s, state.turn, now);
     });
-  }
-
-  function chessOfferDraw() {
-    move((s) => {
-      const seat = seatOf(s, me);
-      if (s.status !== 'playing' || seat === -1 || isOut(s, seat) || s.drawOffer != null) return null;
-      s.drawOffer = seat;
-      return s;
-    }, null, true);
-  }
-  function chessAnswerDraw(accept) {
-    move((s) => {
-      const seat = seatOf(s, me);
-      if (s.status !== 'playing' || seat === -1 || s.drawOffer == null || s.drawOffer === seat) return null;
-      if (!accept) {
-        s.drawOffer = null;
-        return s;
-      }
-      return endGame(s, 'draw', 'agreed');
-    }, null, true);
   }
 
   // ---- Chess: a small on-device engine — material plus simple piece-square tables, and a
@@ -17425,7 +17431,29 @@
       const leave = gameButton('', 'danger', () => askLeave(g));
       leave.innerHTML = ICON.flag;
       leave.append(el('span', null, 'Leave (forfeit)'));
-      row.append(hold, restart, leave);
+      row.append(hold, restart);
+      // A mutual draw only makes unambiguous sense with exactly two of you left; chess offers
+      // it from its own side panel instead, alongside its move list and tips.
+      if (g.type !== 'chess' && !GAMES[g.type].openroom && activeSeats(g).length === 2) {
+        if (typeof g.drawOffer === 'number' && g.drawOffer !== seat) {
+          const accept = gameButton('', 'primary', () => answerDraw(true));
+          accept.innerHTML = ICON.equal;
+          accept.append(el('span', null, 'Accept draw'));
+          accept.title = nameOf(seatList(g)[g.drawOffer]) + ' offered a draw';
+          row.append(accept, gameButton('Decline', '', () => answerDraw(false)));
+        } else if (typeof g.drawOffer === 'number') {
+          const pending = gameButton('', '', () => {});
+          pending.disabled = true;
+          pending.append(el('span', null, 'Draw offered…'));
+          row.append(pending);
+        } else {
+          const draw = gameButton('', '', offerDraw);
+          draw.innerHTML = ICON.equal;
+          draw.append(el('span', null, 'Offer draw'));
+          row.append(draw);
+        }
+      }
+      row.append(leave);
     }
     return row;
   }
@@ -20067,11 +20095,11 @@
         const drawRow = el('div', 'chess-draw-row');
         if (typeof g.drawOffer === 'number' && g.drawOffer !== seat) {
           drawRow.append(el('span', 'gs-note', nameOf(seatList(g)[g.drawOffer]) + ' offers a draw.'),
-            gameButton('Accept', 'primary', () => chessAnswerDraw(true)), gameButton('Decline', '', () => chessAnswerDraw(false)));
+            gameButton('Accept', 'primary', () => answerDraw(true)), gameButton('Decline', '', () => answerDraw(false)));
         } else if (typeof g.drawOffer === 'number') {
           drawRow.append(el('span', 'gs-note', 'Draw offer sent.'));
         } else {
-          drawRow.append(gameButton('Offer draw', '', chessOfferDraw));
+          drawRow.append(gameButton('Offer draw', '', offerDraw));
         }
         side.append(drawRow);
       }
