@@ -2413,6 +2413,7 @@
   .gs-ptext { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
   .gs-pname { display: flex; align-items: center; gap: 6px; font: 800 14px monospace; }
   .gs-host { padding: 2px 6px; border-radius: 6px; background: rgba(250, 166, 26, 0.18); color: var(--warning); font: 800 9px system-ui, sans-serif; letter-spacing: 1px; text-transform: uppercase; }
+  .gs-rating { font: 700 12.5px monospace; color: var(--text-muted); }
   .gs-psub { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; color: var(--text-muted); }
   .gs-mark { font-size: 16px; line-height: 1; }
   .gs-clock {
@@ -2776,6 +2777,18 @@
   .game-screen[data-game="wr"] { --g-accent: #6ee7a0; --g-glow: rgba(110, 231, 160, 0.34); --g-on: #052015; --g-bg1: #17422c; --g-bg2: #050d09; }
   .game-screen[data-game="rps"] { --g-accent: #7db4ff; --g-glow: rgba(125, 180, 255, 0.36); --g-on: #041226; --g-bg1: #172a5c; --g-bg2: #060912; }
   .game-screen[data-game="chess"] { --g-accent: #d4af6a; --g-glow: rgba(212, 175, 106, 0.4); --g-on: #241a02; --g-bg1: #241c46; --g-bg2: #07050c; }
+  /* Chess.com-style layout: unwrap the shared player strip so each card can sit on its own side
+     of the board — right above it and right below it — instead of both side by side up top. */
+  .game-screen[data-game="chess"] .gs-stage { gap: 8px; }
+  .game-screen[data-game="chess"] .gs-players { display: contents; }
+  .game-screen[data-game="chess"] .gs-player:not(.me) { order: -1; }
+  .game-screen[data-game="chess"] .gs-player.me { order: 1; }
+  .game-screen[data-game="chess"] .gs-player {
+    width: 100%;
+    max-width: 800px;   /* keep in sync with .chess-board-wrap's max-width */
+    box-sizing: border-box;
+    min-width: 0;
+  }
   .gs-backdrop { position: absolute; inset: -80px; z-index: 0; opacity: 0.2; filter: blur(46px) saturate(1.5); pointer-events: none; }
   .gs-backdrop .art { width: 100%; height: 100%; }
   .gs-head, .gs-main { position: relative; z-index: 1; }
@@ -4817,6 +4830,7 @@
   .lb-spot .avatar { box-shadow: 0 0 0 3px var(--ring); transition: transform 0.2s ease, box-shadow 0.2s ease; }
   .lb-spot-name { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 800; font-size: 13.5px; }
   .lb-spot-wins { margin-bottom: 6px; font-size: 11.5px; font-weight: 700; color: var(--text-muted); }
+  .lb-chess-rating { font: 800 15px monospace; color: #d4af6a; }
   .lb-block {
     position: relative;
     width: 100%;
@@ -4898,6 +4912,7 @@
   .rank-text { display: flex; flex-direction: column; min-width: 0; }
   .rank-text b { font-size: 13.5px; font-weight: 800; }
   .rank-text span { font-size: 11.5px; color: var(--text-muted); }
+  .chess-rating-num { font: 800 18px monospace; color: #d4af6a; }
   .rank-ladder { display: grid; gap: 6px; margin-top: 10px; }
   .rank-row {
     display: flex; align-items: center; gap: 14px; padding: 8px 12px;
@@ -5099,8 +5114,8 @@
   }
 
   /* ---- Chess: large glass board, glowing accents, geometric pieces ---- */
-  .chess-wrap { display: flex; gap: 20px; width: 100%; max-width: 920px; margin: 0 auto; container-type: inline-size; flex-wrap: wrap; justify-content: center; }
-  .chess-board-wrap { display: flex; flex-direction: column; align-items: center; gap: 8px; flex: 1 1 480px; min-width: 280px; max-width: 620px; position: relative; }
+  .chess-wrap { display: flex; gap: 20px; width: 100%; max-width: 1180px; margin: 0 auto; container-type: inline-size; flex-wrap: wrap; justify-content: center; }
+  .chess-board-wrap { display: flex; flex-direction: column; align-items: center; gap: 8px; flex: 2 1 560px; min-width: 280px; max-width: 800px; position: relative; }
   .chess-board {
     display: grid;
     grid-template-columns: repeat(8, 1fr);
@@ -5113,16 +5128,31 @@
     background: rgba(10, 8, 18, 0.6);
     backdrop-filter: blur(14px);
   }
-  .chess-sq { position: relative; border: none; padding: 0; display: flex; align-items: center; justify-content: center; cursor: pointer; font: inherit; }
+  .chess-sq {
+    position: relative; border: none; padding: 0; display: flex; align-items: center; justify-content: center; cursor: pointer; font: inherit;
+    transition: background-color 0.15s ease, box-shadow 0.15s ease;
+  }
   .chess-sq.light { background: rgba(240, 223, 180, 0.16); }
   .chess-sq.dark { background: rgba(20, 16, 36, 0.55); }
   .chess-sq:disabled { cursor: default; }
   .chess-sq.last { background: rgba(212, 175, 106, 0.32); }
   .chess-sq.check { box-shadow: inset 0 0 0 3px #ff4d4f, inset 0 0 22px rgba(255, 77, 79, 0.65); }
   .chess-sq.sel { box-shadow: inset 0 0 0 3px var(--g-accent); }
-  .chess-sq.dot::after { content: ''; position: absolute; width: 28%; height: 28%; border-radius: 50%; background: var(--g-accent); opacity: 0.55; pointer-events: none; }
-  .chess-sq.cap::after { content: ''; position: absolute; inset: 6%; border-radius: 50%; box-shadow: inset 0 0 0 4px rgba(255, 77, 79, 0.75); pointer-events: none; }
-  .chess-piece { position: relative; width: 78%; height: 78%; display: block; filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.55)); transition: transform 0.12s ease; pointer-events: none; }
+  .chess-sq.dot::after {
+    content: ''; position: absolute; width: 28%; height: 28%; border-radius: 50%; background: var(--g-accent); opacity: 0.55; pointer-events: none;
+    animation: chessDotIn 0.15s cubic-bezier(.2, .8, .2, 1);
+  }
+  .chess-sq.cap::after {
+    content: ''; position: absolute; inset: 6%; border-radius: 50%; box-shadow: inset 0 0 0 4px rgba(255, 77, 79, 0.75); pointer-events: none;
+    animation: chessCapIn 0.15s cubic-bezier(.2, .8, .2, 1);
+  }
+  @keyframes chessDotIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 0.55; } }
+  @keyframes chessCapIn { from { transform: scale(0.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .chess-piece {
+    position: relative; width: 78%; height: 78%; display: block; filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.55)); pointer-events: none;
+    transition: transform 0.12s ease;
+  }
+  .chess-sq:not(:disabled):active .chess-piece { transition: transform 0.06s ease; transform: scale(0.9); }
   .chess-sq:not(:disabled):hover .chess-piece { transform: scale(1.06); }
   .cp-svg { width: 100%; height: 100%; display: block; fill: currentColor; }
   .cp-w { color: #f0dfb4; }
@@ -5138,7 +5168,9 @@
   .chess-promo {
     position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
     background: rgba(6, 5, 12, 0.82); backdrop-filter: blur(6px); border-radius: 14px; z-index: 2;
+    animation: chessPromoIn 0.16s cubic-bezier(.2, .8, .2, 1);
   }
+  @keyframes chessPromoIn { from { opacity: 0; transform: scale(0.97); } to { opacity: 1; transform: scale(1); } }
   .chess-promo-label { font: 700 12px/1 monospace; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); }
   .chess-promo-row { display: flex; gap: 10px; }
   .chess-promo-btn {
@@ -5147,16 +5179,30 @@
   }
   .chess-promo-btn:hover { background: rgba(212, 175, 106, 0.22); transform: translateY(-2px); }
   .chess-promo-btn .chess-piece { width: 70%; height: 70%; filter: none; }
-  .chess-side { width: 260px; flex: 0 0 260px; display: flex; flex-direction: column; gap: 14px; }
-  .chess-tips { border-radius: 14px; background: rgba(212, 175, 106, 0.08); border: 1px solid rgba(212, 175, 106, 0.22); overflow: hidden; }
-  .chess-tip {
-    display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 8px; padding: 9px 14px; border: none; background: transparent;
-    color: inherit; font: inherit; cursor: pointer; border-top: 1px solid rgba(212, 175, 106, 0.14); text-align: left;
+  .chess-side { width: 300px; flex: 0 0 300px; display: flex; flex-direction: column; gap: 14px; }
+  /* How your (or their) last move graded out — not a hint, a verdict, right after it's played */
+  .chess-feedback {
+    display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 14px;
+    background: rgba(255, 255, 255, 0.045); border: 1px solid rgb(var(--ink) / 0.1);
+    animation: chessFeedbackIn 0.24s cubic-bezier(.2, .8, .2, 1);
   }
-  .chess-tip:first-of-type { border-top: none; }
-  .chess-tip:hover { background: rgba(212, 175, 106, 0.14); }
-  .chess-tip-rank { font: 700 10px monospace; text-transform: uppercase; letter-spacing: 0.5px; color: var(--g-accent); }
-  .chess-tip-san { font: 700 14px monospace; }
+  .chess-feedback-sym { flex: none; width: 32px; text-align: center; font: 800 21px/1 monospace; }
+  .chess-feedback-text { min-width: 0; }
+  .chess-feedback-label { font: 800 13.5px system-ui, sans-serif; }
+  .chess-feedback-sub { margin-top: 2px; font: 700 12px monospace; color: var(--text-muted); }
+  .chess-feedback.tag-blunder { border-color: rgba(255, 77, 79, 0.4); background: rgba(255, 77, 79, 0.1); }
+  .chess-feedback.tag-mistake { border-color: rgba(255, 157, 77, 0.4); background: rgba(255, 157, 77, 0.1); }
+  .chess-feedback.tag-inaccuracy { border-color: rgba(245, 212, 66, 0.35); background: rgba(245, 212, 66, 0.09); }
+  .chess-feedback.tag-good { border-color: rgba(125, 211, 252, 0.35); background: rgba(125, 211, 252, 0.09); }
+  .chess-feedback.tag-best { border-color: rgba(110, 231, 160, 0.35); background: rgba(110, 231, 160, 0.09); }
+  .chess-feedback.tag-brilliant { border-color: rgba(30, 235, 196, 0.5); background: rgba(30, 235, 196, 0.12); }
+  .chess-feedback.tag-blunder .chess-feedback-sym { color: #ff4d4f; }
+  .chess-feedback.tag-mistake .chess-feedback-sym { color: #ff9d4d; }
+  .chess-feedback.tag-inaccuracy .chess-feedback-sym { color: #f5d442; }
+  .chess-feedback.tag-good .chess-feedback-sym { color: #7dd3fc; }
+  .chess-feedback.tag-best .chess-feedback-sym { color: #6ee7a0; }
+  .chess-feedback.tag-brilliant .chess-feedback-sym { color: #1eebc4; text-shadow: 0 0 12px rgba(30, 235, 196, 0.75); }
+  @keyframes chessFeedbackIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
   .chess-moves {
     flex: 1; min-height: 80px; max-height: 220px; overflow-y: auto; border-radius: 14px; background: rgba(255, 255, 255, 0.04); padding: 6px 4px;
     scrollbar-width: thin; scrollbar-color: var(--scroll) transparent;
@@ -5168,6 +5214,8 @@
   .chess-move-san.tag-mistake { color: #ff9d4d; }
   .chess-move-san.tag-inaccuracy { color: #f5d442; }
   .chess-move-san.tag-best { color: #6ee7a0; }
+  .chess-move-san.tag-good { color: #7dd3fc; }
+  .chess-move-san.tag-brilliant { color: #1eebc4; }
   .chess-draw-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
   .chess-review-summary { display: flex; gap: 12px; margin-bottom: 14px; }
   .chess-review-card { flex: 1; text-align: center; padding: 14px 10px; border-radius: 14px; background: rgba(255, 255, 255, 0.05); }
@@ -5448,7 +5496,7 @@
   const pathOf = (r, kind) => r.base + '/' + r.rel[kind];
 
   // Shown in Settings; every release also renames RULES_PROBE (below)
-  const APP_VERSION = '1.6';
+  const APP_VERSION = '1.7';
   const APP_DATE = 'Sep 24';
 
   const MAX_LENGTH = 500;        // longest message allowed, in characters
@@ -5493,7 +5541,7 @@
   const SYNC_OVERLAP_MS = 5 * 60 * 1000;    // re-checks this much before the last sync, to be safe
   // Only this version's rules make this readable. Every update renames it, so once the new rules
   // are published, older copies of the file see "out of date" and stop.
-  const RULES_PROBE = 'rules_1_6';
+  const RULES_PROBE = 'rules_1_7';
   const BASE_TITLE = 'Mainframe';
   const PUSH_KEY = /^-[A-Za-z0-9_-]{1,40}$/;
   const SAFE_ID = /^[A-Za-z0-9_-]{1,40}$/;
@@ -12092,14 +12140,24 @@
     bs: { name: 'Buckshot Roulette', short: 'Buckshot', icon: '🔫', players: [2], clock: false,
       desc: 'Live rounds and blanks, and nobody knows the order. Shoot yourself on a blank and you go again. Items change everything.' },
     chess: { name: 'Chess', short: 'Chess', icon: '♞', players: [2], clock: true,
-      desc: 'The real rules — castling, en passant, promotion, the lot. Free move tips on your turn and a full accuracy review when it ends.' }
+      desc: 'The real rules — castling, en passant, promotion, the lot. Every move graded the instant you make it, and a full accuracy review when the game ends.' }
   };
   const GAME_ORDER = ['ttt', 'c4', 'breach', 'imp', 'court', 'pool', 'hm', 'gw', 'slot', 'bs', 'uno', 'll', 'wr', 'rps', 'bj', 'chess'];
   const LIMIT_MIN = 5;                                                  // game time limit, minutes
-  const LIMIT_MAX = 120;                                                // (2 hours at most)
-  const fmtLimit = (m) => (m < 60 ? m + ' min' : Math.floor(m / 60) + ' h' + (m % 60 ? ' ' + (m % 60) + ' min' : ''));
+  const LIMIT_MAX = 120;                                                // (2 hours at most, except chess's own Daily presets — see CHESS_CATS)
+  const fmtLimit = (m) => (m < 60 ? m + ' min' : m < 1440 ? Math.floor(m / 60) + ' h' + (m % 60 ? ' ' + (m % 60) + ' min' : '') :
+    Math.floor(m / 1440) + ' d' + (Math.floor((m % 1440) / 60) ? ' ' + Math.floor((m % 1440) / 60) + ' h' : ''));
   const MOVE_CHOICES = [10, 15, 20, 30, 45, 60, 120, 180, 300, 600];   // seconds per move
   const BANK_CHOICES = [1, 2, 3, 5, 10, 15, 20, 30];                   // time bank: minutes each
+  // Chess's own game-creation menu, chess.com-style: a category, then a few presets in it. For
+  // Bullet/Blitz/Rapid a preset is [minutes bank, increment seconds]; for Daily it's [days, 0] —
+  // Daily skips the live clock entirely and drives the overall game-length cap instead.
+  const CHESS_CATS = [
+    ['bullet', '⚡', 'Bullet', [[1, 0, '1 min'], [1, 1, '1 | 1'], [2, 1, '2 | 1']]],
+    ['blitz', '🔥', 'Blitz', [[3, 0, '3 min'], [3, 2, '3 | 2'], [5, 0, '5 min']]],
+    ['rapid', '⏳', 'Rapid', [[10, 0, '10 min'], [10, 5, '10 | 5'], [15, 10, '15 | 10']]],
+    ['daily', '☀️', 'Daily', [[1, 0, '1 day'], [3, 0, '3 days'], [7, 0, '7 days']]]
+  ];
   const PICK_CHOICES = [0, 30, 45, 60, 90, 120, 180, 300];             // choosing time: seconds (0 = no limit)
   const PAUSE_MAX_MS = 10 * 60 * 1000;                                 // nobody gets to freeze a game for longer
   const fmtPick = (sec) => (sec ? fmtSeconds(sec) : 'No limit');
@@ -12144,6 +12202,8 @@
 
   function fmtClock(ms) {
     const total = Math.max(0, Math.ceil(ms / 1000));
+    const d = Math.floor(total / 86400);
+    if (d) return d + 'd ' + Math.floor((total % 86400) / 3600) + 'h';   // chess's Daily games only
     const h = Math.floor(total / 3600);
     const m = Math.floor((total % 3600) / 60);
     const s = total % 60;
@@ -12208,6 +12268,9 @@
   function passTurn(s, seat, now) {
     if (s.tmode === 'clock' && s.clocks && typeof s.turnAt === 'number') {
       s.clocks[s.turn] = Math.max(0, (s.clocks[s.turn] || 0) - Math.max(0, now - s.turnAt));
+      // An increment (chess's Bullet/Blitz/Rapid presets only — every other game leaves this unset)
+      // is added back after the time is taken off, same as a real chess clock.
+      if (s.tinc) s.clocks[s.turn] += s.tinc;
     }
     s.turn = seat;
     s.turnAt = TIMESTAMP();
@@ -12427,11 +12490,27 @@
   function rankOf(stats, user, type) {
     const t = ((stats || {})[user] || {})[type] || {};
     const wins = Number(t.pl) || 0;
+    const pq = Number(t.pq) || 0;
     if (wins < RANK_PLACE_GAMES) {
-      return { placing: true, left: RANK_PLACE_GAMES - wins, div: 0, rr: 0, name: 'Unranked' };
+      return { placing: true, left: RANK_PLACE_GAMES - wins, div: 0, rr: 0, pq: pq, name: 'Unranked' };
     }
     const div = Math.max(0, Math.min(RANK_TOP, Number(t.dv) || 0));
-    return { placing: false, left: 0, div: div, rr: Math.max(0, Math.min(99, Number(t.rr) || 0)), name: rankName(div) };
+    return { placing: false, left: 0, div: div, rr: Math.max(0, Math.min(99, Number(t.rr) || 0)), pq: pq, name: rankName(div) };
+  }
+
+  // Chess shows a plain Elo-style number instead of a division name — it's still driven by the
+  // exact same div/RR the ladder above uses (100 points = 1 division = 1 "rating point" band), so
+  // a chess rating and a chess rank always move together. Nothing new to store or sync.
+  const CHESS_RATING_BASE = 400;
+  function chessRatingFromDivRR(div, rr) {
+    return CHESS_RATING_BASE + Math.max(0, Number(div) || 0) * 100 + Math.max(0, Math.min(99, Number(rr) || 0));
+  }
+  function chessRatingOf(rank) {
+    if (rank.placing) {
+      const divEq = Math.round(clamp01((rank.pq || 0) / (100 * RANK_PLACE_GAMES)) * RANK_PLACE_TOP);
+      return chessRatingFromDivRR(divEq, 0);
+    }
+    return chessRatingFromDivRR(rank.div, rank.rr);
   }
 
   // How much a result is worth. First place takes the most; in a game with three or more,
@@ -12571,6 +12650,24 @@
     if (!after) return;
     const wasPlacing = (Number(before.pl) || 0) < RANK_PLACE_GAMES;
     const nowPlaced = (Number(after.pl) || 0) >= RANK_PLACE_GAMES;
+    if (type === 'chess') {
+      if (wasPlacing && nowPlaced) {
+        showToast('Placed at ' + chessRatingFromDivRR(after.dv, after.rr) + ' chess rating!', true);
+        return;
+      }
+      if (wasPlacing) {
+        const left = RANK_PLACE_GAMES - (Number(after.pl) || 0);
+        if (left > 0 && (Number(after.pl) || 0) > (Number(before.pl) || 0)) {
+          showToast(left + (left === 1 ? ' more win' : ' more wins') + ' to place your chess rating.', true);
+        }
+        return;
+      }
+      const gap = ((Number(after.dv) || 0) * 100 + (Number(after.rr) || 0)) -
+        ((Number(before.dv) || 0) * 100 + (Number(before.rr) || 0));
+      if (!gap) return;
+      showToast((gap > 0 ? '+' : '') + gap + ' · ' + chessRatingFromDivRR(after.dv, after.rr) + ' chess rating', gap > 0);
+      return;
+    }
     if (wasPlacing && nowPlaced) {
       showToast('Placed in ' + rankName(after.dv) + ' at ' + GAMES[type].short + '!', true);
       return;
@@ -12725,8 +12822,16 @@
   }
 
   // The badge with its name next to it
-  function rankChip(rank, size) {
+  function rankChip(rank, size, chessMode) {
     const chip = el('div', 'rank-chip' + (size ? ' ' + size : ''));
+    if (chessMode) {
+      chip.classList.add('chess-rating-chip');
+      const text = el('div', 'rank-text');
+      text.append(el('b', 'chess-rating-num', String(chessRatingOf(rank))));
+      text.append(el('span', null, rank.placing ? rank.left + (rank.left === 1 ? ' win to place' : ' wins to place') : 'chess rating'));
+      chip.append(text);
+      return chip;
+    }
     const art = el('span', 'rank-art');
     art.innerHTML = rankSvg(rank.div, rank.placing);
     chip.append(art);
@@ -12890,6 +12995,7 @@
       tmode: cfg.tmode,
       tmove: cfg.tmove,
       tbank: cfg.tbank,
+      tinc: cfg.tinc || 0,
       tpick: cfg.tpick || 0,
       created: TIMESTAMP(),
       updated: TIMESTAMP()
@@ -13921,18 +14027,39 @@
 
   const CHESS_DEPTH = 2;   // plies; shallow on purpose so it never stalls a Chromebook
 
-  // The top couple of moves for whoever is on turn, each with the line it leads to
-  function chessTips(s) {
-    const state = { b: s.b, turn: s.turn, castle: s.castle || '', ep: typeof s.ep === 'number' ? s.ep : -1, half: s.half || 0 };
-    const board = state.b.split('');
-    const white = state.turn === 0;
-    const legal = chessLegalMoves(state);
-    const scored = legal.map((mv) => {
-      const child = chessAdvance(state, mv);
-      const reply = chessSearch(child, CHESS_DEPTH - 1, -Infinity, Infinity);
-      return { move: mv, score: -reply.score, san: chessSAN(board, mv, state.castle, state.ep, white) };
-    }).sort((a, b) => b.score - a.score);
-    return scored.slice(0, 2);
+  // How a move is graded, chess.com-style: a symbol and label off how many centipawns it gave
+  // up against this same shallow search's own best line, plus one special case — "sacrifice"
+  // bumps a cost-free best move up to Brilliant instead of plain Best.
+  const CHESS_TAGS = {
+    brilliant: { label: 'Brilliant', sym: '!!', cls: 'brilliant' },
+    best: { label: 'Best move', sym: '★', cls: 'best' },
+    good: { label: 'Good', sym: '✓', cls: 'good' },
+    inaccuracy: { label: 'Inaccuracy', sym: '?!', cls: 'inaccuracy' },
+    mistake: { label: 'Mistake', sym: '?', cls: 'mistake' },
+    blunder: { label: 'Blunder', sym: '??', cls: 'blunder' }
+  };
+  function chessGrade(cpLoss, sac) {
+    if (cpLoss <= 10) return sac ? 'brilliant' : 'best';
+    if (cpLoss <= 40) return 'good';
+    if (cpLoss <= 100) return 'inaccuracy';
+    if (cpLoss <= 250) return 'mistake';
+    return 'blunder';
+  }
+  // A "sacrifice": the piece that just moved is not a pawn or king, isn't a fair-or-better trade
+  // for whatever it captured, lands somewhere the opponent can take it, and nothing of mine takes
+  // it back — genuinely hanging, not just an even trade — yet the search still rates this the
+  // strongest move on the board. The shallow-engine proxy for a real, startling brilliancy.
+  function chessIsSac(beforeState, mv) {
+    const board = beforeState.b.split('');
+    const piece = board[mv.from];
+    const kind = piece.toLowerCase();
+    if (kind === 'p' || kind === 'k') return false;
+    const white = chessWhite(piece);
+    const captured = mv.capture ? (board[mv.to] !== '.' ? board[mv.to].toLowerCase() : 'p') : null;
+    if (captured && CHESS_VALUE[captured] >= CHESS_VALUE[kind]) return false;
+    const after = chessApply(board, beforeState.castle || '', typeof beforeState.ep === 'number' ? beforeState.ep : -1, mv);
+    if (!chessAttacks(after.b, mv.to, !white)) return false;
+    return !chessAttacks(after.b, mv.to, white);
   }
 
   // A move-by-move accuracy grade for both sides, and a tag for each ply. cpLoss is how much
@@ -13960,9 +14087,7 @@
       const afterScore = -chessSearch(next, CHESS_DEPTH, -Infinity, Infinity).score;
       const cpLoss = Math.max(0, before - afterScore);
       (white ? loss.w : loss.b).push(cpLoss);
-      // Thresholds sit higher than a deep engine would use — at this depth, ordinary opening and
-      // positional moves already carry some noise, so only real, sizeable swings get flagged.
-      const tag = cpLoss > 250 ? 'blunder' : cpLoss > 100 ? 'mistake' : cpLoss > 40 ? 'inaccuracy' : 'best';
+      const tag = chessGrade(cpLoss, cpLoss <= 10 && chessIsSac(state, mv));
       marks.push({ ply: marks.length, white: white, san: san, cpLoss: cpLoss, tag: tag });
       state = next;
     });
@@ -13971,10 +14096,37 @@
       const avg = list.reduce((a, b) => a + b, 0) / list.length;
       return Math.max(0, Math.min(100, Math.round(103.1668 * Math.exp(-0.04354 * (avg / 100)) - 3.1668)));
     };
-    const sideStats = (list) => ({
-      accuracy: accOf(list), blunders: list.filter((n) => n > 150).length, mistakes: list.filter((n) => n > 50 && n <= 150).length
-    });
-    return { marks: marks, white: sideStats(loss.w), black: sideStats(loss.b) };
+    const sideStats = (list, side) => {
+      const own = marks.filter((m) => m.white === (side === 'w'));
+      return {
+        accuracy: accOf(list),
+        brilliants: own.filter((m) => m.tag === 'brilliant').length,
+        blunders: own.filter((m) => m.tag === 'blunder').length,
+        mistakes: own.filter((m) => m.tag === 'mistake').length
+      };
+    };
+    return { marks: marks, white: sideStats(loss.w, 'w'), black: sideStats(loss.b, 'b') };
+  }
+
+  // Grades only the last move played, for the instant "how was that?" feedback next to the
+  // board — cheap and constant-time, unlike a full chessReview() replay of the whole game.
+  function chessLastMoveGrade(g) {
+    const tokens = (g.hist || '').split(',').filter(Boolean);
+    if (!tokens.length) return null;
+    const before = chessReplay(tokens.slice(0, -1).join(',')).state;
+    const white = before.turn === 0;
+    const board = before.b.split('');
+    const parsed = chessParseMove(tokens[tokens.length - 1]);
+    const options = chessPieceMoves(board, parsed.from, before.castle, before.ep)
+      .filter((m) => m.to === parsed.to && (m.promo || '') === (parsed.promo || ''));
+    const mv = options[0] || parsed;
+    const san = chessSAN(board, mv, before.castle, before.ep, white);
+    const beforeScore = chessSearch(before, CHESS_DEPTH, -Infinity, Infinity).score;
+    const after = { b: g.b, turn: g.turn, castle: g.castle || '', ep: typeof g.ep === 'number' ? g.ep : -1, half: g.half || 0 };
+    const afterScore = -chessSearch(after, CHESS_DEPTH, -Infinity, Infinity).score;
+    const cpLoss = Math.max(0, beforeScore - afterScore);
+    const tag = chessGrade(cpLoss, cpLoss <= 10 && chessIsSac(before, mv));
+    return { white: white, san: san, cpLoss: cpLoss, tag: tag };
   }
 
   // ---- Breach: secret codes never leave your device; the page answers guesses for you ----
@@ -17085,13 +17237,18 @@
       // Their picture, with their piece on it: a mark, or a disc
       const pic = el('div', 'gs-pic');
       pic.append(avatarEl(user, 'lg'));
+      let chessRating = null;
       if (g.ranked !== false && statsAll) {
         const rank = rankOf(statsAll, user, g.type);
-        const badge = el('span', 'gs-rank');
-        badge.innerHTML = rankSvg(rank.div, rank.placing);
-        badge.title = nameOf(user) + ' — ' + (rank.placing ? 'Unranked, ' + rank.left + ' to place' : rank.name + ' · ' + rank.rr + ' RR') +
-          ' at ' + GAMES[g.type].short;
-        pic.append(badge);
+        if (g.type === 'chess') {
+          chessRating = chessRatingOf(rank);
+        } else {
+          const badge = el('span', 'gs-rank');
+          badge.innerHTML = rankSvg(rank.div, rank.placing);
+          badge.title = nameOf(user) + ' — ' + (rank.placing ? 'Unranked, ' + rank.left + ' to place' : rank.name + ' · ' + rank.rr + ' RR') +
+            ' at ' + GAMES[g.type].short;
+          pic.append(badge);
+        }
       }
       if (g.type === 'ttt') {
         const piece = el('span', 'gs-piece');
@@ -17104,6 +17261,7 @@
       const text = el('div', 'gs-ptext');
       const top = el('div', 'gs-ptop');
       top.append(nameEl('span', 'gs-pname', user));
+      if (chessRating !== null) top.append(el('span', 'gs-rating', '(' + chessRating + ')'));
       if (user === me) top.append(el('span', 'gs-tag', 'You'));
       if (user === g.host && g.status === 'waiting') top.append(el('span', 'gs-tag host', 'Host'));
       text.append(top);
@@ -17291,9 +17449,20 @@
 
   function settingsParts(g) {
     const parts = g.type === 'court' ? [] : [g.ranked === false ? 'Casual' : 'Competitive'];
-    if (g.limit) parts.push(fmtLimit(Math.round(g.limit / 60000)) + ' game');
-    if (g.tmode === 'move') parts.push((isBullet(g) ? 'Bullet · ' : '') + fmtSeconds(Math.round(g.tmove / 1000)) + ' per move');
-    if (g.tmode === 'clock') parts.push(Math.round(g.tbank / 60000) + ' min time bank');
+    if (g.type === 'chess') {
+      if (g.tmode === 'clock') {
+        const mins = Math.round(g.tbank / 60000);
+        const inc = Math.round((g.tinc || 0) / 1000);
+        const cat = mins <= 2 ? 'Bullet' : mins <= 5 ? 'Blitz' : 'Rapid';
+        parts.push(cat + ' · ' + mins + (inc ? ' | ' + inc : ' min'));
+      } else if (g.limit) {
+        parts.push('Daily · ' + Math.round(g.limit / 86400000) + ' day' + (g.limit === 86400000 ? '' : 's'));
+      }
+    } else {
+      if (g.limit) parts.push(fmtLimit(Math.round(g.limit / 60000)) + ' game');
+      if (g.tmode === 'move') parts.push((isBullet(g) ? 'Bullet · ' : '') + fmtSeconds(Math.round(g.tmove / 1000)) + ' per move');
+      if (g.tmode === 'clock') parts.push(Math.round(g.tbank / 60000) + ' min time bank');
+    }
     if (g.tpick && GAMES[g.type].pick) parts.push(fmtSeconds(Math.round(g.tpick / 1000)) + ' to choose');
     if (g.type === 'ttt') parts.push(g.size + '×' + g.size + ' board');
     if (g.type === 'c4') parts.push(c4Cols(g) + '×' + c4Rows(g) + ' board');
@@ -17768,8 +17937,10 @@
         const card = el('div', 'chess-review-card');
         card.append(el('div', 'chess-review-side', user ? nameOf(user) : label), el('div', 'chess-review-sub2', label));
         card.append(el('div', 'chess-review-acc', stat.accuracy + '%'));
-        card.append(el('div', 'chess-review-sub', stat.blunders + ' blunder' + (stat.blunders === 1 ? '' : 's') + ' · ' +
-          stat.mistakes + ' mistake' + (stat.mistakes === 1 ? '' : 's')));
+        const bits = [];
+        if (stat.brilliants) bits.push(stat.brilliants + ' brilliant' + (stat.brilliants === 1 ? '' : 's'));
+        bits.push(stat.blunders + ' blunder' + (stat.blunders === 1 ? '' : 's'), stat.mistakes + ' mistake' + (stat.mistakes === 1 ? '' : 's'));
+        card.append(el('div', 'chess-review-sub', bits.join(' · ')));
         summary.append(card);
       });
       body.append(summary);
@@ -17780,7 +17951,7 @@
         [review.marks[i], review.marks[i + 1]].forEach((m) => {
           if (!m) return;
           const tag = el('span', 'chess-move-san tag-' + m.tag, m.san);
-          if (m.tag !== 'best') tag.title = m.tag.charAt(0).toUpperCase() + m.tag.slice(1);
+          if (m.tag !== 'best' && m.tag !== 'good') tag.title = CHESS_TAGS[m.tag].label;
           row.append(tag);
         });
         rows.append(row);
@@ -19983,14 +20154,22 @@
       const inCheck = chessInCheck(cells, g.turn === 0);
       const kingSq = inCheck ? chessKingSquare(cells, g.turn === 0) : -1;
       const lastMove = g.last ? chessParseMove(g.last) : null;
+      // How the last move played graded out — computed once, shown both as a callout and as a
+      // tag on that move's own row in the move list.
+      const lastGrade = g.hist ? chessLastMoveGrade(g) : null;
 
       // Selection lives on the game object so it survives re-draws, the same trick ttt uses
       if (game.chessGameId !== g.id) {
         game.chessGameId = g.id;
         game.chessSel = -1;
         game.chessPromo = null;
+        game.chessAnimatedMove = '';
       }
       if (!canMove) game.chessPromo = null;
+      // Slide the piece in from its old square once per new move — not on a re-render that's
+      // only a click selecting something, which would otherwise replay the same slide every time.
+      const animateMove = g.last && g.last !== game.chessAnimatedMove ? lastMove : null;
+      game.chessAnimatedMove = g.last || '';
       let legalFromSel = [];
       if (canMove && game.chessSel !== -1 && game.chessSel !== undefined) {
         legalFromSel = chessPieceMoves(cells, game.chessSel, castle, ep)
@@ -20035,6 +20214,25 @@
           if (piece !== '.') {
             const p = el('span', 'chess-piece ' + (chessWhite(piece) ? 'cp-w' : 'cp-b'));
             p.innerHTML = chessPieceSvg(piece);
+            if (animateMove && sq === animateMove.to) {
+              // The grid is perfectly uniform, so the slide-from offset is just the square
+              // count between the old and new squares — no measuring needed.
+              const fromCol = flip ? 7 - chessFile(animateMove.from) : chessFile(animateMove.from);
+              const fromRow = flip ? chessRank(animateMove.from) : 7 - chessRank(animateMove.from);
+              // translate() percentages are relative to the piece's own box, which is only 78%
+              // of its square, so scale up to make one cell of offset a full square in practice.
+              const cellPct = 100 / 0.78;
+              const dx = (fromCol - displayCol) * cellPct, dy = (fromRow - displayRow) * cellPct;
+              p.style.transition = 'none';
+              p.style.transform = 'translate(' + dx + '%,' + dy + '%)';
+              requestAnimationFrame(() => requestAnimationFrame(() => {
+                p.style.transition = 'transform 0.18s cubic-bezier(.2,.8,.2,1)';
+                p.style.transform = '';
+                // Hand transform back to the CSS classes (hover/press) once the slide settles,
+                // rather than leaving this inline transition pinned in place forever.
+                setTimeout(() => { p.style.transition = ''; }, 200);
+              }));
+            }
             sqEl.append(p);
           }
           if (displayRow === 7) sqEl.append(el('span', 'chess-coord file', CHESS_FILES[file]));
@@ -20070,24 +20268,30 @@
       wrap.append(boardWrap);
 
       const side = el('div', 'chess-side');
-      if (canMove && g.status === 'playing') {
-        const tipsBox = el('div', 'chess-tips');
-        tipsBox.append(el('div', 'gs-side-head', 'Free tips'));
-        chessTips(state).forEach((t, i) => {
-          const row = el('button', 'chess-tip');
-          row.type = 'button';
-          row.append(el('span', 'chess-tip-rank', i === 0 ? 'Best' : 'Also good'), el('span', 'chess-tip-san', t.san));
-          row.addEventListener('click', () => { game.chessSel = t.move.from; renderGame(); });
-          tipsBox.append(row);
-        });
-        side.append(tipsBox);
+      // Instant feedback on the move that was just played — not a hint about what to play next.
+      if (lastGrade) {
+        const info = CHESS_TAGS[lastGrade.tag];
+        const feedback = el('div', 'chess-feedback tag-' + info.cls);
+        feedback.append(el('span', 'chess-feedback-sym', info.sym));
+        const text = el('div', 'chess-feedback-text');
+        text.append(el('div', 'chess-feedback-label', info.label));
+        text.append(el('div', 'chess-feedback-sub', (lastGrade.white ? 'White' : 'Black') + ' played ' + lastGrade.san));
+        feedback.append(text);
+        side.append(feedback);
       }
       const movesBox = el('div', 'chess-moves');
       const replay = chessReplay(g.hist || '');
+      const lastPly = replay.steps.length - 1;
       for (let i = 0; i < replay.steps.length; i += 2) {
         const row = el('div', 'chess-move-row');
-        row.append(el('span', 'chess-move-no', String(i / 2 + 1) + '.'), el('span', 'chess-move-san', replay.steps[i].san));
-        if (replay.steps[i + 1]) row.append(el('span', 'chess-move-san', replay.steps[i + 1].san));
+        row.append(el('span', 'chess-move-no', String(i / 2 + 1) + '.'));
+        [replay.steps[i], replay.steps[i + 1]].forEach((step, j) => {
+          if (!step) return;
+          const ply = i + j;
+          const tagged = ply === lastPly && lastGrade;
+          const san = el('span', 'chess-move-san' + (tagged ? ' tag-' + lastGrade.tag : ''), step.san);
+          row.append(san);
+        });
         movesBox.append(row);
       }
       side.append(el('div', 'gs-side-head', 'Moves'), movesBox);
@@ -21544,7 +21748,9 @@
     const saved = loadJSON('mainframe.gameSetup.' + type, {});
     const cfg = {
       players: info.players.indexOf(saved.players) !== -1 ? saved.players : info.players[0],
-      limit: saved.limit >= LIMIT_MIN && saved.limit <= LIMIT_MAX && saved.limit % 5 === 0 ? saved.limit : 30,
+      // Chess's own Daily presets run the game-length cap out to days, well past LIMIT_MAX --
+      // every other game stays capped there.
+      limit: saved.limit >= LIMIT_MIN && saved.limit <= (type === 'chess' ? 7 * 1440 : LIMIT_MAX) && saved.limit % 5 === 0 ? saved.limit : 30,
       tmode: ['none', 'move', 'clock'].indexOf(saved.tmode) !== -1 && (info.clock || saved.tmode !== 'clock') ? saved.tmode : 'none',
       tmove: MOVE_CHOICES.indexOf(saved.tmove) !== -1 ? saved.tmove : 30,
       tbank: BANK_CHOICES.indexOf(saved.tbank) !== -1 ? saved.tbank : 5,
@@ -21575,8 +21781,20 @@
       smode: ['tour', 'rand', 'mix'].indexOf(saved.smode) !== -1 ? saved.smode : 'rand',
       charges: [2, 3, 4, 5].indexOf(saved.charges) !== -1 ? saved.charges : 3,
       c4b: saved.c4b >= 0 && saved.c4b < C4_BOARDS.length ? saved.c4b : 0,
-      miss: saved.miss === 'turn' ? 'turn' : 'lose'
+      miss: saved.miss === 'turn' ? 'turn' : 'lose',
+      tcat: CHESS_CATS.some((c) => c[0] === saved.tcat) ? saved.tcat : 'rapid',
+      tinc: typeof saved.tinc === 'number' ? Math.max(0, Math.min(60, saved.tinc)) : 0
     };
+    // Chess's own time control replaces the generic move-timer/game-length pair entirely, so a
+    // fresh chess setup (nothing saved yet) starts on Rapid 10|5 — chess.com's own default —
+    // instead of the generic "no timer" every other game opens on.
+    if (type === 'chess' && !saved.tcat) {
+      const rapid10 = CHESS_CATS[2][3][0];
+      cfg.tmode = 'clock';
+      cfg.tbank = rapid10[0];
+      cfg.tinc = rapid10[1];
+      cfg.limit = LIMIT_MAX;
+    }
     const candidates = inviteCandidates(room);
     const invited = new Set(candidates);
     const LIMITS = [];
@@ -21598,10 +21816,16 @@
 
       const grid = el('div', 'setup-grid');
       const summary = el('div', 'setup-summary');
+      const chessTimeLabel = () => {
+        const cat = CHESS_CATS.find((c) => c[0] === cfg.tcat) || CHESS_CATS[2];
+        if (cat[0] === 'daily') return cat[2] + ' · ' + cfg.limit / 1440 + (cfg.limit === 1440 ? ' day' : ' days');
+        return cat[2] + ' · ' + cfg.tbank + (cfg.tinc ? ' | ' + cfg.tinc : ' min');
+      };
       const refresh = () => {
-        const parts = info.noranked ? [cfg.players + ' players'] : [cfg.ranked === false ? 'Casual' : 'Competitive', cfg.players + ' players', fmtLimit(cfg.limit)];
-        if (cfg.tmode === 'move') parts.push(fmtSeconds(cfg.tmove) + ' per move');
-        if (cfg.tmode === 'clock') parts.push(cfg.tbank + ' min bank');
+        const parts = info.noranked ? [cfg.players + ' players'] :
+          [cfg.ranked === false ? 'Casual' : 'Competitive', cfg.players + ' players', type === 'chess' ? chessTimeLabel() : fmtLimit(cfg.limit)];
+        if (type !== 'chess' && cfg.tmode === 'move') parts.push(fmtSeconds(cfg.tmove) + ' per move');
+        if (type !== 'chess' && cfg.tmode === 'clock') parts.push(cfg.tbank + ' min bank');
         if (type === 'll') parts.push(cfg.tturn + ' s a turn', cfg.minlen + '+ letters', cfg.llives + ' lives');
         if (type === 'wr') parts.push((WR_THEMES.find((t) => t[0] === cfg.theme) || WR_THEMES[0])[2]);
         if (type === 'rps') parts.push('first to ' + cfg.rounds, cfg.dbl + ' ×2 each');
@@ -21637,9 +21861,11 @@
         grid.append(setupCard('Players', 'Head to head.', duel));
       }
 
-      // Game length
-      grid.append(setupCard('Game length', type === 'bj' ? 'When time’s up, the most chips wins.' : type === 'hm' ? 'When time’s up, the most points wins.' : 'Nobody winning in time is a draw.',
-        rangeControl(LIMITS, LIMITS.indexOf(cfg.limit), fmtLimit, (v) => { cfg.limit = v; refresh(); })));
+      // Game length — chess owns this itself, as part of its own time-control picker below
+      if (type !== 'chess') {
+        grid.append(setupCard('Game length', type === 'bj' ? 'When time’s up, the most chips wins.' : type === 'hm' ? 'When time’s up, the most points wins.' : 'Nobody winning in time is a draw.',
+          rangeControl(LIMITS, LIMITS.indexOf(cfg.limit), fmtLimit, (v) => { cfg.limit = v; refresh(); })));
+      }
 
       // Last Letter runs on its own short clock instead of the usual move timer
       if (type === 'll') {
@@ -21764,8 +21990,41 @@
       // These two only make sense on a clock, so they start with one
       if ((type === 'slot' || type === 'bs') && cfg.tmode === 'none') cfg.tmode = 'move';
 
-      // Move timer
-      if (!info.notimer) {
+      // Move timer — chess gets its own chess.com-style Bullet/Blitz/Rapid/Daily picker instead
+      if (type === 'chess') {
+        const applyChessPreset = (cat, preset) => {
+          cfg.tcat = cat;
+          if (cat === 'daily') {
+            cfg.tmode = 'none';
+            cfg.tinc = 0;
+            cfg.limit = preset[0] * 1440;
+          } else {
+            cfg.tmode = 'clock';
+            cfg.tbank = preset[0];
+            cfg.tinc = preset[1];
+            cfg.limit = LIMIT_MAX;
+          }
+          refresh();
+        };
+        const cats = el('div', 'opt-row');
+        CHESS_CATS.forEach(([id, icon, label]) => {
+          const inner = el('span', 'opt-label');
+          inner.append(el('span', 'opt-icon', icon), el('span', null, label));
+          cats.append(optionTile(inner, '', cfg.tcat === id, () => {
+            applyChessPreset(id, CHESS_CATS.find((c) => c[0] === id)[3][0]);
+            draw();
+          }));
+        });
+        const activeCat = CHESS_CATS.find((c) => c[0] === cfg.tcat) || CHESS_CATS[2];
+        const presets = el('div', 'opt-row');
+        activeCat[3].forEach((preset) => {
+          const on = activeCat[0] === 'daily' ? cfg.limit === preset[0] * 1440 : (cfg.tbank === preset[0] && cfg.tinc === preset[1]);
+          presets.append(optionTile(el('span', 'opt-big', preset[2]), '', on, () => { applyChessPreset(activeCat[0], preset); draw(); }));
+        });
+        const stack = el('div', 'setup-stack');
+        stack.append(cats, presets);
+        grid.append(setupCard('Time control', 'Bullet and Blitz are fast, casual games. Rapid gives you real time to think. Daily plays out over days, a move at a time, with no live clock.', stack, 'wide'));
+      } else if (!info.notimer) {
       const modes = el('div', 'opt-row');
       [['none', '∞', 'No timer', 'Take your time'], ['move', '⚡', 'Per move', 'A clock on every move']]
         .concat(info.clock ? [['clock', '⏳', 'Time bank', 'Only runs on your turn']] : [])
@@ -21903,6 +22162,7 @@
           tmode: cfg.tmode,
           tmove: cfg.tmove * 1000,
           tbank: cfg.tbank * 60000,
+          tinc: cfg.tinc * 1000,
           digits: cfg.digits,
           chips: cfg.chips,
           laps: cfg.laps,
@@ -22294,10 +22554,14 @@
           el('div', 'lb-spot-wins', row.w + (row.w === 1 ? ' win' : ' wins')));
         if (GAMES[type]) {
           const rank = rankOf(stats, row.user, type);
-          const art = el('span', 'rank-art sm');
-          art.innerHTML = rankSvg(rank.div, rank.placing);
-          art.title = rank.placing ? 'Unranked' : rank.name + ' · ' + rank.rr + ' RR';
-          spot.append(art);
+          if (type === 'chess') {
+            spot.append(el('span', 'lb-chess-rating', String(chessRatingOf(rank))));
+          } else {
+            const art = el('span', 'rank-art sm');
+            art.innerHTML = rankSvg(rank.div, rank.placing);
+            art.title = rank.placing ? 'Unranked' : rank.name + ' · ' + rank.rr + ' RR';
+            spot.append(art);
+          }
         }
         spot.tabIndex = 0;
         spot.addEventListener('mouseenter', () => show(row, spot));
@@ -22344,7 +22608,7 @@
     const who = el('div', 'lb-detail-who');
     who.append(nameEl('div', 'lb-detail-name', row.user), el('div', 'lb-detail-place', placeName(row.rank) + ' place'));
     head.append(avatarEl(row.user, 'lg'), who);
-    if (stats && GAMES[type]) head.append(rankChip(rankOf(stats, row.user, type), 'sm'));
+    if (stats && GAMES[type]) head.append(rankChip(rankOf(stats, row.user, type), 'sm', type === 'chess'));
     const grid = el('div', 'lb-detail-stats');
     [['Wins', row.w], ['Losses', row.l], ['Draws', row.d], ['Played', row.played]].forEach(([label, value]) => {
       const stat = el('div', 'lb-stat');
