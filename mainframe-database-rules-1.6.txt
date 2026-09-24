@@ -1,0 +1,1019 @@
+{
+  "rules": {
+    "rules_1_6": {
+      ".read": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com')"
+    },
+    "status": {
+      ".read": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com')",
+      "$conn": {
+        ".write": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com') && ($conn.length <= 40 && (!data.exists() || (auth != null && ((auth.token.email === '302@mainframe.example.com' && data.child('user').val() === '302') || (auth.token.email === '808@mainframe.example.com' && data.child('user').val() === '808') || (auth.token.email === '838@mainframe.example.com' && data.child('user').val() === '838') || (auth.token.email === '111@mainframe.example.com' && data.child('user').val() === '111') || (auth.token.email === 'user5@mainframe.example.com' && data.child('user').val() === 'user5') || (auth.token.email === 'user6@mainframe.example.com' && data.child('user').val() === 'user6') || (auth.token.email === 'user7@mainframe.example.com' && data.child('user').val() === 'user7')))))",
+        ".validate": "newData.hasChildren(['user', 't'])",
+        "user": {
+          ".validate": "(auth != null && ((auth.token.email === '302@mainframe.example.com' && newData.val() === '302') || (auth.token.email === '808@mainframe.example.com' && newData.val() === '808') || (auth.token.email === '838@mainframe.example.com' && newData.val() === '838') || (auth.token.email === '111@mainframe.example.com' && newData.val() === '111') || (auth.token.email === 'user5@mainframe.example.com' && newData.val() === 'user5') || (auth.token.email === 'user6@mainframe.example.com' && newData.val() === 'user6') || (auth.token.email === 'user7@mainframe.example.com' && newData.val() === 'user7')))"
+        },
+        "room": {
+          ".validate": "newData.isString() && newData.val().length <= 16"
+        },
+        "away": {
+          ".validate": "newData.isBoolean()"
+        },
+        "g": {
+          ".validate": "newData.isString() && newData.val().length <= 16"
+        },
+        "gid": {
+          ".validate": "newData.isString() && newData.val().length <= 40"
+        },
+        "scr": {
+          ".validate": "newData.val() === 'chat' || newData.val() === 'game'"
+        },
+        "t": {
+          ".validate": "newData.isNumber() && newData.val() <= now"
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
+    "profiles": {
+      ".read": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com')",
+      "$user": {
+        ".write": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com') && ((auth != null && ((auth.token.email === '302@mainframe.example.com' && $user === '302') || (auth.token.email === '808@mainframe.example.com' && $user === '808') || (auth.token.email === '838@mainframe.example.com' && $user === '838') || (auth.token.email === '111@mainframe.example.com' && $user === '111') || (auth.token.email === 'user5@mainframe.example.com' && $user === 'user5') || (auth.token.email === 'user6@mainframe.example.com' && $user === 'user6') || (auth.token.email === 'user7@mainframe.example.com' && $user === 'user7'))) || (auth != null && ((auth.token.email === '302@mainframe.example.com' && '302' === '302') || (auth.token.email === '808@mainframe.example.com' && '302' === '808') || (auth.token.email === '838@mainframe.example.com' && '302' === '838') || (auth.token.email === '111@mainframe.example.com' && '302' === '111') || (auth.token.email === 'user5@mainframe.example.com' && '302' === 'user5') || (auth.token.email === 'user6@mainframe.example.com' && '302' === 'user6') || (auth.token.email === 'user7@mainframe.example.com' && '302' === 'user7'))))",
+        "c": {
+          ".validate": "newData.isString() && newData.val().length === 7 && newData.val().matches(/^#[0-9a-f]+$/)"
+        },
+        "iv": {
+          ".validate": "newData.isNumber()"
+        },
+        "n": {
+          ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 16 && ($user === '302' || (newData.val().toLowerCase() !== '302' && (!root.child('profiles/302/n').exists() || root.child('profiles/302/n').val().toLowerCase() !== newData.val().toLowerCase()))) && ($user === '808' || (newData.val().toLowerCase() !== '808' && (!root.child('profiles/808/n').exists() || root.child('profiles/808/n').val().toLowerCase() !== newData.val().toLowerCase()))) && ($user === '838' || (newData.val().toLowerCase() !== '838' && (!root.child('profiles/838/n').exists() || root.child('profiles/838/n').val().toLowerCase() !== newData.val().toLowerCase()))) && ($user === '111' || (newData.val().toLowerCase() !== '111' && (!root.child('profiles/111/n').exists() || root.child('profiles/111/n').val().toLowerCase() !== newData.val().toLowerCase()))) && ($user === 'user5' || (newData.val().toLowerCase() !== 'user5' && (!root.child('profiles/user5/n').exists() || root.child('profiles/user5/n').val().toLowerCase() !== newData.val().toLowerCase()))) && ($user === 'user6' || (newData.val().toLowerCase() !== 'user6' && (!root.child('profiles/user6/n').exists() || root.child('profiles/user6/n').val().toLowerCase() !== newData.val().toLowerCase()))) && ($user === 'user7' || (newData.val().toLowerCase() !== 'user7' && (!root.child('profiles/user7/n').exists() || root.child('profiles/user7/n').val().toLowerCase() !== newData.val().toLowerCase())))"
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
+    "settings": {
+      "$user": {
+        ".read": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com') && ((auth != null && ((auth.token.email === '302@mainframe.example.com' && $user === '302') || (auth.token.email === '808@mainframe.example.com' && $user === '808') || (auth.token.email === '838@mainframe.example.com' && $user === '838') || (auth.token.email === '111@mainframe.example.com' && $user === '111') || (auth.token.email === 'user5@mainframe.example.com' && $user === 'user5') || (auth.token.email === 'user6@mainframe.example.com' && $user === 'user6') || (auth.token.email === 'user7@mainframe.example.com' && $user === 'user7'))))",
+        ".write": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com') && ((auth != null && ((auth.token.email === '302@mainframe.example.com' && $user === '302') || (auth.token.email === '808@mainframe.example.com' && $user === '808') || (auth.token.email === '838@mainframe.example.com' && $user === '838') || (auth.token.email === '111@mainframe.example.com' && $user === '111') || (auth.token.email === 'user5@mainframe.example.com' && $user === 'user5') || (auth.token.email === 'user6@mainframe.example.com' && $user === 'user6') || (auth.token.email === 'user7@mainframe.example.com' && $user === 'user7'))))",
+        "blur": {
+          ".validate": "newData.isBoolean()"
+        },
+        "bstr": {
+          ".validate": "newData.isNumber() && newData.val() >= 0.2 && newData.val() <= 12"
+        },
+        "areas": {
+          ".validate": "newData.isString() && newData.val().length <= 80"
+        },
+        "key": {
+          ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 40"
+        },
+        "profanity": {
+          ".validate": "newData.isBoolean()"
+        },
+        "text": {
+          ".validate": "newData.val() === 'small' || newData.val() === 'normal' || newData.val() === 'large'"
+        },
+        "density": {
+          ".validate": "newData.val() === 'cozy' || newData.val() === 'compact'"
+        },
+        "theme": {
+          ".validate": "newData.val() === 'dark' || newData.val() === 'darkest' || newData.val() === 'light'"
+        },
+        "favs": {
+          ".validate": "newData.isString() && newData.val().length <= 1000"
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
+    "nicks": {
+      "$user": {
+        ".read": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com') && ((auth != null && ((auth.token.email === '302@mainframe.example.com' && $user === '302') || (auth.token.email === '808@mainframe.example.com' && $user === '808') || (auth.token.email === '838@mainframe.example.com' && $user === '838') || (auth.token.email === '111@mainframe.example.com' && $user === '111') || (auth.token.email === 'user5@mainframe.example.com' && $user === 'user5') || (auth.token.email === 'user6@mainframe.example.com' && $user === 'user6') || (auth.token.email === 'user7@mainframe.example.com' && $user === 'user7'))))",
+        ".write": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com') && ((auth != null && ((auth.token.email === '302@mainframe.example.com' && $user === '302') || (auth.token.email === '808@mainframe.example.com' && $user === '808') || (auth.token.email === '838@mainframe.example.com' && $user === '838') || (auth.token.email === '111@mainframe.example.com' && $user === '111') || (auth.token.email === 'user5@mainframe.example.com' && $user === 'user5') || (auth.token.email === 'user6@mainframe.example.com' && $user === 'user6') || (auth.token.email === 'user7@mainframe.example.com' && $user === 'user7'))))",
+        "$slot": {
+          ".validate": "$slot.matches(/^[0-3]$/) && newData.hasChildren(['n'])",
+          "n": {
+            ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 16"
+          },
+          "c": {
+            ".validate": "newData.isString() && newData.val().length === 7 && newData.val().matches(/^#[0-9a-f]+$/)"
+          },
+          "p": {
+            ".validate": "newData.isString() && newData.val().length <= 40000 && newData.val().beginsWith('data:image/')"
+          },
+          "$other": {
+            ".validate": false
+          }
+        }
+      }
+    },
+    "gwpicv": {
+      ".read": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com')",
+      "$card": {
+        ".write": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com') && ((auth != null && ((auth.token.email === '302@mainframe.example.com' && '302' === '302') || (auth.token.email === '808@mainframe.example.com' && '302' === '808') || (auth.token.email === '838@mainframe.example.com' && '302' === '838') || (auth.token.email === '111@mainframe.example.com' && '302' === '111') || (auth.token.email === 'user5@mainframe.example.com' && '302' === 'user5') || (auth.token.email === 'user6@mainframe.example.com' && '302' === 'user6') || (auth.token.email === 'user7@mainframe.example.com' && '302' === 'user7'))))",
+        ".validate": "newData.isNumber()"
+      }
+    },
+    "gwpics": {
+      "$card": {
+        ".read": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com')",
+        ".write": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com') && ((auth != null && ((auth.token.email === '302@mainframe.example.com' && '302' === '302') || (auth.token.email === '808@mainframe.example.com' && '302' === '808') || (auth.token.email === '838@mainframe.example.com' && '302' === '838') || (auth.token.email === '111@mainframe.example.com' && '302' === '111') || (auth.token.email === 'user5@mainframe.example.com' && '302' === 'user5') || (auth.token.email === 'user6@mainframe.example.com' && '302' === 'user6') || (auth.token.email === 'user7@mainframe.example.com' && '302' === 'user7'))))",
+        ".validate": "newData.isString() && newData.val().length <= 60000 && newData.val().beginsWith('data:image/')"
+      }
+    },
+    "slotpicv": {
+      ".read": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com')",
+      "$series": {
+        "$who": {
+          ".write": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com') && ((auth != null && ((auth.token.email === '302@mainframe.example.com' && '302' === '302') || (auth.token.email === '808@mainframe.example.com' && '302' === '808') || (auth.token.email === '838@mainframe.example.com' && '302' === '838') || (auth.token.email === '111@mainframe.example.com' && '302' === '111') || (auth.token.email === 'user5@mainframe.example.com' && '302' === 'user5') || (auth.token.email === 'user6@mainframe.example.com' && '302' === 'user6') || (auth.token.email === 'user7@mainframe.example.com' && '302' === 'user7'))))",
+          ".validate": "newData.isNumber()"
+        }
+      }
+    },
+    "slotpics": {
+      "$series": {
+        "$who": {
+          ".read": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com')",
+          ".write": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com') && ((auth != null && ((auth.token.email === '302@mainframe.example.com' && '302' === '302') || (auth.token.email === '808@mainframe.example.com' && '302' === '808') || (auth.token.email === '838@mainframe.example.com' && '302' === '838') || (auth.token.email === '111@mainframe.example.com' && '302' === '111') || (auth.token.email === 'user5@mainframe.example.com' && '302' === 'user5') || (auth.token.email === 'user6@mainframe.example.com' && '302' === 'user6') || (auth.token.email === 'user7@mainframe.example.com' && '302' === 'user7'))))",
+          ".validate": "newData.isString() && newData.val().length <= 60000 && newData.val().beginsWith('data:image/')"
+        }
+      }
+    },
+    "slotvs": {
+      ".read": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com')",
+      "$pair": {
+        ".write": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com') && (true)",
+        ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 60 && $pair.length <= 130"
+      }
+    },
+    "publics": {
+      ".read": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com')",
+      "$room": {
+        ".write": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com') && ($room.length === 64 && $room.matches(/^[0-9a-f]+$/))",
+        ".validate": "newData.hasChildren(['n'])",
+        "n": {
+          ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 32"
+        },
+        "o": {
+          ".validate": "newData.val() === '302' || newData.val() === '808' || newData.val() === '838' || newData.val() === '111' || newData.val() === 'user5' || newData.val() === 'user6' || newData.val() === 'user7'"
+        },
+        "t": {
+          ".validate": "newData.isNumber() && newData.val() <= now && newData.val() > now - 60000"
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
+    "favgifs": {
+      "$user": {
+        ".read": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com') && ((auth != null && ((auth.token.email === '302@mainframe.example.com' && $user === '302') || (auth.token.email === '808@mainframe.example.com' && $user === '808') || (auth.token.email === '838@mainframe.example.com' && $user === '838') || (auth.token.email === '111@mainframe.example.com' && $user === '111') || (auth.token.email === 'user5@mainframe.example.com' && $user === 'user5') || (auth.token.email === 'user6@mainframe.example.com' && $user === 'user6') || (auth.token.email === 'user7@mainframe.example.com' && $user === 'user7'))))",
+        ".write": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com') && ((auth != null && ((auth.token.email === '302@mainframe.example.com' && $user === '302') || (auth.token.email === '808@mainframe.example.com' && $user === '808') || (auth.token.email === '838@mainframe.example.com' && $user === '838') || (auth.token.email === '111@mainframe.example.com' && $user === '111') || (auth.token.email === 'user5@mainframe.example.com' && $user === 'user5') || (auth.token.email === 'user6@mainframe.example.com' && $user === 'user6') || (auth.token.email === 'user7@mainframe.example.com' && $user === 'user7'))))",
+        "$gif": {
+          ".validate": "$gif.length <= 20 && $gif.matches(/^g[0-9a-z]+$/) && newData.hasChildren(['u', 'w', 'h'])",
+          "u": {
+            ".validate": "newData.isString() && newData.val().length <= 500 && (newData.val().beginsWith('https://static.klipy.com/') || newData.val().beginsWith('https://static1.klipy.com/') || newData.val().beginsWith('https://static2.klipy.com/'))"
+          },
+          "w": {
+            ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= 2000"
+          },
+          "h": {
+            ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= 2000"
+          },
+          "t": {
+            ".validate": "newData.isNumber() && newData.val() <= now"
+          },
+          "$other": {
+            ".validate": false
+          }
+        }
+      }
+    },
+    "notifications": {
+      "$user": {
+        ".read": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com') && ((auth != null && ((auth.token.email === '302@mainframe.example.com' && $user === '302') || (auth.token.email === '808@mainframe.example.com' && $user === '808') || (auth.token.email === '838@mainframe.example.com' && $user === '838') || (auth.token.email === '111@mainframe.example.com' && $user === '111') || (auth.token.email === 'user5@mainframe.example.com' && $user === 'user5') || (auth.token.email === 'user6@mainframe.example.com' && $user === 'user6') || (auth.token.email === 'user7@mainframe.example.com' && $user === 'user7'))))",
+        "$note": {
+          ".write": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com') && ((!data.exists() && newData.exists() && (auth != null && ((auth.token.email === '302@mainframe.example.com' && newData.child('from').val() === '302') || (auth.token.email === '808@mainframe.example.com' && newData.child('from').val() === '808') || (auth.token.email === '838@mainframe.example.com' && newData.child('from').val() === '838') || (auth.token.email === '111@mainframe.example.com' && newData.child('from').val() === '111') || (auth.token.email === 'user5@mainframe.example.com' && newData.child('from').val() === 'user5') || (auth.token.email === 'user6@mainframe.example.com' && newData.child('from').val() === 'user6') || (auth.token.email === 'user7@mainframe.example.com' && newData.child('from').val() === 'user7'))) && ($user === '302' || $user === '808' || $user === '838' || $user === '111' || $user === 'user5' || $user === 'user6' || $user === 'user7')) || (!newData.exists() && (auth != null && ((auth.token.email === '302@mainframe.example.com' && $user === '302') || (auth.token.email === '808@mainframe.example.com' && $user === '808') || (auth.token.email === '838@mainframe.example.com' && $user === '838') || (auth.token.email === '111@mainframe.example.com' && $user === '111') || (auth.token.email === 'user5@mainframe.example.com' && $user === 'user5') || (auth.token.email === 'user6@mainframe.example.com' && $user === 'user6') || (auth.token.email === 'user7@mainframe.example.com' && $user === 'user7')))))",
+          ".validate": "newData.hasChildren(['k', 'from', 'game', 'room', 'gid', 't'])",
+          "k": {
+            ".validate": "newData.val() === 'invite'"
+          },
+          "from": {
+            ".validate": "newData.val() === '302' || newData.val() === '808' || newData.val() === '838' || newData.val() === '111' || newData.val() === 'user5' || newData.val() === 'user6' || newData.val() === 'user7'"
+          },
+          "game": {
+            ".validate": "newData.val() === 'ttt' || newData.val() === 'c4' || newData.val() === 'bj' || newData.val() === 'breach' || newData.val() === 'hm' || newData.val() === 'gw' || newData.val() === 'll' || newData.val() === 'wr' || newData.val() === 'rps' || newData.val() === 'slot' || newData.val() === 'bs' || newData.val() === 'uno' || newData.val() === 'imp' || newData.val() === 'pool' || newData.val() === 'court' || newData.val() === 'chess'"
+          },
+          "room": {
+            ".validate": "newData.val() === 'main' || (newData.isString() && newData.val().length === 64 && newData.val().matches(/^[0-9a-f]+$/))"
+          },
+          "rname": {
+            ".validate": "newData.isString() && newData.val().length <= 32"
+          },
+          "gid": {
+            ".validate": "newData.isString() && newData.val().length <= 40 && newData.val().matches(/^[A-Za-z0-9_-]+$/)"
+          },
+          "t": {
+            ".validate": "newData.isNumber() && newData.val() <= now && newData.val() > now - 60000"
+          },
+          "$other": {
+            ".validate": false
+          }
+        }
+      }
+    },
+    "avatars": {
+      "$user": {
+        ".read": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com')",
+        ".write": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com') && ((auth != null && ((auth.token.email === '302@mainframe.example.com' && $user === '302') || (auth.token.email === '808@mainframe.example.com' && $user === '808') || (auth.token.email === '838@mainframe.example.com' && $user === '838') || (auth.token.email === '111@mainframe.example.com' && $user === '111') || (auth.token.email === 'user5@mainframe.example.com' && $user === 'user5') || (auth.token.email === 'user6@mainframe.example.com' && $user === 'user6') || (auth.token.email === 'user7@mainframe.example.com' && $user === 'user7'))))",
+        ".validate": "newData.isString() && newData.val().length <= 40000 && newData.val().beginsWith('data:image/')"
+      }
+    },
+    "stats": {
+      ".read": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com')",
+      "$user": {
+        ".write": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com') && ($user === '302' || $user === '808' || $user === '838' || $user === '111' || $user === 'user5' || $user === 'user6' || $user === 'user7')",
+        "$game": {
+          "$field": {
+            ".validate": "newData.isNumber()"
+          }
+        }
+      }
+    },
+    "doors": {
+      "$door": {
+        ".read": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com')",
+        ".write": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com') && ($door.length === 64 && $door.matches(/^[0-9a-f]+$/) && (!data.exists() || !newData.exists()))",
+        ".validate": "newData.isString() && newData.val().length === 64 && newData.val().matches(/^[0-9a-f]+$/)"
+      }
+    },
+    "channels": {
+      "global_terminal_node": {
+        ".read": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com')",
+        ".indexOn": [
+          "timestamp"
+        ],
+        "$message": {
+          ".write": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com') && (newData.exists() && (!data.exists() || data.hasChild('user')))",
+          ".validate": "(!data.exists() && !newData.hasChild('deleted') && newData.hasChildren(['user', 'timestamp']) && (newData.hasChild('msg') || newData.hasChild('gif') || newData.hasChild('file') || newData.hasChild('poll') || newData.hasChild('game') || newData.hasChild('snipe') || newData.hasChild('snipes')) && (auth != null && ((auth.token.email === '302@mainframe.example.com' && newData.child('user').val() === '302') || (auth.token.email === '808@mainframe.example.com' && newData.child('user').val() === '808') || (auth.token.email === '838@mainframe.example.com' && newData.child('user').val() === '838') || (auth.token.email === '111@mainframe.example.com' && newData.child('user').val() === '111') || (auth.token.email === 'user5@mainframe.example.com' && newData.child('user').val() === 'user5') || (auth.token.email === 'user6@mainframe.example.com' && newData.child('user').val() === 'user6') || (auth.token.email === 'user7@mainframe.example.com' && newData.child('user').val() === 'user7')))) || (data.exists() && newData.hasChildren(['deleted', 'timestamp']) && !newData.hasChild('msg') && !newData.hasChild('gif') && !newData.hasChild('file') && !newData.hasChild('poll') && !newData.hasChild('game') && !newData.hasChild('snipe') && !newData.hasChild('snipes') && !newData.hasChild('user') && !newData.hasChild('reply') && !newData.hasChild('spoiler') && !newData.hasChild('edited') && (auth != null && ((auth.token.email === '302@mainframe.example.com' && data.child('user').val() === '302') || (auth.token.email === '808@mainframe.example.com' && data.child('user').val() === '808') || (auth.token.email === '838@mainframe.example.com' && data.child('user').val() === '838') || (auth.token.email === '111@mainframe.example.com' && data.child('user').val() === '111') || (auth.token.email === 'user5@mainframe.example.com' && data.child('user').val() === 'user5') || (auth.token.email === 'user6@mainframe.example.com' && data.child('user').val() === 'user6') || (auth.token.email === 'user7@mainframe.example.com' && data.child('user').val() === 'user7')))) || (data.exists() && !newData.hasChild('deleted') && newData.hasChildren(['user', 'timestamp']) && (newData.hasChild('msg') || newData.hasChild('gif') || newData.hasChild('file') || newData.hasChild('poll') || newData.hasChild('game') || newData.hasChild('snipe') || newData.hasChild('snipes')) && newData.child('user').val() === data.child('user').val() && newData.child('gif/url').val() === data.child('gif/url').val() && newData.child('file/id').val() === data.child('file/id').val() && newData.child('poll/q').val() === data.child('poll/q').val() && newData.child('game/id').val() === data.child('game/id').val() && newData.child('game/type').val() === data.child('game/type').val() && newData.child('snipe/user').val() === data.child('snipe/user').val() && newData.child('snipe/msg').val() === data.child('snipe/msg').val() && newData.child('reply/key').val() === data.child('reply/key').val() && newData.child('spoiler').val() === data.child('spoiler').val() && (newData.child('msg').val() === data.child('msg').val() || (newData.child('edited').val() === true && (auth != null && ((auth.token.email === '302@mainframe.example.com' && data.child('user').val() === '302') || (auth.token.email === '808@mainframe.example.com' && data.child('user').val() === '808') || (auth.token.email === '838@mainframe.example.com' && data.child('user').val() === '838') || (auth.token.email === '111@mainframe.example.com' && data.child('user').val() === '111') || (auth.token.email === 'user5@mainframe.example.com' && data.child('user').val() === 'user5') || (auth.token.email === 'user6@mainframe.example.com' && data.child('user').val() === 'user6') || (auth.token.email === 'user7@mainframe.example.com' && data.child('user').val() === 'user7'))))))",
+          "user": {
+            ".validate": "newData.val() === '302' || newData.val() === '808' || newData.val() === '838' || newData.val() === '111' || newData.val() === 'user5' || newData.val() === 'user6' || newData.val() === 'user7'"
+          },
+          "msg": {
+            ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 500"
+          },
+          "gif": {
+            ".validate": "newData.hasChildren(['url', 'w', 'h'])",
+            "url": {
+              ".validate": "newData.isString() && newData.val().length <= 500 && (newData.val().beginsWith('https://static.klipy.com/') || newData.val().beginsWith('https://static1.klipy.com/') || newData.val().beginsWith('https://static2.klipy.com/'))"
+            },
+            "w": {
+              ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= 2000"
+            },
+            "h": {
+              ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= 2000"
+            },
+            "$other": {
+              ".validate": false
+            }
+          },
+          "file": {
+            ".validate": "newData.hasChildren(['id', 'name', 'type', 'size', 'n'])",
+            "id": {
+              ".validate": "newData.isString() && newData.val().length <= 40 && newData.val().matches(/^[A-Za-z0-9_-]+$/)"
+            },
+            "name": {
+              ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 200"
+            },
+            "type": {
+              ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 100"
+            },
+            "size": {
+              ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= 5242880"
+            },
+            "n": {
+              ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= 99"
+            },
+            "w": {
+              ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= 20000"
+            },
+            "h": {
+              ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= 20000"
+            },
+            "$other": {
+              ".validate": false
+            }
+          },
+          "poll": {
+            ".validate": "newData.hasChildren(['q', 'o']) && newData.child('o').hasChildren(['0', '1'])",
+            "q": {
+              ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 200"
+            },
+            "o": {
+              "$i": {
+                ".validate": "$i.matches(/^[0-9]$/) && newData.isString() && newData.val().length > 0 && newData.val().length <= 80"
+              }
+            },
+            "$other": {
+              ".validate": false
+            }
+          },
+          "game": {
+            ".validate": "newData.hasChildren(['id', 'type'])",
+            "id": {
+              ".validate": "newData.isString() && newData.val().length <= 40 && newData.val().matches(/^[A-Za-z0-9_-]+$/)"
+            },
+            "type": {
+              ".validate": "newData.val() === 'ttt' || newData.val() === 'c4' || newData.val() === 'bj' || newData.val() === 'breach' || newData.val() === 'hm' || newData.val() === 'gw' || newData.val() === 'll' || newData.val() === 'wr' || newData.val() === 'rps' || newData.val() === 'slot' || newData.val() === 'bs' || newData.val() === 'uno' || newData.val() === 'imp' || newData.val() === 'pool' || newData.val() === 'court' || newData.val() === 'chess'"
+            },
+            "v": {
+              ".validate": "newData.val() === 2"
+            },
+            "res": {
+              ".validate": "!data.exists() && newData.isString() && newData.val().length <= 40"
+            },
+            "$other": {
+              ".validate": false
+            }
+          },
+          "snipe": {
+            ".validate": "newData.hasChild('user') && (newData.hasChild('msg') || newData.hasChild('gif') || newData.hasChild('file'))",
+            "user": {
+              ".validate": "newData.val() === '302' || newData.val() === '808' || newData.val() === '838' || newData.val() === '111' || newData.val() === 'user5' || newData.val() === 'user6' || newData.val() === 'user7'"
+            },
+            "msg": {
+              ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 500"
+            },
+            "gif": {
+              ".validate": "newData.hasChildren(['url', 'w', 'h'])",
+              "url": {
+                ".validate": "newData.isString() && newData.val().length <= 500 && (newData.val().beginsWith('https://static.klipy.com/') || newData.val().beginsWith('https://static1.klipy.com/') || newData.val().beginsWith('https://static2.klipy.com/'))"
+              },
+              "w": {
+                ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= 2000"
+              },
+              "h": {
+                ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= 2000"
+              },
+              "$other": {
+                ".validate": false
+              }
+            },
+            "file": {
+              ".validate": "newData.hasChildren(['id', 'name', 'type', 'size', 'n'])",
+              "id": {
+                ".validate": "newData.isString() && newData.val().length <= 40 && newData.val().matches(/^[A-Za-z0-9_-]+$/)"
+              },
+              "name": {
+                ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 200"
+              },
+              "type": {
+                ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 100"
+              },
+              "size": {
+                ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= 5242880"
+              },
+              "n": {
+                ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= 99"
+              },
+              "w": {
+                ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= 20000"
+              },
+              "h": {
+                ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= 20000"
+              },
+              "$other": {
+                ".validate": false
+              }
+            },
+            "spoiler": {
+              ".validate": "newData.val() === true"
+            },
+            "sent": {
+              ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= now"
+            },
+            "at": {
+              ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= now"
+            },
+            "n": {
+              ".validate": "newData.isNumber() && newData.val() >= 2 && newData.val() <= 100"
+            },
+            "$other": {
+              ".validate": false
+            }
+          },
+          "snipes": {
+            ".validate": "newData.val() === true"
+          },
+          "reply": {
+            ".validate": "newData.hasChildren(['key', 'user'])",
+            "key": {
+              ".validate": "newData.isString() && newData.val().length <= 41 && newData.val().matches(/^-[A-Za-z0-9_-]+$/)"
+            },
+            "user": {
+              ".validate": "newData.val() === '302' || newData.val() === '808' || newData.val() === '838' || newData.val() === '111' || newData.val() === 'user5' || newData.val() === 'user6' || newData.val() === 'user7'"
+            },
+            "$other": {
+              ".validate": false
+            }
+          },
+          "spoiler": {
+            ".validate": "newData.val() === true"
+          },
+          "edited": {
+            ".validate": "newData.val() === true"
+          },
+          "deleted": {
+            ".validate": "newData.val() === true"
+          },
+          "timestamp": {
+            ".validate": "newData.isNumber() && newData.val() <= now && newData.val() > now - 60000"
+          },
+          "$other": {
+            ".validate": false
+          }
+        }
+      },
+      "global_reactions": {
+        ".read": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com')",
+        ".indexOn": [
+          "t"
+        ],
+        "$message": {
+          ".write": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com') && (!newData.exists())",
+          "t": {
+            ".write": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com') && (root.child('channels').child('global_terminal_node').child($message).hasChild('user'))",
+            ".validate": "newData.isNumber() && newData.val() <= now && newData.val() > now - 60000"
+          },
+          "$emoji": {
+            "$user": {
+              ".write": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com') && (root.child('channels').child('global_terminal_node').child($message).hasChild('user') && $emoji.length <= 60 && $emoji.matches(/^[0-9a-f_]+$/) && newData.parent().parent().child('t').val() > now - 60000 && (auth != null && ((auth.token.email === '302@mainframe.example.com' && $user === '302') || (auth.token.email === '808@mainframe.example.com' && $user === '808') || (auth.token.email === '838@mainframe.example.com' && $user === '838') || (auth.token.email === '111@mainframe.example.com' && $user === '111') || (auth.token.email === 'user5@mainframe.example.com' && $user === 'user5') || (auth.token.email === 'user6@mainframe.example.com' && $user === 'user6') || (auth.token.email === 'user7@mainframe.example.com' && $user === 'user7'))))",
+              ".validate": "newData.val() === true"
+            }
+          }
+        }
+      },
+      "global_votes": {
+        ".read": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com')",
+        ".indexOn": [
+          "t"
+        ],
+        "$message": {
+          ".write": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com') && (!newData.exists())",
+          "t": {
+            ".write": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com') && (root.child('channels').child('global_terminal_node').child($message).child('poll').exists())",
+            ".validate": "newData.isNumber() && newData.val() <= now && newData.val() > now - 60000"
+          },
+          "$user": {
+            ".write": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com') && (root.child('channels').child('global_terminal_node').child($message).child('poll').exists() && (auth != null && ((auth.token.email === '302@mainframe.example.com' && $user === '302') || (auth.token.email === '808@mainframe.example.com' && $user === '808') || (auth.token.email === '838@mainframe.example.com' && $user === '838') || (auth.token.email === '111@mainframe.example.com' && $user === '111') || (auth.token.email === 'user5@mainframe.example.com' && $user === 'user5') || (auth.token.email === 'user6@mainframe.example.com' && $user === 'user6') || (auth.token.email === 'user7@mainframe.example.com' && $user === 'user7'))) && newData.parent().child('t').val() > now - 60000)",
+            ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 9"
+          }
+        }
+      },
+      "global_reads": {
+        ".read": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com')",
+        "$user": {
+          ".write": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com') && ((auth != null && ((auth.token.email === '302@mainframe.example.com' && $user === '302') || (auth.token.email === '808@mainframe.example.com' && $user === '808') || (auth.token.email === '838@mainframe.example.com' && $user === '838') || (auth.token.email === '111@mainframe.example.com' && $user === '111') || (auth.token.email === 'user5@mainframe.example.com' && $user === 'user5') || (auth.token.email === 'user6@mainframe.example.com' && $user === 'user6') || (auth.token.email === 'user7@mainframe.example.com' && $user === 'user7'))))",
+          ".validate": "newData.hasChildren(['k', 't'])",
+          "k": {
+            ".validate": "newData.isString() && newData.val().length <= 41 && newData.val().matches(/^-[A-Za-z0-9_-]+$/)"
+          },
+          "t": {
+            ".validate": "newData.isNumber() && newData.val() <= now && newData.val() > now - 60000"
+          },
+          "$other": {
+            ".validate": false
+          }
+        }
+      },
+      "global_snipes": {
+        ".read": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com')",
+        "$snipe": {
+          ".validate": "newData.hasChildren(['user', 'at']) && (newData.hasChild('msg') || newData.hasChild('gif') || newData.hasChild('file'))",
+          "user": {
+            ".validate": "newData.val() === '302' || newData.val() === '808' || newData.val() === '838' || newData.val() === '111' || newData.val() === 'user5' || newData.val() === 'user6' || newData.val() === 'user7'"
+          },
+          "msg": {
+            ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 500"
+          },
+          "gif": {
+            ".validate": "newData.hasChildren(['url', 'w', 'h'])",
+            "url": {
+              ".validate": "newData.isString() && newData.val().length <= 500 && (newData.val().beginsWith('https://static.klipy.com/') || newData.val().beginsWith('https://static1.klipy.com/') || newData.val().beginsWith('https://static2.klipy.com/'))"
+            },
+            "w": {
+              ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= 2000"
+            },
+            "h": {
+              ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= 2000"
+            },
+            "$other": {
+              ".validate": false
+            }
+          },
+          "file": {
+            ".validate": "newData.hasChildren(['id', 'name', 'type', 'size', 'n'])",
+            "id": {
+              ".validate": "newData.isString() && newData.val().length <= 40 && newData.val().matches(/^[A-Za-z0-9_-]+$/)"
+            },
+            "name": {
+              ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 200"
+            },
+            "type": {
+              ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 100"
+            },
+            "size": {
+              ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= 5242880"
+            },
+            "n": {
+              ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= 99"
+            },
+            "w": {
+              ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= 20000"
+            },
+            "h": {
+              ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= 20000"
+            },
+            "$other": {
+              ".validate": false
+            }
+          },
+          "spoiler": {
+            ".validate": "newData.val() === true"
+          },
+          "sent": {
+            ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= now"
+          },
+          "at": {
+            ".validate": "newData.isNumber() && newData.val() <= now && newData.val() > now - 60000"
+          },
+          "n": {
+            ".validate": false
+          },
+          "$other": {
+            ".validate": false
+          },
+          ".write": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com') && (!data.exists() && newData.exists() && $snipe.length <= 40 && $snipe.matches(/^-[A-Za-z0-9_-]+$/))"
+        }
+      },
+      "global_files": {
+        "$file": {
+          ".read": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com')",
+          "$part": {
+            ".write": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com') && (!data.exists() && $file.length <= 40 && $file.matches(/^[A-Za-z0-9_-]+$/) && $part.length <= 2 && $part.matches(/^[0-9]+$/))",
+            ".validate": "newData.isString() && newData.val().length <= 262144"
+          }
+        }
+      },
+      "global_games": {
+        "$game": {
+          ".read": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com')",
+          ".write": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com') && ($game.length <= 40 && $game.matches(/^[A-Za-z0-9_-]+$/) && (newData.exists() || (data.child('status').val() === 'done' && data.child('updated').val() < now - 259200000)))",
+          ".validate": "newData.hasChildren(['type', 'host', 'updated']) && (!data.exists() || newData.child('type').val() === data.child('type').val())",
+          "type": {
+            ".validate": "newData.val() === 'ttt' || newData.val() === 'c4' || newData.val() === 'bj' || newData.val() === 'breach' || newData.val() === 'hm' || newData.val() === 'gw' || newData.val() === 'll' || newData.val() === 'wr' || newData.val() === 'rps' || newData.val() === 'slot' || newData.val() === 'bs' || newData.val() === 'uno' || newData.val() === 'imp' || newData.val() === 'pool' || newData.val() === 'court' || newData.val() === 'chess'"
+          },
+          "host": {
+            ".validate": "newData.val() === '302' || newData.val() === '808' || newData.val() === '838' || newData.val() === '111' || newData.val() === 'user5' || newData.val() === 'user6' || newData.val() === 'user7'"
+          },
+          "updated": {
+            ".validate": "newData.isNumber() && newData.val() <= now && newData.val() > now - 60000"
+          }
+        }
+      },
+      "global_gamechat": {
+        "$game": {
+          ".read": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com')",
+          ".write": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com') && (!newData.exists() && data.exists() && !root.child('channels').child('global_games').child($game).exists())",
+          "$line": {
+            ".write": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com') && (!data.exists() && newData.exists() && $game.length <= 40 && $game.matches(/^[A-Za-z0-9_-]+$/))",
+            ".validate": "newData.hasChildren(['user', 'msg', 't'])",
+            "user": {
+              ".validate": "(auth != null && ((auth.token.email === '302@mainframe.example.com' && newData.val() === '302') || (auth.token.email === '808@mainframe.example.com' && newData.val() === '808') || (auth.token.email === '838@mainframe.example.com' && newData.val() === '838') || (auth.token.email === '111@mainframe.example.com' && newData.val() === '111') || (auth.token.email === 'user5@mainframe.example.com' && newData.val() === 'user5') || (auth.token.email === 'user6@mainframe.example.com' && newData.val() === 'user6') || (auth.token.email === 'user7@mainframe.example.com' && newData.val() === 'user7')))"
+            },
+            "msg": {
+              ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 200"
+            },
+            "r": {
+              ".validate": "newData.isBoolean()"
+            },
+            "n": {
+              ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 30"
+            },
+            "t": {
+              ".validate": "newData.isNumber() && newData.val() <= now && newData.val() > now - 60000"
+            },
+            "$other": {
+              ".validate": false
+            }
+          }
+        }
+      }
+    },
+    "rooms": {
+      "$room": {
+        ".write": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com') && (!newData.exists() && data.child('meta').exists() && (!data.child('meta').child('owner').exists() || (auth != null && ((auth.token.email === '302@mainframe.example.com' && data.child('meta').child('owner').val() === '302') || (auth.token.email === '808@mainframe.example.com' && data.child('meta').child('owner').val() === '808') || (auth.token.email === '838@mainframe.example.com' && data.child('meta').child('owner').val() === '838') || (auth.token.email === '111@mainframe.example.com' && data.child('meta').child('owner').val() === '111') || (auth.token.email === 'user5@mainframe.example.com' && data.child('meta').child('owner').val() === 'user5') || (auth.token.email === 'user6@mainframe.example.com' && data.child('meta').child('owner').val() === 'user6') || (auth.token.email === 'user7@mainframe.example.com' && data.child('meta').child('owner').val() === 'user7'))) || data.child('meta').child('open').val() === true || (auth != null && ((auth.token.email === '302@mainframe.example.com' && '302' === '302') || (auth.token.email === '808@mainframe.example.com' && '302' === '808') || (auth.token.email === '838@mainframe.example.com' && '302' === '838') || (auth.token.email === '111@mainframe.example.com' && '302' === '111') || (auth.token.email === 'user5@mainframe.example.com' && '302' === 'user5') || (auth.token.email === 'user6@mainframe.example.com' && '302' === 'user6') || (auth.token.email === 'user7@mainframe.example.com' && '302' === 'user7')))))",
+        "meta": {
+          ".read": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com')",
+          ".write": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com') && ($room.length === 64 && $room.matches(/^[0-9a-f]+$/) && newData.exists() && (!data.exists() || !data.child('owner').exists() || (auth != null && ((auth.token.email === '302@mainframe.example.com' && data.child('owner').val() === '302') || (auth.token.email === '808@mainframe.example.com' && data.child('owner').val() === '808') || (auth.token.email === '838@mainframe.example.com' && data.child('owner').val() === '838') || (auth.token.email === '111@mainframe.example.com' && data.child('owner').val() === '111') || (auth.token.email === 'user5@mainframe.example.com' && data.child('owner').val() === 'user5') || (auth.token.email === 'user6@mainframe.example.com' && data.child('owner').val() === 'user6') || (auth.token.email === 'user7@mainframe.example.com' && data.child('owner').val() === 'user7'))) || data.child('open').val() === true || (auth != null && ((auth.token.email === '302@mainframe.example.com' && '302' === '302') || (auth.token.email === '808@mainframe.example.com' && '302' === '808') || (auth.token.email === '838@mainframe.example.com' && '302' === '838') || (auth.token.email === '111@mainframe.example.com' && '302' === '111') || (auth.token.email === 'user5@mainframe.example.com' && '302' === 'user5') || (auth.token.email === 'user6@mainframe.example.com' && '302' === 'user6') || (auth.token.email === 'user7@mainframe.example.com' && '302' === 'user7')))))",
+          ".validate": "newData.hasChildren(['name', 'created'])",
+          "name": {
+            ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 32"
+          },
+          "created": {
+            ".validate": "newData.isNumber() && ((!data.exists() && newData.val() <= now) || newData.val() === data.val())"
+          },
+          "owner": {
+            ".validate": "(!data.exists() && (auth != null && ((auth.token.email === '302@mainframe.example.com' && newData.val() === '302') || (auth.token.email === '808@mainframe.example.com' && newData.val() === '808') || (auth.token.email === '838@mainframe.example.com' && newData.val() === '838') || (auth.token.email === '111@mainframe.example.com' && newData.val() === '111') || (auth.token.email === 'user5@mainframe.example.com' && newData.val() === 'user5') || (auth.token.email === 'user6@mainframe.example.com' && newData.val() === 'user6') || (auth.token.email === 'user7@mainframe.example.com' && newData.val() === 'user7')))) || newData.val() === data.val()"
+          },
+          "door": {
+            ".validate": "newData.isString() && newData.val().length === 64 && newData.val().matches(/^[0-9a-f]+$/)"
+          },
+          "locked": {
+            ".validate": "newData.val() === true"
+          },
+          "open": {
+            ".validate": "newData.val() === true"
+          },
+          "trash": {
+            "by": {
+              ".validate": "newData.val() === '302' || newData.val() === '808' || newData.val() === '838' || newData.val() === '111' || newData.val() === 'user5' || newData.val() === 'user6' || newData.val() === 'user7'"
+            },
+            "at": {
+              ".validate": "newData.isNumber() && newData.val() <= now && newData.val() > now - 60000"
+            },
+            "$other": {
+              ".validate": false
+            }
+          },
+          "$other": {
+            ".validate": false
+          }
+        },
+        "messages": {
+          ".read": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com')",
+          ".indexOn": [
+            "timestamp"
+          ],
+          "$message": {
+            ".write": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com') && (newData.exists() && (!data.exists() || data.hasChild('user')) && root.child('rooms').child($room).child('meta').exists())",
+            ".validate": "(!data.exists() && !newData.hasChild('deleted') && newData.hasChildren(['user', 'timestamp']) && (newData.hasChild('msg') || newData.hasChild('gif') || newData.hasChild('file') || newData.hasChild('poll') || newData.hasChild('game') || newData.hasChild('snipe') || newData.hasChild('snipes')) && (auth != null && ((auth.token.email === '302@mainframe.example.com' && newData.child('user').val() === '302') || (auth.token.email === '808@mainframe.example.com' && newData.child('user').val() === '808') || (auth.token.email === '838@mainframe.example.com' && newData.child('user').val() === '838') || (auth.token.email === '111@mainframe.example.com' && newData.child('user').val() === '111') || (auth.token.email === 'user5@mainframe.example.com' && newData.child('user').val() === 'user5') || (auth.token.email === 'user6@mainframe.example.com' && newData.child('user').val() === 'user6') || (auth.token.email === 'user7@mainframe.example.com' && newData.child('user').val() === 'user7')))) || (data.exists() && newData.hasChildren(['deleted', 'timestamp']) && !newData.hasChild('msg') && !newData.hasChild('gif') && !newData.hasChild('file') && !newData.hasChild('poll') && !newData.hasChild('game') && !newData.hasChild('snipe') && !newData.hasChild('snipes') && !newData.hasChild('user') && !newData.hasChild('reply') && !newData.hasChild('spoiler') && !newData.hasChild('edited') && (auth != null && ((auth.token.email === '302@mainframe.example.com' && data.child('user').val() === '302') || (auth.token.email === '808@mainframe.example.com' && data.child('user').val() === '808') || (auth.token.email === '838@mainframe.example.com' && data.child('user').val() === '838') || (auth.token.email === '111@mainframe.example.com' && data.child('user').val() === '111') || (auth.token.email === 'user5@mainframe.example.com' && data.child('user').val() === 'user5') || (auth.token.email === 'user6@mainframe.example.com' && data.child('user').val() === 'user6') || (auth.token.email === 'user7@mainframe.example.com' && data.child('user').val() === 'user7')))) || (data.exists() && !newData.hasChild('deleted') && newData.hasChildren(['user', 'timestamp']) && (newData.hasChild('msg') || newData.hasChild('gif') || newData.hasChild('file') || newData.hasChild('poll') || newData.hasChild('game') || newData.hasChild('snipe') || newData.hasChild('snipes')) && newData.child('user').val() === data.child('user').val() && newData.child('gif/url').val() === data.child('gif/url').val() && newData.child('file/id').val() === data.child('file/id').val() && newData.child('poll/q').val() === data.child('poll/q').val() && newData.child('game/id').val() === data.child('game/id').val() && newData.child('game/type').val() === data.child('game/type').val() && newData.child('snipe/user').val() === data.child('snipe/user').val() && newData.child('snipe/msg').val() === data.child('snipe/msg').val() && newData.child('reply/key').val() === data.child('reply/key').val() && newData.child('spoiler').val() === data.child('spoiler').val() && (newData.child('msg').val() === data.child('msg').val() || (newData.child('edited').val() === true && (auth != null && ((auth.token.email === '302@mainframe.example.com' && data.child('user').val() === '302') || (auth.token.email === '808@mainframe.example.com' && data.child('user').val() === '808') || (auth.token.email === '838@mainframe.example.com' && data.child('user').val() === '838') || (auth.token.email === '111@mainframe.example.com' && data.child('user').val() === '111') || (auth.token.email === 'user5@mainframe.example.com' && data.child('user').val() === 'user5') || (auth.token.email === 'user6@mainframe.example.com' && data.child('user').val() === 'user6') || (auth.token.email === 'user7@mainframe.example.com' && data.child('user').val() === 'user7'))))))",
+            "user": {
+              ".validate": "newData.val() === '302' || newData.val() === '808' || newData.val() === '838' || newData.val() === '111' || newData.val() === 'user5' || newData.val() === 'user6' || newData.val() === 'user7'"
+            },
+            "msg": {
+              ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 500"
+            },
+            "gif": {
+              ".validate": "newData.hasChildren(['url', 'w', 'h'])",
+              "url": {
+                ".validate": "newData.isString() && newData.val().length <= 500 && (newData.val().beginsWith('https://static.klipy.com/') || newData.val().beginsWith('https://static1.klipy.com/') || newData.val().beginsWith('https://static2.klipy.com/'))"
+              },
+              "w": {
+                ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= 2000"
+              },
+              "h": {
+                ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= 2000"
+              },
+              "$other": {
+                ".validate": false
+              }
+            },
+            "file": {
+              ".validate": "newData.hasChildren(['id', 'name', 'type', 'size', 'n'])",
+              "id": {
+                ".validate": "newData.isString() && newData.val().length <= 40 && newData.val().matches(/^[A-Za-z0-9_-]+$/)"
+              },
+              "name": {
+                ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 200"
+              },
+              "type": {
+                ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 100"
+              },
+              "size": {
+                ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= 5242880"
+              },
+              "n": {
+                ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= 99"
+              },
+              "w": {
+                ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= 20000"
+              },
+              "h": {
+                ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= 20000"
+              },
+              "$other": {
+                ".validate": false
+              }
+            },
+            "poll": {
+              ".validate": "newData.hasChildren(['q', 'o']) && newData.child('o').hasChildren(['0', '1'])",
+              "q": {
+                ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 200"
+              },
+              "o": {
+                "$i": {
+                  ".validate": "$i.matches(/^[0-9]$/) && newData.isString() && newData.val().length > 0 && newData.val().length <= 80"
+                }
+              },
+              "$other": {
+                ".validate": false
+              }
+            },
+            "game": {
+              ".validate": "newData.hasChildren(['id', 'type'])",
+              "id": {
+                ".validate": "newData.isString() && newData.val().length <= 40 && newData.val().matches(/^[A-Za-z0-9_-]+$/)"
+              },
+              "type": {
+                ".validate": "newData.val() === 'ttt' || newData.val() === 'c4' || newData.val() === 'bj' || newData.val() === 'breach' || newData.val() === 'hm' || newData.val() === 'gw' || newData.val() === 'll' || newData.val() === 'wr' || newData.val() === 'rps' || newData.val() === 'slot' || newData.val() === 'bs' || newData.val() === 'uno' || newData.val() === 'imp' || newData.val() === 'pool' || newData.val() === 'court' || newData.val() === 'chess'"
+              },
+              "v": {
+                ".validate": "newData.val() === 2"
+              },
+              "res": {
+                ".validate": "!data.exists() && newData.isString() && newData.val().length <= 40"
+              },
+              "$other": {
+                ".validate": false
+              }
+            },
+            "snipe": {
+              ".validate": "newData.hasChild('user') && (newData.hasChild('msg') || newData.hasChild('gif') || newData.hasChild('file'))",
+              "user": {
+                ".validate": "newData.val() === '302' || newData.val() === '808' || newData.val() === '838' || newData.val() === '111' || newData.val() === 'user5' || newData.val() === 'user6' || newData.val() === 'user7'"
+              },
+              "msg": {
+                ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 500"
+              },
+              "gif": {
+                ".validate": "newData.hasChildren(['url', 'w', 'h'])",
+                "url": {
+                  ".validate": "newData.isString() && newData.val().length <= 500 && (newData.val().beginsWith('https://static.klipy.com/') || newData.val().beginsWith('https://static1.klipy.com/') || newData.val().beginsWith('https://static2.klipy.com/'))"
+                },
+                "w": {
+                  ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= 2000"
+                },
+                "h": {
+                  ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= 2000"
+                },
+                "$other": {
+                  ".validate": false
+                }
+              },
+              "file": {
+                ".validate": "newData.hasChildren(['id', 'name', 'type', 'size', 'n'])",
+                "id": {
+                  ".validate": "newData.isString() && newData.val().length <= 40 && newData.val().matches(/^[A-Za-z0-9_-]+$/)"
+                },
+                "name": {
+                  ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 200"
+                },
+                "type": {
+                  ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 100"
+                },
+                "size": {
+                  ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= 5242880"
+                },
+                "n": {
+                  ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= 99"
+                },
+                "w": {
+                  ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= 20000"
+                },
+                "h": {
+                  ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= 20000"
+                },
+                "$other": {
+                  ".validate": false
+                }
+              },
+              "spoiler": {
+                ".validate": "newData.val() === true"
+              },
+              "sent": {
+                ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= now"
+              },
+              "at": {
+                ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= now"
+              },
+              "n": {
+                ".validate": "newData.isNumber() && newData.val() >= 2 && newData.val() <= 100"
+              },
+              "$other": {
+                ".validate": false
+              }
+            },
+            "snipes": {
+              ".validate": "newData.val() === true"
+            },
+            "reply": {
+              ".validate": "newData.hasChildren(['key', 'user'])",
+              "key": {
+                ".validate": "newData.isString() && newData.val().length <= 41 && newData.val().matches(/^-[A-Za-z0-9_-]+$/)"
+              },
+              "user": {
+                ".validate": "newData.val() === '302' || newData.val() === '808' || newData.val() === '838' || newData.val() === '111' || newData.val() === 'user5' || newData.val() === 'user6' || newData.val() === 'user7'"
+              },
+              "$other": {
+                ".validate": false
+              }
+            },
+            "spoiler": {
+              ".validate": "newData.val() === true"
+            },
+            "edited": {
+              ".validate": "newData.val() === true"
+            },
+            "deleted": {
+              ".validate": "newData.val() === true"
+            },
+            "timestamp": {
+              ".validate": "newData.isNumber() && newData.val() <= now && newData.val() > now - 60000"
+            },
+            "$other": {
+              ".validate": false
+            }
+          }
+        },
+        "reactions": {
+          ".read": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com')",
+          ".indexOn": [
+            "t"
+          ],
+          "$message": {
+            ".write": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com') && (!newData.exists())",
+            "t": {
+              ".write": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com') && (root.child('rooms').child($room).child('messages').child($message).hasChild('user'))",
+              ".validate": "newData.isNumber() && newData.val() <= now && newData.val() > now - 60000"
+            },
+            "$emoji": {
+              "$user": {
+                ".write": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com') && (root.child('rooms').child($room).child('messages').child($message).hasChild('user') && $emoji.length <= 60 && $emoji.matches(/^[0-9a-f_]+$/) && newData.parent().parent().child('t').val() > now - 60000 && (auth != null && ((auth.token.email === '302@mainframe.example.com' && $user === '302') || (auth.token.email === '808@mainframe.example.com' && $user === '808') || (auth.token.email === '838@mainframe.example.com' && $user === '838') || (auth.token.email === '111@mainframe.example.com' && $user === '111') || (auth.token.email === 'user5@mainframe.example.com' && $user === 'user5') || (auth.token.email === 'user6@mainframe.example.com' && $user === 'user6') || (auth.token.email === 'user7@mainframe.example.com' && $user === 'user7'))))",
+                ".validate": "newData.val() === true"
+              }
+            }
+          }
+        },
+        "votes": {
+          ".read": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com')",
+          ".indexOn": [
+            "t"
+          ],
+          "$message": {
+            ".write": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com') && (!newData.exists())",
+            "t": {
+              ".write": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com') && (root.child('rooms').child($room).child('messages').child($message).child('poll').exists())",
+              ".validate": "newData.isNumber() && newData.val() <= now && newData.val() > now - 60000"
+            },
+            "$user": {
+              ".write": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com') && (root.child('rooms').child($room).child('messages').child($message).child('poll').exists() && (auth != null && ((auth.token.email === '302@mainframe.example.com' && $user === '302') || (auth.token.email === '808@mainframe.example.com' && $user === '808') || (auth.token.email === '838@mainframe.example.com' && $user === '838') || (auth.token.email === '111@mainframe.example.com' && $user === '111') || (auth.token.email === 'user5@mainframe.example.com' && $user === 'user5') || (auth.token.email === 'user6@mainframe.example.com' && $user === 'user6') || (auth.token.email === 'user7@mainframe.example.com' && $user === 'user7'))) && newData.parent().child('t').val() > now - 60000)",
+              ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 9"
+            }
+          }
+        },
+        "reads": {
+          ".read": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com')",
+          "$user": {
+            ".write": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com') && ((auth != null && ((auth.token.email === '302@mainframe.example.com' && $user === '302') || (auth.token.email === '808@mainframe.example.com' && $user === '808') || (auth.token.email === '838@mainframe.example.com' && $user === '838') || (auth.token.email === '111@mainframe.example.com' && $user === '111') || (auth.token.email === 'user5@mainframe.example.com' && $user === 'user5') || (auth.token.email === 'user6@mainframe.example.com' && $user === 'user6') || (auth.token.email === 'user7@mainframe.example.com' && $user === 'user7'))) && root.child('rooms').child($room).child('meta').exists())",
+            ".validate": "newData.hasChildren(['k', 't'])",
+            "k": {
+              ".validate": "newData.isString() && newData.val().length <= 41 && newData.val().matches(/^-[A-Za-z0-9_-]+$/)"
+            },
+            "t": {
+              ".validate": "newData.isNumber() && newData.val() <= now && newData.val() > now - 60000"
+            },
+            "$other": {
+              ".validate": false
+            }
+          }
+        },
+        "snipes": {
+          ".read": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com')",
+          "$snipe": {
+            ".validate": "newData.hasChildren(['user', 'at']) && (newData.hasChild('msg') || newData.hasChild('gif') || newData.hasChild('file'))",
+            "user": {
+              ".validate": "newData.val() === '302' || newData.val() === '808' || newData.val() === '838' || newData.val() === '111' || newData.val() === 'user5' || newData.val() === 'user6' || newData.val() === 'user7'"
+            },
+            "msg": {
+              ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 500"
+            },
+            "gif": {
+              ".validate": "newData.hasChildren(['url', 'w', 'h'])",
+              "url": {
+                ".validate": "newData.isString() && newData.val().length <= 500 && (newData.val().beginsWith('https://static.klipy.com/') || newData.val().beginsWith('https://static1.klipy.com/') || newData.val().beginsWith('https://static2.klipy.com/'))"
+              },
+              "w": {
+                ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= 2000"
+              },
+              "h": {
+                ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= 2000"
+              },
+              "$other": {
+                ".validate": false
+              }
+            },
+            "file": {
+              ".validate": "newData.hasChildren(['id', 'name', 'type', 'size', 'n'])",
+              "id": {
+                ".validate": "newData.isString() && newData.val().length <= 40 && newData.val().matches(/^[A-Za-z0-9_-]+$/)"
+              },
+              "name": {
+                ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 200"
+              },
+              "type": {
+                ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 100"
+              },
+              "size": {
+                ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= 5242880"
+              },
+              "n": {
+                ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= 99"
+              },
+              "w": {
+                ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= 20000"
+              },
+              "h": {
+                ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= 20000"
+              },
+              "$other": {
+                ".validate": false
+              }
+            },
+            "spoiler": {
+              ".validate": "newData.val() === true"
+            },
+            "sent": {
+              ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= now"
+            },
+            "at": {
+              ".validate": "newData.isNumber() && newData.val() <= now && newData.val() > now - 60000"
+            },
+            "n": {
+              ".validate": false
+            },
+            "$other": {
+              ".validate": false
+            },
+            ".write": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com') && (!data.exists() && newData.exists() && $snipe.length <= 40 && $snipe.matches(/^-[A-Za-z0-9_-]+$/) && root.child('rooms').child($room).child('meta').exists())"
+          }
+        },
+        "files": {
+          "$file": {
+            ".read": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com')",
+            "$part": {
+              ".write": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com') && (!data.exists() && $file.length <= 40 && $file.matches(/^[A-Za-z0-9_-]+$/) && $part.length <= 2 && $part.matches(/^[0-9]+$/) && root.child('rooms').child($room).child('meta').exists())",
+              ".validate": "newData.isString() && newData.val().length <= 262144"
+            }
+          }
+        },
+        "games": {
+          "$game": {
+            ".read": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com')",
+            ".write": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com') && ($game.length <= 40 && $game.matches(/^[A-Za-z0-9_-]+$/) && (newData.exists() || (data.child('status').val() === 'done' && data.child('updated').val() < now - 259200000)) && root.child('rooms').child($room).child('meta').exists())",
+            ".validate": "newData.hasChildren(['type', 'host', 'updated']) && (!data.exists() || newData.child('type').val() === data.child('type').val())",
+            "type": {
+              ".validate": "newData.val() === 'ttt' || newData.val() === 'c4' || newData.val() === 'bj' || newData.val() === 'breach' || newData.val() === 'hm' || newData.val() === 'gw' || newData.val() === 'll' || newData.val() === 'wr' || newData.val() === 'rps' || newData.val() === 'slot' || newData.val() === 'bs' || newData.val() === 'uno' || newData.val() === 'imp' || newData.val() === 'pool' || newData.val() === 'court' || newData.val() === 'chess'"
+            },
+            "host": {
+              ".validate": "newData.val() === '302' || newData.val() === '808' || newData.val() === '838' || newData.val() === '111' || newData.val() === 'user5' || newData.val() === 'user6' || newData.val() === 'user7'"
+            },
+            "updated": {
+              ".validate": "newData.isNumber() && newData.val() <= now && newData.val() > now - 60000"
+            }
+          }
+        },
+        "gamechat": {
+          "$game": {
+            ".read": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com')",
+            ".write": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com') && (!newData.exists() && data.exists() && !root.child('rooms').child($room).child('games').child($game).exists())",
+            "$line": {
+              ".write": "auth != null && (auth.token.email === '302@mainframe.example.com' || auth.token.email === '808@mainframe.example.com' || auth.token.email === '838@mainframe.example.com' || auth.token.email === '111@mainframe.example.com' || auth.token.email === 'user5@mainframe.example.com' || auth.token.email === 'user6@mainframe.example.com' || auth.token.email === 'user7@mainframe.example.com') && (!data.exists() && newData.exists() && $game.length <= 40 && $game.matches(/^[A-Za-z0-9_-]+$/) && root.child('rooms').child($room).child('meta').exists())",
+              ".validate": "newData.hasChildren(['user', 'msg', 't'])",
+              "user": {
+                ".validate": "(auth != null && ((auth.token.email === '302@mainframe.example.com' && newData.val() === '302') || (auth.token.email === '808@mainframe.example.com' && newData.val() === '808') || (auth.token.email === '838@mainframe.example.com' && newData.val() === '838') || (auth.token.email === '111@mainframe.example.com' && newData.val() === '111') || (auth.token.email === 'user5@mainframe.example.com' && newData.val() === 'user5') || (auth.token.email === 'user6@mainframe.example.com' && newData.val() === 'user6') || (auth.token.email === 'user7@mainframe.example.com' && newData.val() === 'user7')))"
+              },
+              "msg": {
+                ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 200"
+              },
+              "r": {
+                ".validate": "newData.isBoolean()"
+              },
+              "n": {
+                ".validate": "newData.isNumber() && newData.val() >= 1 && newData.val() <= 30"
+              },
+              "t": {
+                ".validate": "newData.isNumber() && newData.val() <= now && newData.val() > now - 60000"
+              },
+              "$other": {
+                ".validate": false
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
