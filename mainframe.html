@@ -17714,7 +17714,7 @@
     const value = { P: 1, N: 3, B: 3, R: 5, Q: 9 };
     const takenFrom = (white) => {
       const list = [];
-      'QRBNP'.forEach((k) => {
+      'QRBNP'.split('').forEach((k) => {
         const key = white ? k : k.toLowerCase();
         for (let i = 0; i < start[key] - have[key]; i++) list.push(k);
       });
