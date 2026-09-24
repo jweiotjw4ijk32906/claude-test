@@ -3329,12 +3329,6 @@
   .gw-mine-text .gw-title { margin: 0; }
   .gw-mine-text b { font-size: 17px; font-weight: 900; }
   .gw-opp { font-size: 12px; color: rgba(255, 255, 255, 0.6); }
-  .gw-qs { display: flex; flex-wrap: wrap; gap: 7px; max-height: 340px; overflow-y: auto; scrollbar-width: thin; }
-  .gw-q { padding: 7px 12px; background: rgba(255, 255, 255, 0.06); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.13); border-radius: 999px; font: 700 12px system-ui, sans-serif; text-align: left; cursor: pointer; transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease; }
-  .gw-q:hover:not(:disabled) { background: rgba(230, 36, 41, 0.32); border-color: #e62429; transform: translateY(-1px); box-shadow: 0 4px 12px -4px rgba(230, 36, 41, 0.6); }
-  .gw-q:disabled { opacity: 0.45; cursor: default; }
-  .gw-q.yes { opacity: 1; background: rgba(76, 175, 80, 0.22); border-color: #66bb6a; color: #c8f7ca; }
-  .gw-q.no { opacity: 1; background: rgba(229, 57, 53, 0.18); border-color: #ef5350; color: #ffc4c4; }
   .gw-tools { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
   .gw-log { display: flex; flex-direction: column; gap: 5px; max-height: 240px; overflow-y: auto; font-size: 12.5px; scrollbar-width: thin; }
   .gw-log-row { padding: 6px 9px; background: rgba(255, 255, 255, 0.05); border-radius: 8px; line-height: 1.35; animation: pickerIn 0.2s ease-out; }
@@ -3342,7 +3336,6 @@
   .gw-log-row b.no { color: #ef7373; }
   .gw-ask { display: flex; gap: 6px; margin-bottom: 8px; }
   .gw-ask-field { flex: 1; min-width: 0; }
-  .gw-title.small { margin-top: 4px; opacity: 0.75; }
   .gw-answer { box-shadow: inset 0 0 0 1px rgba(255, 210, 80, 0.5); }
   .gw-question { margin: 6px 0 10px; font-size: 16px; font-weight: 800; line-height: 1.35; }
   .gw-log-row.pending { color: #fcd34d; animation: pulse 1.2s ease-in-out infinite; }
@@ -5575,7 +5568,7 @@
   const pathOf = (r, kind) => r.base + '/' + r.rel[kind];
 
   // Shown in Settings; every release also renames RULES_PROBE (below)
-  const APP_VERSION = '1.12';
+  const APP_VERSION = '1.13';
   const APP_DATE = 'Sep 24';
 
   const MAX_LENGTH = 500;        // longest message allowed, in characters
@@ -5620,7 +5613,7 @@
   const SYNC_OVERLAP_MS = 5 * 60 * 1000;    // re-checks this much before the last sync, to be safe
   // Only this version's rules make this readable. Every update renames it, so once the new rules
   // are published, older copies of the file see "out of date" and stop.
-  const RULES_PROBE = 'rules_1_12';
+  const RULES_PROBE = 'rules_1_13';
   const BASE_TITLE = 'Mainframe';
   const PUSH_KEY = /^-[A-Za-z0-9_-]{1,40}$/;
   const SAFE_ID = /^[A-Za-z0-9_-]{1,40}$/;
@@ -14674,6 +14667,9 @@
   const gwSecret = (id) => loadJSON(GW_KEY + id + '.' + me, null);
   // A question applies everywhere unless a 3rd element lists which universe(s) it's specific to
   // (Marvel already had a few of these — "original 6 Avengers" makes no sense in Dragon Ball).
+  // Legacy quick-question ids. Nothing offers these as chips any more — questions are free
+  // text — but a game already in progress when that shipped can still hold a few old answers
+  // recorded against one of these ids, so gwText keeps them readable in History.
   const GW_QUESTIONS = [
     ['f', 'Is it a woman?'], ['mask', 'Face hidden by a mask or helmet?'], ['fly', 'Can they fly?'], ['cape', 'Wear a cape?'],
     ['alien', 'Not human? (god, alien, android…)'], ['villain', 'A villain?'], ['og', 'One of the original 6 Avengers?', ['marvel']],
@@ -14685,13 +14681,10 @@
     ['robot', 'An animatronic, not a living person?', ['fnaf']], ['kid', 'A human child?', ['fnaf']]
   ];
   const gwText = (id) => (GW_QUESTIONS.find((q) => q[0] === id) || [id, id])[1];
-  // Which quick-question chips make sense for a given universe: the shared ones, plus that
-  // universe's own flavor questions (Marvel keeps its original four this way too).
-  const gwQuestions = (board) => GW_QUESTIONS.filter((q) => !q[2] || q[2].indexOf(board) !== -1);
 
   // ---- Every playable cast. Each character is { n: name, r: role/subtitle, e: emoji shown until
-  // a developer uploads a real picture, c: [gradient start, end], t: tags matched against
-  // GW_QUESTIONS for Auto-flip and the quick-question chips }. ----
+  // a developer uploads a real picture, c: [gradient start, end], t: descriptive tags kept on
+  // each character for future use — nothing currently reads them }. ----
   const GW_UNIVERSES = {
     marvel: { name: 'Marvel', icon: '🦸', tagline: 'Live-action Marvel heroes and villains.', cast: [
       { n: 'Iron Man', r: 'Tony Stark', e: '⚙️', c: ['#b3121b', '#e0a526'], t: ['mask', 'fly', 'og', 'suit'] },
@@ -14802,17 +14795,20 @@
   const gwUni = (board) => GW_UNIVERSES[board] || GW_UNIVERSES.marvel;
   const gwCast = (board) => gwUni(board).cast;
   const GW_Q_MAX = 80;      // one question
+  const GW_A_MAX = 80;      // one answer
   const GW_LOG_MAX = 1400;  // all of someone's questions together, so the game node stays small
 
-  // Questions you asked and what they said. Typed ones are lines of "1|key|text"; the key is
-  // filled in when what you typed matches a quick question, which is what Auto-flip goes on.
+  // Questions you asked and what they said back, in their own words. Typed lines are
+  // "2|answer|question". A game already mid-play when this shipped may still carry a few
+  // older "1|key|question" / "0|key|question" lines from when answers were Yes/No buttons —
+  // those are read back as a plain "Yes"/"No" so old history still renders correctly.
   function gwLog(g, seat) {
     const out = [];
     const old = g['q' + seat] || '';   // games started before questions were typed
     if (old) {
       old.split(',').forEach((item) => {
         const bits = item.split(':');
-        if (bits[0]) out.push({ k: bits[0], yes: bits[1] === '1', text: gwText(bits[0]) });
+        if (bits[0]) out.push({ text: gwText(bits[0]), answer: bits[1] === '1' ? 'Yes' : 'No' });
       });
     }
     const text = g['qs' + seat] || '';
@@ -14820,7 +14816,8 @@
       text.split('\n').forEach((line) => {
         const cut = line.indexOf('|', 2);
         if (cut === -1) return;
-        out.push({ k: line.slice(2, cut), yes: line.charAt(0) === '1', text: line.slice(cut + 1) });
+        const answer = line.charAt(0) === '2' ? line.slice(2, cut) : (line.charAt(0) === '1' ? 'Yes' : 'No');
+        out.push({ text: line.slice(cut + 1), answer: answer });
       });
     }
     return out;
@@ -14859,31 +14856,33 @@
     });
   }
 
-  // You type a question, they read it and answer Yes or No themselves
-  function gwAsk(raw, key, left) {
+  // You type a question, they read it and answer in their own words
+  function gwAsk(raw, left) {
     const q = String(raw || '').replace(/[\r\n|]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, GW_Q_MAX);
     if (!q) return;
     move((s, now) => {
       const seat = seatOf(s, me);
       if (s.status !== 'playing' || s.turn !== seat || s.pending) return null;
       if ((s['qs' + seat] || '').length > GW_LOG_MAX) return null;
-      s.pending = { s: seat, q: q, k: key || '' };
+      s.pending = { s: seat, q: q };
       s.left = s.left || {};
       s.left[seat] = left;
       return passTurn(s, seat, now);
     });
   }
 
-  // The other player answers what you asked. A guess isn't answered by hand — their device
-  // checks that against the character they locked in, so nobody can fib about a guess.
-  function gwAnswer(yes) {
+  // The other player answers what you asked, in their own words. A guess isn't answered by
+  // hand — their device checks that against the character they locked in, so nobody can fib.
+  function gwAnswer(raw) {
+    const a = String(raw || '').replace(/[\r\n|]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, GW_A_MAX);
+    if (!a) return;
     move((s) => {
       const seat = seatOf(s, me);
       if (seat === -1 || s.status !== 'playing' || !s.pending || typeof s.pending.q !== 'string') return null;
       if (s.pending.s !== 1 - seat) return null;
       const asker = 1 - seat;
       const key = 'qs' + asker;
-      s[key] = (s[key] ? s[key] + '\n' : '') + (yes ? '1|' : '0|') + (s.pending.k || '') + '|' + s.pending.q;
+      s[key] = (s[key] ? s[key] + '\n' : '') + '2|' + a + '|' + s.pending.q;
       s.pending = null;
       s.turn = seat;              // answered: now it's your go
       s.turnAt = TIMESTAMP();
@@ -18633,13 +18632,30 @@
       const layout = el('div', 'gw');
       const side = el('div', 'gw-side');
 
-      // They asked you something: read it and answer honestly
+      // They asked you something: read it and answer in your own words
       if (g.status === 'playing' && alive && g.pending && typeof g.pending.q === 'string' && g.pending.s === 1 - seat) {
         const box = el('div', 'gw-panel gw-answer');
         box.append(el('div', 'gw-title', nameOf(list[1 - seat]) + ' asks'));
         box.append(el('div', 'gw-question', '“' + g.pending.q + '”'));
-        const row = el('div', 'gs-actions');
-        row.append(gameButton('✓ Yes', 'primary', () => gwAnswer(true)), gameButton('✗ No', 'danger', () => gwAnswer(false)));
+        const field = gameInput('gwa', () => {
+          const f = el('input', 'pop-field gw-ask-field');
+          f.maxLength = GW_A_MAX;
+          f.autocomplete = 'off';
+          f.placeholder = 'Answer in your own words…';
+          return f;
+        });
+        const send = gameButton('Reply', 'primary', () => {
+          const text = field.value.trim();
+          if (!text) {
+            showToast('Type a reply first — anything at all.');
+            return;
+          }
+          field.value = '';
+          gwAnswer(text);
+        });
+        field.onkeydown = (event) => { if (event.key === 'Enter') send.click(); };
+        const row = el('div', 'gw-ask');
+        row.append(field, send);
         box.append(row);
         if (mine !== null) box.append(el('p', 'gs-note', 'About ' + cast[mine].n + ' — only you know that.'));
         side.append(box);
@@ -18659,12 +18675,9 @@
 
       // Questions (your turn: ask one, or make a guess)
       if (g.status === 'playing' && alive) {
-        const questions = gwQuestions(g.board);
-        const asked = {};
-        gwLog(g, seat).forEach((item) => { if (item.k) asked[item.k] = item.yes; });
         const panel = el('div', 'gw-panel');
         panel.append(el('div', 'gw-title', myTurn ? (guessing ? 'Click the character you think it is' : 'Ask anything') : 'Questions'));
-        // You write the question yourself; they read it and answer Yes or No
+        // You write the question yourself; they read it and answer in their own words
         const field = gameInput('gwq', () => {
           const f = el('input', 'pop-field gw-ask-field');
           f.maxLength = GW_Q_MAX;
@@ -18675,12 +18688,11 @@
         const send = gameButton('Ask', 'primary', () => {
           const text = field.value.trim();
           if (!text) {
-            showToast('Type a question first — anything they can answer yes or no.');
+            showToast('Type a question first — ask anything.');
             return;
           }
-          const preset = questions.find((q) => q[1].toLowerCase() === text.toLowerCase());
           field.value = '';
-          gwAsk(text, preset ? preset[0] : '', cast.length - flips.size);
+          gwAsk(text, cast.length - flips.size);
         });
         field.disabled = !myTurn || guessing;
         send.disabled = !myTurn || guessing;
@@ -18688,31 +18700,8 @@
         const ask = el('div', 'gw-ask');
         ask.append(field, send);
         panel.append(ask);
-        panel.append(el('div', 'gw-title small', 'Quick questions'));
-        const qs = el('div', 'gw-qs');
-        questions.forEach(([id, text]) => {
-          const done = Object.prototype.hasOwnProperty.call(asked, id);
-          const btn = el('button', 'gw-q' + (done ? (asked[id] ? ' yes' : ' no') : ''), (done ? (asked[id] ? '✓ ' : '✗ ') : '') + text);
-          btn.type = 'button';
-          btn.disabled = !myTurn || guessing;
-          btn.title = done ? 'Already answered — tap to ask it again anyway' : 'Puts it in the box';
-          btn.addEventListener('click', () => {
-            field.value = text;
-            field.focus();
-          });
-          qs.append(btn);
-        });
-        panel.append(qs);
         const tools = el('div', 'gw-tools');
-        tools.append(gameButton('Auto-flip', 'small', () => {
-          // Flips down everyone your answers rule out
-          const answers = gwLog(g, seat);
-          cast.forEach((c, i) => {
-            if (answers.some((a) => a.k && (c.t.indexOf(a.k) !== -1) !== a.yes) || misses.indexOf(i) !== -1) flips.add(i);
-          });
-          gwSaveFlips(g, flips);
-          renderGame();
-        }), gameButton('↺ Unflip all', 'small', () => {
+        tools.append(gameButton('↺ Unflip all', 'small', () => {
           gwSaveFlips(g, new Set());
           renderGame();
         }));
@@ -18735,7 +18724,9 @@
         gwLog(g, s).forEach((item) => {
           const row = el('div', 'gw-log-row');
           const who = list[s] === me ? 'You' : nameOf(list[s]);
-          row.append(who + ': ' + item.text + ' ', el('b', item.yes ? 'yes' : 'no', item.yes ? 'Yes' : 'No'));
+          const norm = item.answer.trim().toLowerCase();
+          const cls = norm === 'yes' ? 'yes' : (norm === 'no' ? 'no' : '');
+          row.append(who + ': ' + item.text + ' — ', el('b', cls, item.answer));
           log.append(row);
         });
         gwMisses(g, s).forEach((idx) => {
