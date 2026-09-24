@@ -5499,7 +5499,7 @@
   const pathOf = (r, kind) => r.base + '/' + r.rel[kind];
 
   // Shown in Settings; every release also renames RULES_PROBE (below)
-  const APP_VERSION = '1.8';
+  const APP_VERSION = '1.9';
   const APP_DATE = 'Sep 24';
 
   const MAX_LENGTH = 500;        // longest message allowed, in characters
@@ -5544,7 +5544,7 @@
   const SYNC_OVERLAP_MS = 5 * 60 * 1000;    // re-checks this much before the last sync, to be safe
   // Only this version's rules make this readable. Every update renames it, so once the new rules
   // are published, older copies of the file see "out of date" and stop.
-  const RULES_PROBE = 'rules_1_8';
+  const RULES_PROBE = 'rules_1_9';
   const BASE_TITLE = 'Mainframe';
   const PUSH_KEY = /^-[A-Za-z0-9_-]{1,40}$/;
   const SAFE_ID = /^[A-Za-z0-9_-]{1,40}$/;
@@ -12782,14 +12782,27 @@
       // carved in pearl instead of basalt -- the same silhouette as Moyai below it, transfigured.
       // Kept deliberately more saturated than white-on-white, so the shield and the face inside
       // it still read as shapes -- shine is a highlight here, not the whole badge.
-      let rays = '';
+      // A pastel spectrum, reused for the aura, the ray tips and the sparkles so the "multi
+      // colour pearlescent" read comes from repetition, not one loud rainbow in one spot.
+      const iris = ['#ffc9e6', '#ffe3a8', '#a8f0e0', '#d6c9ff', '#9fd9ea'];
+      let aura = '';
+      iris.forEach((hue, i) => {
+        aura += `<ellipse cx="50" cy="52" rx="45" ry="49" fill="${hue}" opacity="0.15" transform="rotate(${i * 36 + 10} 50 52)"/>`;
+      });
+      let raysWhite = '';
+      let raysHue = '';
       for (let i = 0; i < 16; i++) {
         const angle = (i * 22.5) * Math.PI / 180;
-        rays += `<line x1="${(50 + Math.cos(angle) * 42).toFixed(1)}" y1="${(55 + Math.sin(angle) * 44).toFixed(1)}" ` +
-          `x2="${(50 + Math.cos(angle) * (i % 2 ? 52 : 57)).toFixed(1)}" y2="${(55 + Math.sin(angle) * (i % 2 ? 55 : 60)).toFixed(1)}"/>`;
+        const x1 = (50 + Math.cos(angle) * 42).toFixed(1);
+        const y1 = (55 + Math.sin(angle) * 44).toFixed(1);
+        const x2 = (50 + Math.cos(angle) * (i % 2 ? 52 : 57)).toFixed(1);
+        const y2 = (55 + Math.sin(angle) * (i % 2 ? 55 : 60)).toFixed(1);
+        raysWhite += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`;
+        raysHue += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${iris[i % iris.length]}"/>`;
       }
-      art = '<g stroke="#eafaff" stroke-width="2.4" stroke-linecap="round" opacity="0.85">' + rays + '</g>' +
-        '<g stroke="#9fd9ea" stroke-width="1.1" stroke-linecap="round" opacity="0.65">' + rays + '</g>' + art;
+      art = `<g>${aura}</g>` +
+        '<g stroke="#eafaff" stroke-width="2.2" stroke-linecap="round" opacity="0.8">' + raysWhite + '</g>' +
+        '<g stroke-width="1.3" stroke-linecap="round" opacity="0.8">' + raysHue + '</g>' + art;
       // Wings, two-tone so they read as feathers, not a haze
       art += '<g fill="#eafaff" opacity="0.9">' +
         '<path d="M11 34 q-16 8 -13 24 q9 -8 15 -6 q-10 9 -7 21 q10 -10 16 -8 z"/>' +
@@ -12806,8 +12819,9 @@
         '<rect x="45.5" y="50" width="9" height="19" rx="3.5" fill="#8bb2c8"/>' +
         '<rect x="39" y="73" width="22" height="5" rx="2.5" fill="#4f7994"/>' +
         '<rect x="39" y="72" width="22" height="1.1" fill="#ffffff" opacity="0.7"/></g>';
-      // A halo strung with pearls
-      art += '<ellipse cx="50" cy="15" rx="21" ry="6.4" fill="none" stroke="#6f93ab" stroke-width="4"/>' +
+      // A halo strung with pearls, rimmed with one thin iridescent ring
+      art += `<ellipse cx="50" cy="15" rx="25" ry="7.8" fill="none" stroke="url(#${id}r)" stroke-width="1.6" opacity="0.9"/>` +
+        '<ellipse cx="50" cy="15" rx="21" ry="6.4" fill="none" stroke="#6f93ab" stroke-width="4"/>' +
         '<ellipse cx="50" cy="15" rx="21" ry="6.4" fill="none" stroke="#ffffff" stroke-width="1.6"/>' +
         '<ellipse cx="50" cy="15" rx="15" ry="4" fill="none" stroke="#bfeaf6" stroke-width="1.4" opacity="0.9"/>';
       let beads = '';
@@ -12816,11 +12830,11 @@
         beads += `<circle cx="${(50 + Math.cos(a) * 21).toFixed(1)}" cy="${(15 + Math.sin(a) * 6.4).toFixed(1)}" r="1.5" fill="#ffffff" stroke="#6f93ab" stroke-width="0.5"/>`;
       }
       art += `<g opacity="0.95">${beads}</g>`;
-      // Sparks
-      art += '<g fill="#ffffff">' +
-        '<path d="M22 24 l2.2 4.6 4.6 2.2 -4.6 2.2 -2.2 4.6 -2.2 -4.6 -4.6 -2.2 4.6 -2.2 z" opacity="0.95"/>' +
-        '<path d="M79 30 l1.7 3.6 3.6 1.7 -3.6 1.7 -1.7 3.6 -1.7 -3.6 -3.6 -1.7 3.6 -1.7 z" opacity="0.85"/>' +
-        '<path d="M66 88 l1.4 2.9 2.9 1.4 -2.9 1.4 -1.4 2.9 -1.4 -2.9 -2.9 -1.4 2.9 -1.4 z" opacity="0.8"/></g>';
+      // Sparks, each its own pastel so they flash different colours like an opal instead of glare
+      art += '<path d="M22 24 l2.2 4.6 4.6 2.2 -4.6 2.2 -2.2 4.6 -2.2 -4.6 -4.6 -2.2 4.6 -2.2 z" fill="#ffd0e8" opacity="0.95"/>' +
+        '<path d="M79 30 l1.7 3.6 3.6 1.7 -3.6 1.7 -1.7 3.6 -1.7 -3.6 -3.6 -1.7 3.6 -1.7 z" fill="#ffe9c2" opacity="0.9"/>' +
+        '<path d="M66 88 l1.4 2.9 2.9 1.4 -2.9 1.4 -1.4 2.9 -1.4 -2.9 -2.9 -1.4 2.9 -1.4 z" fill="#bdf0e6" opacity="0.85"/>' +
+        '<path d="M30 85 l1.4 2.9 2.9 1.4 -2.9 1.4 -1.4 2.9 -1.4 -2.9 -2.9 -1.4 2.9 -1.4 z" fill="#dcd0ff" opacity="0.85"/>';
     }
     if (look.style === 'ascend') {
       let rays = '';
@@ -12861,6 +12875,12 @@
         '<stop offset="0" stop-color="#ffffff"/><stop offset="0.35" stop-color="#dceaf2"/>' +
         '<stop offset="0.7" stop-color="#a9c6d6"/><stop offset="1" stop-color="#8bb2c8"/></linearGradient>'
       : '';
+    const ringGrad = look.style === 'pearl'
+      ? `<linearGradient id="${id}r" x1="0" y1="0" x2="1" y2="0">` +
+        '<stop offset="0" stop-color="#ffc9e6"/><stop offset="0.25" stop-color="#ffe3a8"/>' +
+        '<stop offset="0.5" stop-color="#a8f0e0"/><stop offset="0.75" stop-color="#d6c9ff"/>' +
+        '<stop offset="1" stop-color="#9fd9ea"/></linearGradient>'
+      : '';
     return `<svg viewBox="-16 -10 132 142" fill="none" aria-hidden="true">` +
       `<defs><linearGradient id="${id}f" x1="0" y1="0" x2="0" y2="1">` +
       (look.style === 'pearl'
@@ -12868,7 +12888,7 @@
           '<stop offset="0.62" stop-color="#a9c6d6"/><stop offset="1" stop-color="#749fba"/>'
         : `<stop offset="0" stop-color="${look.c}"/><stop offset="0.55" stop-color="${look.b}"/>` +
           `<stop offset="1" stop-color="${look.foot || '#0a0b0f'}"/>`) +
-      `</linearGradient>${headGrad}${blur}</defs>` +
+      `</linearGradient>${headGrad}${ringGrad}${blur}</defs>` +
       (effGlow ? `<g filter="url(#${id}g)">${art}</g>` : art) + '</svg>';
   }
 
@@ -12917,7 +12937,7 @@
         row.append(stack);
       } else {
         const art = el('span', 'rank-art lg');
-        art.innerHTML = rankSvg(RANK_DIVS.findIndex((d) => d.group === name && d.tier === tiers), false);
+        art.innerHTML = rankSvg(RANK_DIVS.findIndex((d) => d.group === name), false);
         row.append(art);
       }
       const text = el('div', 'rank-text');
