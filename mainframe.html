@@ -2775,6 +2775,7 @@
   .game-screen[data-game="ll"] { --g-accent: #4fd7a0; --g-glow: rgba(79, 215, 160, 0.34); --g-on: #04231a; --g-bg1: #0d3d4a; --g-bg2: #040f14; }
   .game-screen[data-game="wr"] { --g-accent: #6ee7a0; --g-glow: rgba(110, 231, 160, 0.34); --g-on: #052015; --g-bg1: #17422c; --g-bg2: #050d09; }
   .game-screen[data-game="rps"] { --g-accent: #7db4ff; --g-glow: rgba(125, 180, 255, 0.36); --g-on: #041226; --g-bg1: #172a5c; --g-bg2: #060912; }
+  .game-screen[data-game="chess"] { --g-accent: #d4af6a; --g-glow: rgba(212, 175, 106, 0.4); --g-on: #241a02; --g-bg1: #241c46; --g-bg2: #07050c; }
   .gs-backdrop { position: absolute; inset: -80px; z-index: 0; opacity: 0.2; filter: blur(46px) saturate(1.5); pointer-events: none; }
   .gs-backdrop .art { width: 100%; height: 100%; }
   .gs-head, .gs-main { position: relative; z-index: 1; }
@@ -5096,6 +5097,89 @@
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; transition: none !important; }
   }
+
+  /* ---- Chess: large glass board, glowing accents, geometric pieces ---- */
+  .chess-wrap { display: flex; gap: 20px; width: 100%; max-width: 920px; margin: 0 auto; container-type: inline-size; flex-wrap: wrap; justify-content: center; }
+  .chess-board-wrap { display: flex; flex-direction: column; align-items: center; gap: 8px; flex: 1 1 480px; min-width: 280px; max-width: 620px; position: relative; }
+  .chess-board {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 0 0 1px rgb(var(--ink) / 0.08), 0 24px 60px -24px var(--g-glow), inset 0 0 40px rgba(0, 0, 0, 0.35);
+    background: rgba(10, 8, 18, 0.6);
+    backdrop-filter: blur(14px);
+  }
+  .chess-sq { position: relative; border: none; padding: 0; display: flex; align-items: center; justify-content: center; cursor: pointer; font: inherit; }
+  .chess-sq.light { background: rgba(240, 223, 180, 0.16); }
+  .chess-sq.dark { background: rgba(20, 16, 36, 0.55); }
+  .chess-sq:disabled { cursor: default; }
+  .chess-sq.last { background: rgba(212, 175, 106, 0.32); }
+  .chess-sq.check { box-shadow: inset 0 0 0 3px #ff4d4f, inset 0 0 22px rgba(255, 77, 79, 0.65); }
+  .chess-sq.sel { box-shadow: inset 0 0 0 3px var(--g-accent); }
+  .chess-sq.dot::after { content: ''; position: absolute; width: 28%; height: 28%; border-radius: 50%; background: var(--g-accent); opacity: 0.55; pointer-events: none; }
+  .chess-sq.cap::after { content: ''; position: absolute; inset: 6%; border-radius: 50%; box-shadow: inset 0 0 0 4px rgba(255, 77, 79, 0.75); pointer-events: none; }
+  .chess-piece { position: relative; width: 78%; height: 78%; display: block; filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.55)); transition: transform 0.12s ease; pointer-events: none; }
+  .chess-sq:not(:disabled):hover .chess-piece { transform: scale(1.06); }
+  .cp-svg { width: 100%; height: 100%; display: block; fill: currentColor; }
+  .cp-w { color: #f0dfb4; }
+  .cp-b { color: #8b7fd1; }
+  .cp-w .cp-svg, .cp-b .cp-svg { stroke: rgba(0, 0, 0, 0.35); stroke-width: 0.6; }
+  .chess-coord { position: absolute; font: 700 9px monospace; opacity: 0.45; pointer-events: none; }
+  .chess-coord.file { bottom: 2px; right: 3px; }
+  .chess-coord.rank { top: 2px; left: 3px; }
+  .chess-tray { display: flex; align-items: center; gap: 2px; min-height: 22px; width: 100%; flex-wrap: wrap; }
+  .chess-tray-piece { width: 20px; height: 20px; color: var(--text-muted); opacity: 0.8; }
+  .chess-tray-piece .cp-svg { width: 100%; height: 100%; }
+  .chess-tray-edge { margin-left: 4px; font: 700 12px monospace; color: var(--g-accent); }
+  .chess-promo {
+    position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+    background: rgba(6, 5, 12, 0.82); backdrop-filter: blur(6px); border-radius: 14px; z-index: 2;
+  }
+  .chess-promo-label { font: 700 12px/1 monospace; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); }
+  .chess-promo-row { display: flex; gap: 10px; }
+  .chess-promo-btn {
+    width: 56px; height: 56px; border-radius: 12px; border: 1px solid rgb(var(--ink) / 0.14); background: rgba(255, 255, 255, 0.06); cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: transform 0.12s ease, background 0.12s ease;
+  }
+  .chess-promo-btn:hover { background: rgba(212, 175, 106, 0.22); transform: translateY(-2px); }
+  .chess-promo-btn .chess-piece { width: 70%; height: 70%; filter: none; }
+  .chess-side { width: 260px; flex: 0 0 260px; display: flex; flex-direction: column; gap: 14px; }
+  .chess-tips { border-radius: 14px; background: rgba(212, 175, 106, 0.08); border: 1px solid rgba(212, 175, 106, 0.22); overflow: hidden; }
+  .chess-tip {
+    display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 8px; padding: 9px 14px; border: none; background: transparent;
+    color: inherit; font: inherit; cursor: pointer; border-top: 1px solid rgba(212, 175, 106, 0.14); text-align: left;
+  }
+  .chess-tip:first-of-type { border-top: none; }
+  .chess-tip:hover { background: rgba(212, 175, 106, 0.14); }
+  .chess-tip-rank { font: 700 10px monospace; text-transform: uppercase; letter-spacing: 0.5px; color: var(--g-accent); }
+  .chess-tip-san { font: 700 14px monospace; }
+  .chess-moves {
+    flex: 1; min-height: 80px; max-height: 220px; overflow-y: auto; border-radius: 14px; background: rgba(255, 255, 255, 0.04); padding: 6px 4px;
+    scrollbar-width: thin; scrollbar-color: var(--scroll) transparent;
+  }
+  .chess-move-row { display: grid; grid-template-columns: 28px 1fr 1fr; gap: 4px; padding: 3px 8px; font: 600 13px monospace; align-items: center; border-radius: 8px; }
+  .chess-move-row:hover { background: rgba(255, 255, 255, 0.05); }
+  .chess-move-no { color: var(--text-muted); }
+  .chess-move-san.tag-blunder { color: #ff4d4f; }
+  .chess-move-san.tag-mistake { color: #ff9d4d; }
+  .chess-move-san.tag-inaccuracy { color: #f5d442; }
+  .chess-move-san.tag-best { color: #6ee7a0; }
+  .chess-draw-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .chess-review-summary { display: flex; gap: 12px; margin-bottom: 14px; }
+  .chess-review-card { flex: 1; text-align: center; padding: 14px 10px; border-radius: 14px; background: rgba(255, 255, 255, 0.05); }
+  .chess-review-side { font-weight: 700; font-size: 13px; }
+  .chess-review-sub2 { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; }
+  .chess-review-acc { font: 800 26px/1.2 monospace; color: var(--g-accent); margin: 4px 0; }
+  .chess-review-sub { font-size: 11.5px; color: var(--text-muted); }
+  .chess-review-list { max-height: 320px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--scroll) transparent; }
+  @container (max-width: 640px) {
+    .chess-side { width: 100%; flex: 1 1 100%; }
+    .chess-moves { max-height: 140px; }
+  }
 </style>
 </head>
 <body class="preload">
@@ -5364,8 +5448,8 @@
   const pathOf = (r, kind) => r.base + '/' + r.rel[kind];
 
   // Shown in Settings; every release also renames RULES_PROBE (below)
-  const APP_VERSION = '1.4';
-  const APP_DATE = 'Sep 22';
+  const APP_VERSION = '1.5';
+  const APP_DATE = 'Sep 24';
 
   const MAX_LENGTH = 500;        // longest message allowed, in characters
   const MAX_DOTS = 5;            // most online dots shown next to one name
@@ -5409,7 +5493,7 @@
   const SYNC_OVERLAP_MS = 5 * 60 * 1000;    // re-checks this much before the last sync, to be safe
   // Only this version's rules make this readable. Every update renames it, so once the new rules
   // are published, older copies of the file see "out of date" and stop.
-  const RULES_PROBE = 'rules_1_4';
+  const RULES_PROBE = 'rules_1_5';
   const BASE_TITLE = 'Mainframe';
   const PUSH_KEY = /^-[A-Za-z0-9_-]{1,40}$/;
   const SAFE_ID = /^[A-Za-z0-9_-]{1,40}$/;
@@ -5425,7 +5509,7 @@
   const IMAGE_QUALITY = 0.82;
 
   // ---- Games -----------------------------------------------------------------------
-  const GAME_TYPES = ['ttt', 'c4', 'bj', 'breach', 'hm', 'gw', 'll', 'wr', 'rps', 'slot', 'bs', 'uno', 'imp', 'pool', 'court'];
+  const GAME_TYPES = ['ttt', 'c4', 'bj', 'breach', 'hm', 'gw', 'll', 'wr', 'rps', 'slot', 'bs', 'uno', 'imp', 'pool', 'court', 'chess'];
 
   // ---- GIFs (KLIPY) ------------------------------------------------------------
   const KLIPY_API = 'https://api.klipy.com';
@@ -11962,7 +12046,13 @@
       '<circle cx="9" cy="9" r="2.6" fill="#ffffff" opacity="0.3"/>',
     bj: '<rect x="2.6" y="6" width="10.4" height="14.4" rx="2" fill="#c9d2e0" transform="rotate(-10 7.8 13.2)"/>' +
       '<rect x="10.4" y="4" width="11" height="15.4" rx="2" fill="#f7f9fc"/>' +
-      '<path d="M15.9 7.6l2.7 3.4-2.7 3.4-2.7-3.4z" fill="#e3342f"/>'
+      '<path d="M15.9 7.6l2.7 3.4-2.7 3.4-2.7-3.4z" fill="#e3342f"/>',
+    chess: '<rect x="1.6" y="2" width="20.8" height="20" rx="4" fill="#161225"/>' +
+      '<path d="M7 8.4l-1.6 3.4h2.2l.5-1.2.5 1.2h2.2L9.2 8.4z" fill="#8b7fd1" opacity="0.4"/>' +
+      '<path d="M12 4.6a2 2 0 1 1-1.2 3.6L9.6 11h4.8l-1.2-2.8A2 2 0 0 1 12 4.6z" fill="#f0dfb4"/>' +
+      '<path d="M8.8 11h6.4l1 3.2H7.8z" fill="#f0dfb4"/>' +
+      '<rect x="7" y="15.6" width="10" height="2.4" rx="1" fill="#f0dfb4"/>' +
+      '<rect x="6.2" y="18.6" width="11.6" height="2" rx="1" fill="#cdbb8a"/>'
   };
   const gameMark = (type, cls) => {
     const node = el('span', cls || 'g-mark');
@@ -12000,9 +12090,11 @@
     pool: { name: 'Pool', short: 'Pool', icon: '🎱', players: [2], clock: true,
       desc: 'Eight ball on a full table. Only the angle, the power and the spin go up — both devices roll the same shot, so nothing is streamed to anyone.' },
     bs: { name: 'Buckshot Roulette', short: 'Buckshot', icon: '🔫', players: [2], clock: false,
-      desc: 'Live rounds and blanks, and nobody knows the order. Shoot yourself on a blank and you go again. Items change everything.' }
+      desc: 'Live rounds and blanks, and nobody knows the order. Shoot yourself on a blank and you go again. Items change everything.' },
+    chess: { name: 'Chess', short: 'Chess', icon: '♞', players: [2], clock: true,
+      desc: 'The real rules — castling, en passant, promotion, the lot. Free move tips on your turn and a full accuracy review when it ends.' }
   };
-  const GAME_ORDER = ['ttt', 'c4', 'breach', 'imp', 'court', 'pool', 'hm', 'gw', 'slot', 'bs', 'uno', 'll', 'wr', 'rps', 'bj'];
+  const GAME_ORDER = ['ttt', 'c4', 'breach', 'imp', 'court', 'pool', 'hm', 'gw', 'slot', 'bs', 'uno', 'll', 'wr', 'rps', 'bj', 'chess'];
   const LIMIT_MIN = 5;                                                  // game time limit, minutes
   const LIMIT_MAX = 120;                                                // (2 hours at most)
   const fmtLimit = (m) => (m < 60 ? m + ' min' : Math.floor(m / 60) + ' h' + (m % 60 ? ' ' + (m % 60) + ' min' : ''));
@@ -12258,7 +12350,18 @@
           before = current || {};
           const s = Object.assign({}, before);
           s[field] = (Number(s[field]) || 0) + 1;
-          return ranked ? applyRank(s, place, list.length, quality) : s;
+          let q = quality;
+          // Chess: a win streak nudges this win's own quality up a little (capped, so it never
+          // snowballs), and losing resets it. Nothing else reads or writes this field.
+          if (g.type === 'chess') {
+            if (field === 'w') {
+              s.streak = (Number(before.streak) || 0) + 1;
+              q = clamp01(quality + Math.min(0.15, (s.streak - 1) * 0.03));
+            } else if (field === 'l') {
+              s.streak = 0;
+            }
+          }
+          return ranked ? applyRank(s, place, list.length, q, g.type === 'chess' ? quality : undefined) : s;
         }, (err, committed, snap) => {
           if (!err && committed && ranked && user === me && snap) noteRankChange(g.type, before, snap.val());
         }, false);
@@ -12309,12 +12412,20 @@
   // How much a result is worth. First place takes the most; in a game with three or more,
   // finishing close behind costs you almost nothing, and coming last costs you the most.
   // Every division makes winning a little slower and losing a little harsher.
-  function rankPoints(place, players, quality, div) {
+  // lossQuality: only chess passes this — a 1v1 loser's own share of quality is normally 0 (there's
+  // only one loser, nobody to finish "close behind"), so without it every 1v1 loss costs the same
+  // flat amount regardless of how it went. Chess wants a blowout or a fast mate to cost more than a
+  // hard-fought loss, so it opts into scaling its own loser's points by quality too.
+  function rankPoints(place, players, quality, div, lossQuality) {
     const q = clamp01(quality);
     const up = 1 - 0.012 * div;
     const down = 1 + 0.010 * div;
     if (place === 0) return Math.round(5 * up);                        // a draw
     if (place === 1) return Math.max(10, Math.round((24 + 36 * q) * up));
+    if (players === 2 && typeof lossQuality === 'number') {
+      const raw = -14 - 24 * clamp01(lossQuality);
+      return Math.round(raw * down);
+    }
     const share = players > 2 ? (players - place) / (players - 1) : 0;
     const raw = -28 + 46 * share * (0.45 + 0.55 * q);
     return Math.round(raw * (raw < 0 ? down : up));
@@ -12378,11 +12489,31 @@
       const room = (g.b || '').length || 42;
       return clamp01(1 - used / (room * 0.6));
     }
+    // Chess: accuracy from the same engine that gives tips, how much material was left on the
+    // board in the winner's favour, and how few moves it took — a fast, precise, dominant win
+    // (or loss) is worth more RR either way than one that just scraped over the line.
+    if (g.type === 'chess') {
+      if (g.winner === 'draw') return 0.35;
+      const board = (g.b || CHESS_START).split('');
+      const value = { p: 1, n: 3, b: 3, r: 5, q: 9 };
+      let material = 0;
+      board.forEach((p) => {
+        if (p === '.' || p.toLowerCase() === 'k') return;
+        material += (value[p.toLowerCase()] || 0) * (chessWhite(p) ? 1 : -1);
+      });
+      const winnerWhite = list.indexOf(g.winner) === 0;
+      const edge = clamp01(0.5 + (winnerWhite ? material : -material) / 20);
+      const plies = g.hist ? g.hist.split(',').filter(Boolean).length : 0;
+      const quick = clamp01(1 - plies / 80);
+      const review = chessReview(g.hist || '');
+      const accuracy = review ? (winnerWhite ? review.white.accuracy : review.black.accuracy) / 100 : 0.7;
+      return clamp01(accuracy * 0.5 + edge * 0.3 + quick * 0.2);
+    }
     return 0.5;
   }
 
   // Applies a result to one person's record in one game, inside a transaction
-  function applyRank(s, place, players, quality) {
+  function applyRank(s, place, players, quality, lossQuality) {
     const wins = Number(s.pl) || 0;
     if (wins < RANK_PLACE_GAMES) {
       // Placement: only wins count, and how well you won decides where you land
@@ -12397,7 +12528,7 @@
       return s;
     }
     let div = Math.max(0, Math.min(RANK_TOP, Number(s.dv) || 0));
-    let rr = (Number(s.rr) || 0) + rankPoints(place, players, quality, div);
+    let rr = (Number(s.rr) || 0) + rankPoints(place, players, quality, div, lossQuality);
     while (rr >= 100 && div < RANK_TOP) {
       rr -= 100;
       div += 1;
@@ -12779,7 +12910,8 @@
     uno: (cfg) => ({ rounds: cfg.urounds, stack: cfg.ustack !== false }),
     imp: (cfg) => ({ rounds: cfg.irounds, cycles: cfg.icycles, hint: cfg.ihint }),
     pool: (cfg) => ({ assist: cfg.passist, cloth: cfg.pcloth }),
-    court: (cfg) => ({ rounds: cfg.crounds, speak: cfg.cspeak, lawyer: cfg.clawyer !== false })
+    court: (cfg) => ({ rounds: cfg.crounds, speak: cfg.cspeak, lawyer: cfg.clawyer !== false }),
+    chess: () => ({})
   };
 
   // Everything a game starts (or restarts) with once every seat is filled
@@ -12923,6 +13055,15 @@
       seatList(s).forEach((user) => { s.chips[user] = s.start; });
       s.round = 1;
       bjNewRound(s);
+    },
+    chess: (s) => {
+      s.b = CHESS_START;
+      s.castle = 'KQkq';
+      s.ep = -1;
+      s.half = 0;
+      s.last = '';
+      s.hist = '';
+      s.drawOffer = null;
     }
   };
 
@@ -13368,6 +13509,466 @@
       if (cells.indexOf('.') === -1) return endGame(s, 'draw', 'full');
       return passTurn(s, nextSeat(s, seat), now);
     });
+  }
+
+  // ---- Chess: full rules on-device, plus a small engine for tips and post-game review -------
+  // Board: a 64-char string, index = rank*8+file, index 0 = a1 (white's left corner). Uppercase
+  // is white, lowercase black, '.' empty — the same flat-string convention ttt/c4 use for s.b.
+  // Only the move list (s.hist) and current state travel through Firebase; nothing here ever
+  // calls out anywhere else, so it costs no more than any other game and works fully offline
+  // once a move lands.
+  const CHESS_FILES = 'abcdefgh';
+  const CHESS_START = 'RNBQKBNR' + 'PPPPPPPP' + '.'.repeat(32) + 'pppppppp' + 'rnbqkbnr';
+  const chessSq = (f, r) => r * 8 + f;
+  const chessFile = (i) => i % 8;
+  const chessRank = (i) => Math.floor(i / 8);
+  const chessName = (i) => CHESS_FILES[chessFile(i)] + (chessRank(i) + 1);
+  const chessIdx = (name) => chessSq(CHESS_FILES.indexOf(name[0]), Number(name[1]) - 1);
+  const chessWhite = (p) => !!p && p !== '.' && p === p.toUpperCase();
+  const chessOwn = (p, white) => p !== '.' && chessWhite(p) === white;
+  const chessEnemy = (p, white) => p !== '.' && chessWhite(p) !== white;
+
+  const CHESS_DIAG = [[1, 1], [1, -1], [-1, 1], [-1, -1]];
+  const CHESS_ORTH = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+  const CHESS_KNIGHT = [[1, 2], [2, 1], [2, -1], [1, -2], [-1, -2], [-2, -1], [-2, 1], [-1, 2]];
+  const CHESS_KING_STEPS = CHESS_DIAG.concat(CHESS_ORTH);
+  const CHESS_SLIDE = { b: CHESS_DIAG, r: CHESS_ORTH, q: CHESS_DIAG.concat(CHESS_ORTH) };
+
+  // Every square a side attacks — used both to test check and to keep a castling king off
+  // attacked squares. Doesn't care whether the attacker is pinned; that's not what "attacks" means.
+  function chessAttacks(board, sq, byWhite) {
+    const f0 = chessFile(sq), r0 = chessRank(sq);
+    const pr = byWhite ? r0 - 1 : r0 + 1;
+    for (let i = 0; i < 2; i++) {
+      const f = f0 + (i === 0 ? -1 : 1);
+      if (f >= 0 && f < 8 && pr >= 0 && pr < 8 && board[chessSq(f, pr)] === (byWhite ? 'P' : 'p')) return true;
+    }
+    for (const [df, dr] of CHESS_KNIGHT) {
+      const f = f0 + df, r = r0 + dr;
+      if (f >= 0 && f < 8 && r >= 0 && r < 8 && board[chessSq(f, r)] === (byWhite ? 'N' : 'n')) return true;
+    }
+    for (const [df, dr] of CHESS_KING_STEPS) {
+      const f = f0 + df, r = r0 + dr;
+      if (f >= 0 && f < 8 && r >= 0 && r < 8 && board[chessSq(f, r)] === (byWhite ? 'K' : 'k')) return true;
+    }
+    for (const [df, dr] of CHESS_SLIDE.q) {
+      let f = f0 + df, r = r0 + dr;
+      const diag = df !== 0 && dr !== 0;
+      while (f >= 0 && f < 8 && r >= 0 && r < 8) {
+        const p = board[chessSq(f, r)];
+        if (p !== '.') {
+          const isQ = p === (byWhite ? 'Q' : 'q');
+          const isB = diag && p === (byWhite ? 'B' : 'b');
+          const isR = !diag && p === (byWhite ? 'R' : 'r');
+          if (isQ || isB || isR) return true;
+          break;
+        }
+        f += df; r += dr;
+      }
+    }
+    return false;
+  }
+
+  const chessKingSquare = (board, white) => board.indexOf(white ? 'K' : 'k');
+  function chessInCheck(board, white) {
+    const ks = chessKingSquare(board, white);
+    return ks !== -1 && chessAttacks(board, ks, !white);
+  }
+
+  // Every pseudo-legal move for the piece on `sq` — legal except it may leave its own king in
+  // check, which chessLegalMoves filters out afterwards.
+  function chessPieceMoves(board, sq, castle, ep) {
+    const p = board[sq];
+    if (p === '.') return [];
+    const white = chessWhite(p);
+    const kind = p.toLowerCase();
+    const f0 = chessFile(sq), r0 = chessRank(sq);
+    const moves = [];
+    const add = (f, r) => {
+      if (f < 0 || f > 7 || r < 0 || r > 7) return false;
+      const to = chessSq(f, r);
+      const t = board[to];
+      if (chessOwn(t, white)) return false;
+      moves.push({ from: sq, to: to, capture: t !== '.' });
+      return t === '.';
+    };
+    if (kind === 'p') {
+      const dir = white ? 1 : -1;
+      const startRank = white ? 1 : 6;
+      const promoRank = white ? 7 : 0;
+      const oneR = r0 + dir;
+      const pushPromo = (to, capture) => {
+        if (chessRank(to) === promoRank) 'qrbn'.split('').forEach((pc) => moves.push({ from: sq, to: to, capture: capture, promo: pc }));
+        else moves.push({ from: sq, to: to, capture: capture });
+      };
+      if (oneR >= 0 && oneR < 8 && board[chessSq(f0, oneR)] === '.') {
+        pushPromo(chessSq(f0, oneR), false);
+        if (r0 === startRank && board[chessSq(f0, r0 + dir * 2)] === '.') {
+          moves.push({ from: sq, to: chessSq(f0, r0 + dir * 2), capture: false, flag: 'double' });
+        }
+      }
+      [-1, 1].forEach((df) => {
+        const f = f0 + df, r = oneR;
+        if (f < 0 || f > 7 || r < 0 || r > 7) return;
+        const to = chessSq(f, r);
+        if (chessEnemy(board[to], white)) pushPromo(to, true);
+        else if (ep !== -1 && to === ep) moves.push({ from: sq, to: to, capture: true, flag: 'ep' });
+      });
+      return moves;
+    }
+    if (kind === 'n') {
+      CHESS_KNIGHT.forEach(([df, dr]) => add(f0 + df, r0 + dr));
+      return moves;
+    }
+    if (kind === 'k') {
+      CHESS_KING_STEPS.forEach(([df, dr]) => add(f0 + df, r0 + dr));
+      const rank = white ? 0 : 7;
+      if (r0 === rank && f0 === 4 && castle) {
+        const rights = white ? 'KQ' : 'kq';
+        if (castle.indexOf(rights[0]) !== -1 && board[chessSq(5, rank)] === '.' && board[chessSq(6, rank)] === '.' &&
+          board[chessSq(7, rank)] === (white ? 'R' : 'r') && !chessAttacks(board, chessSq(4, rank), !white) &&
+          !chessAttacks(board, chessSq(5, rank), !white) && !chessAttacks(board, chessSq(6, rank), !white)) {
+          moves.push({ from: sq, to: chessSq(6, rank), capture: false, flag: 'O-O' });
+        }
+        if (castle.indexOf(rights[1]) !== -1 && board[chessSq(1, rank)] === '.' && board[chessSq(2, rank)] === '.' &&
+          board[chessSq(3, rank)] === '.' && board[chessSq(0, rank)] === (white ? 'R' : 'r') &&
+          !chessAttacks(board, chessSq(4, rank), !white) && !chessAttacks(board, chessSq(3, rank), !white) &&
+          !chessAttacks(board, chessSq(2, rank), !white)) {
+          moves.push({ from: sq, to: chessSq(2, rank), capture: false, flag: 'O-O-O' });
+        }
+      }
+      return moves;
+    }
+    CHESS_SLIDE[kind].forEach(([df, dr]) => {
+      let f = f0 + df, r = r0 + dr;
+      while (add(f, r)) { f += df; r += dr; }
+    });
+    return moves;
+  }
+
+  // Plays a pseudo-legal move on a board copy; returns the new board plus castling/en-passant
+  // rights. Doesn't check legality — chessLegalMoves and chessMove do that around it.
+  function chessApply(board, castle, ep, move) {
+    const b = board.slice();
+    const p = b[move.from];
+    const white = chessWhite(p);
+    b[move.from] = '.';
+    if (move.flag === 'ep') b[chessSq(chessFile(move.to), chessRank(move.from))] = '.';
+    b[move.to] = move.promo ? (white ? move.promo.toUpperCase() : move.promo) : p;
+    const rank = white ? 0 : 7;
+    if (move.flag === 'O-O') {
+      b[chessSq(5, rank)] = b[chessSq(7, rank)];
+      b[chessSq(7, rank)] = '.';
+    }
+    if (move.flag === 'O-O-O') {
+      b[chessSq(3, rank)] = b[chessSq(0, rank)];
+      b[chessSq(0, rank)] = '.';
+    }
+    let nextCastle = castle || '';
+    if (p === 'K') nextCastle = nextCastle.replace('K', '').replace('Q', '');
+    if (p === 'k') nextCastle = nextCastle.replace('k', '').replace('q', '');
+    if (move.from === 0 || move.to === 0) nextCastle = nextCastle.replace('Q', '');
+    if (move.from === 7 || move.to === 7) nextCastle = nextCastle.replace('K', '');
+    if (move.from === 56 || move.to === 56) nextCastle = nextCastle.replace('q', '');
+    if (move.from === 63 || move.to === 63) nextCastle = nextCastle.replace('k', '');
+    const nextEp = move.flag === 'double' ? (move.from + move.to) / 2 : -1;
+    return { b: b, castle: nextCastle, ep: nextEp };
+  }
+
+  // Every fully legal move for whoever is on turn in state {b, turn, castle, ep}
+  function chessLegalMoves(state) {
+    const board = state.b.split('');
+    const white = state.turn === 0;
+    const castle = state.castle || '';
+    const ep = typeof state.ep === 'number' ? state.ep : -1;
+    const moves = [];
+    for (let sq = 0; sq < 64; sq++) {
+      if (!chessOwn(board[sq], white)) continue;
+      chessPieceMoves(board, sq, castle, ep).forEach((m) => {
+        const next = chessApply(board, castle, ep, m);
+        if (!chessInCheck(next.b, white)) moves.push(m);
+      });
+    }
+    return moves;
+  }
+
+  const chessMoveStr = (m) => chessName(m.from) + chessName(m.to) + (m.promo || '');
+  function chessParseMove(str) {
+    if (typeof str !== 'string' || str.length < 4) return null;
+    return { from: chessIdx(str.slice(0, 2)), to: chessIdx(str.slice(2, 4)), promo: str[4] || '' };
+  }
+
+  // Advances one state by a single already-legal move; the one place turn/castle/ep/half all
+  // move forward together, so live play and replay can never drift apart.
+  function chessAdvance(state, move) {
+    const board = state.b.split('');
+    const castle = state.castle || '';
+    const ep = typeof state.ep === 'number' ? state.ep : -1;
+    const wasPawnOrCap = board[move.from].toLowerCase() === 'p' || move.capture;
+    const next = chessApply(board, castle, ep, move);
+    return { b: next.b.join(''), turn: 1 - state.turn, castle: next.castle, ep: next.ep, half: wasPawnOrCap ? 0 : (state.half || 0) + 1 };
+  }
+
+  function chessInsufficient(board) {
+    const pieces = board.filter((p) => p !== '.' && p.toLowerCase() !== 'k');
+    if (!pieces.length) return true;
+    if (pieces.length === 1 && 'bBnN'.indexOf(pieces[0]) !== -1) return true;
+    if (pieces.length === 2 && pieces.every((p) => p.toLowerCase() === 'b')) {
+      const squares = [];
+      board.forEach((p, i) => { if (p.toLowerCase() === 'b') squares.push(i); });
+      const colorOf = (i) => (chessFile(i) + chessRank(i)) % 2;
+      return colorOf(squares[0]) === colorOf(squares[1]);
+    }
+    return false;
+  }
+
+  const chessPosKey = (state) => state.b + '|' + state.turn + '|' + (state.castle || '') + '|' + (state.ep === undefined ? -1 : state.ep);
+
+  // Replays a move list from the start, rebuilding every position along the way. This is the
+  // only place that needs the full history — live play just carries s.b/castle/ep/half forward
+  // one move at a time — so it's used for repetition checks, the move list and the review.
+  function chessReplay(hist) {
+    let state = { b: CHESS_START, turn: 0, castle: 'KQkq', ep: -1, half: 0 };
+    const steps = [];
+    const keys = [chessPosKey(state)];
+    (hist ? hist.split(',') : []).filter(Boolean).forEach((token) => {
+      const board = state.b.split('');
+      const white = state.turn === 0;
+      const parsed = chessParseMove(token);
+      if (!parsed) return;
+      const options = chessPieceMoves(board, parsed.from, state.castle, state.ep)
+        .filter((m) => m.to === parsed.to && (m.promo || '') === (parsed.promo || ''));
+      const move = options[0] || parsed;
+      const san = chessSAN(board, move, state.castle, state.ep, white);
+      const capture = move.capture || board[move.to] !== '.';
+      state = chessAdvance(state, move);
+      steps.push({ move: move, san: san, white: white, capture: capture });
+      keys.push(chessPosKey(state));
+    });
+    return { state: state, steps: steps, keys: keys };
+  }
+
+  function chessRepeated(hist) {
+    const { keys } = chessReplay(hist);
+    const last = keys[keys.length - 1];
+    return keys.filter((k) => k === last).length;
+  }
+
+  // Standard algebraic notation for one move, given the board it's played from
+  function chessSAN(board, move, castle, ep, white) {
+    if (move.flag === 'O-O') return chessSANCheck(board, move, castle, ep, white, 'O-O');
+    if (move.flag === 'O-O-O') return chessSANCheck(board, move, castle, ep, white, 'O-O-O');
+    const p = board[move.from];
+    const kind = p.toUpperCase();
+    const capture = move.capture || board[move.to] !== '.';
+    let s = '';
+    if (kind === 'P') {
+      if (capture) s += CHESS_FILES[chessFile(move.from)] + 'x';
+      s += chessName(move.to);
+      if (move.promo) s += '=' + move.promo.toUpperCase();
+    } else {
+      s += kind;
+      const others = [];
+      board.forEach((q, sq) => {
+        if (sq !== move.from && q === p && chessPieceMoves(board, sq, castle, ep).some((m) => m.to === move.to)) others.push(sq);
+      });
+      if (others.length) {
+        const sameFile = others.some((sq) => chessFile(sq) === chessFile(move.from));
+        const sameRank = others.some((sq) => chessRank(sq) === chessRank(move.from));
+        if (!sameFile) s += CHESS_FILES[chessFile(move.from)];
+        else if (!sameRank) s += String(chessRank(move.from) + 1);
+        else s += chessName(move.from);
+      }
+      if (capture) s += 'x';
+      s += chessName(move.to);
+    }
+    return chessSANCheck(board, move, castle, ep, white, s);
+  }
+  // Appends + or # by seeing whether the reply side has any legal move at all
+  function chessSANCheck(board, move, castle, ep, white, s) {
+    const next = chessApply(board, castle, ep, move);
+    if (!chessInCheck(next.b, !white)) return s;
+    const reply = { b: next.b.join(''), turn: white ? 1 : 0, castle: next.castle, ep: next.ep };
+    return s + (chessLegalMoves(reply).length ? '+' : '#');
+  }
+
+  // Whether the game is over after the move that produced `state`; null while it continues
+  function chessOutcome(state) {
+    const board = state.b.split('');
+    const white = state.turn === 0;
+    const legal = chessLegalMoves(state);
+    if (!legal.length) {
+      return chessInCheck(board, white) ? { winner: 1 - state.turn, why: 'mate' } : { winner: 'draw', why: 'stalemate' };
+    }
+    if ((state.half || 0) >= 100) return { winner: 'draw', why: 'draw-50' };
+    if (chessInsufficient(board)) return { winner: 'draw', why: 'draw-material' };
+    if (state.hist && chessRepeated(state.hist) >= 3) return { winner: 'draw', why: 'draw-rep' };
+    return null;
+  }
+
+  // The move a player (or Rematch) actually makes
+  function chessMove(from, to, promo) {
+    move((s, now) => {
+      const seat = seatOf(s, me);
+      if (s.status !== 'playing' || s.turn !== seat || isOut(s, seat)) return null;
+      const board = s.b.split('');
+      const castle = s.castle || '';
+      const ep = typeof s.ep === 'number' ? s.ep : -1;
+      const options = chessPieceMoves(board, from, castle, ep).filter((m) => m.to === to && (m.promo || '') === (promo || ''));
+      if (!options.length) return null;
+      const mv = options[0];
+      const next = chessApply(board, castle, ep, mv);
+      if (chessInCheck(next.b, seat === 0)) return null;
+      const state = chessAdvance({ b: s.b, turn: seat, castle: castle, ep: ep, half: s.half || 0 }, mv);
+      s.b = state.b;
+      s.castle = state.castle;
+      s.ep = state.ep;
+      s.half = state.half;
+      s.last = chessMoveStr(mv);
+      s.hist = (s.hist ? s.hist + ',' : '') + chessMoveStr(mv);
+      s.drawOffer = null;
+      const outcome = chessOutcome(Object.assign({}, state, { hist: s.hist }));
+      if (outcome) return endGame(s, outcome.winner === 'draw' ? 'draw' : seatList(s)[outcome.winner], outcome.why);
+      return passTurn(s, state.turn, now);
+    });
+  }
+
+  function chessOfferDraw() {
+    move((s) => {
+      const seat = seatOf(s, me);
+      if (s.status !== 'playing' || seat === -1 || isOut(s, seat) || s.drawOffer != null) return null;
+      s.drawOffer = seat;
+      return s;
+    }, null, true);
+  }
+  function chessAnswerDraw(accept) {
+    move((s) => {
+      const seat = seatOf(s, me);
+      if (s.status !== 'playing' || seat === -1 || s.drawOffer == null || s.drawOffer === seat) return null;
+      if (!accept) {
+        s.drawOffer = null;
+        return s;
+      }
+      return endGame(s, 'draw', 'agreed');
+    }, null, true);
+  }
+
+  // ---- Chess: a small on-device engine — material plus simple piece-square tables, and a
+  // shallow negamax search. Built to give a sane tip or a fair accuracy grade, not to play like
+  // a tournament engine — the brief was "a small engine/minimax in JS", nothing heavier.
+  const CHESS_VALUE = { p: 100, n: 320, b: 330, r: 500, q: 900, k: 0 };
+  const CHESS_PST = {
+    p: [0, 0, 0, 0, 0, 0, 0, 0, 5, 10, 10, -20, -20, 10, 10, 5, 5, -5, -10, 0, 0, -10, -5, 5,
+      0, 0, 0, 20, 20, 0, 0, 0, 5, 5, 10, 25, 25, 10, 5, 5, 10, 10, 20, 30, 30, 20, 10, 10,
+      50, 50, 50, 50, 50, 50, 50, 50, 0, 0, 0, 0, 0, 0, 0, 0],
+    n: [-50, -40, -30, -30, -30, -30, -40, -50, -40, -20, 0, 5, 5, 0, -20, -40, -30, 5, 10, 15, 15, 10, 5, -30,
+      -30, 0, 15, 20, 20, 15, 0, -30, -30, 5, 15, 20, 20, 15, 5, -30, -30, 0, 10, 15, 15, 10, 0, -30,
+      -40, -20, 0, 0, 0, 0, -20, -40, -50, -40, -30, -30, -30, -30, -40, -50],
+    b: [-20, -10, -10, -10, -10, -10, -10, -20, -10, 5, 0, 0, 0, 0, 5, -10, -10, 10, 10, 10, 10, 10, 10, -10,
+      -10, 0, 10, 10, 10, 10, 0, -10, -10, 5, 5, 10, 10, 5, 5, -10, -10, 0, 5, 10, 10, 5, 0, -10,
+      -10, 0, 0, 0, 0, 0, 0, -10, -20, -10, -10, -10, -10, -10, -10, -20],
+    r: [0, 0, 0, 5, 5, 0, 0, 0, -5, 0, 0, 0, 0, 0, 0, -5, -5, 0, 0, 0, 0, 0, 0, -5, -5, 0, 0, 0, 0, 0, 0, -5,
+      -5, 0, 0, 0, 0, 0, 0, -5, -5, 0, 0, 0, 0, 0, 0, -5, 5, 10, 10, 10, 10, 10, 10, 5, 0, 0, 0, 0, 0, 0, 0, 0],
+    q: [-20, -10, -10, -5, -5, -10, -10, -20, -10, 0, 0, 0, 0, 0, 0, -10, -10, 0, 5, 5, 5, 5, 0, -10,
+      -5, 0, 5, 5, 5, 5, 0, -5, 0, 0, 5, 5, 5, 5, 0, -5, -10, 5, 5, 5, 5, 5, 0, -10,
+      -10, 0, 5, 0, 0, 0, 0, -10, -20, -10, -10, -5, -5, -10, -10, -20],
+    k: [20, 30, 10, 0, 0, 10, 30, 20, 20, 20, 0, 0, 0, 0, 20, 20, -10, -20, -20, -20, -20, -20, -20, -10,
+      -20, -30, -30, -40, -40, -30, -30, -20, -30, -40, -40, -50, -50, -40, -40, -30, -30, -40, -40, -50, -50, -40, -40, -30,
+      -30, -40, -40, -50, -50, -40, -40, -30, -30, -40, -40, -50, -50, -40, -40, -30]
+  };
+  function chessEvaluate(board) {
+    let score = 0;
+    for (let sq = 0; sq < 64; sq++) {
+      const p = board[sq];
+      if (p === '.') continue;
+      const white = chessWhite(p);
+      const kind = p.toLowerCase();
+      score += (CHESS_VALUE[kind] + CHESS_PST[kind][white ? sq : 63 - sq]) * (white ? 1 : -1);
+    }
+    return score;
+  }
+
+  // Negamax with alpha-beta pruning. Returns { score, move } from the side-to-move's own
+  // perspective. Captures are searched first — the loudest signal available at this depth.
+  function chessSearch(state, depth, alpha, beta) {
+    const legal = chessLegalMoves(state);
+    const board = state.b.split('');
+    const white = state.turn === 0;
+    if (!legal.length) return { score: chessInCheck(board, white) ? -99000 - depth : 0, move: null };
+    if (depth <= 0) return { score: chessEvaluate(board) * (white ? 1 : -1), move: null };
+    legal.sort((a, b) => (b.capture ? 1 : 0) - (a.capture ? 1 : 0));
+    let best = legal[0];
+    let bestScore = -Infinity;
+    for (const mv of legal) {
+      const child = chessAdvance(state, mv);
+      const reply = chessSearch(child, depth - 1, -beta, -alpha);
+      const score = -reply.score;
+      if (score > bestScore) {
+        bestScore = score;
+        best = mv;
+      }
+      alpha = Math.max(alpha, score);
+      if (alpha >= beta) break;
+    }
+    return { score: bestScore, move: best };
+  }
+
+  const CHESS_DEPTH = 2;   // plies; shallow on purpose so it never stalls a Chromebook
+
+  // The top couple of moves for whoever is on turn, each with the line it leads to
+  function chessTips(s) {
+    const state = { b: s.b, turn: s.turn, castle: s.castle || '', ep: typeof s.ep === 'number' ? s.ep : -1, half: s.half || 0 };
+    const board = state.b.split('');
+    const white = state.turn === 0;
+    const legal = chessLegalMoves(state);
+    const scored = legal.map((mv) => {
+      const child = chessAdvance(state, mv);
+      const reply = chessSearch(child, CHESS_DEPTH - 1, -Infinity, Infinity);
+      return { move: mv, score: -reply.score, san: chessSAN(board, mv, state.castle, state.ep, white) };
+    }).sort((a, b) => b.score - a.score);
+    return scored.slice(0, 2);
+  }
+
+  // A move-by-move accuracy grade for both sides, and a tag for each ply. cpLoss is how much
+  // worse the played move scored than the best one this same shallow search could find — a
+  // proxy for accuracy, not a claim about the objectively best move in the position.
+  function chessReview(hist) {
+    const tokens = (hist || '').split(',').filter(Boolean);
+    if (!tokens.length) return null;
+    let state = { b: CHESS_START, turn: 0, castle: 'KQkq', ep: -1, half: 0 };
+    const loss = { w: [], b: [] };
+    const marks = [];
+    tokens.forEach((token) => {
+      const board = state.b.split('');
+      const white = state.turn === 0;
+      // Both searches go to the same depth — comparing a deeper "before" against a shallower
+      // "after" would make every move look worse than it was, since more search almost always
+      // finds more, whatever was actually played.
+      const before = chessSearch(state, CHESS_DEPTH, -Infinity, Infinity).score;
+      const parsed = chessParseMove(token);
+      const options = chessPieceMoves(board, parsed.from, state.castle, state.ep)
+        .filter((m) => m.to === parsed.to && (m.promo || '') === (parsed.promo || ''));
+      const mv = options[0] || parsed;
+      const san = chessSAN(board, mv, state.castle, state.ep, white);
+      const next = chessAdvance(state, mv);
+      const afterScore = -chessSearch(next, CHESS_DEPTH, -Infinity, Infinity).score;
+      const cpLoss = Math.max(0, before - afterScore);
+      (white ? loss.w : loss.b).push(cpLoss);
+      // Thresholds sit higher than a deep engine would use — at this depth, ordinary opening and
+      // positional moves already carry some noise, so only real, sizeable swings get flagged.
+      const tag = cpLoss > 250 ? 'blunder' : cpLoss > 100 ? 'mistake' : cpLoss > 40 ? 'inaccuracy' : 'best';
+      marks.push({ ply: marks.length, white: white, san: san, cpLoss: cpLoss, tag: tag });
+      state = next;
+    });
+    const accOf = (list) => {
+      if (!list.length) return 100;
+      const avg = list.reduce((a, b) => a + b, 0) / list.length;
+      return Math.max(0, Math.min(100, Math.round(103.1668 * Math.exp(-0.04354 * (avg / 100)) - 3.1668)));
+    };
+    const sideStats = (list) => ({
+      accuracy: accOf(list), blunders: list.filter((n) => n > 150).length, mistakes: list.filter((n) => n > 50 && n <= 150).length
+    });
+    return { marks: marks, white: sideStats(loss.w), black: sideStats(loss.b) };
   }
 
   // ---- Breach: secret codes never leave your device; the page answers guesses for you ----
@@ -16618,6 +17219,8 @@
           nameOf(list[g.pending.s]) + (typeof g.pending.q === 'string' ? ' asks: “' + g.pending.q + '”' : ' guesses ' + GW_MARVEL[g.pending.g].n + '!');
       } else if (g.type === 'breach' && g.pending) {
         text = 'Checking ' + (list[g.pending.s] === me ? 'your' : nameOf(list[g.pending.s]) + '’s') + ' guess…';
+      } else if (g.type === 'chess' && chessInCheck((g.b || CHESS_START).split(''), g.turn === 0)) {
+        text = (list[g.turn] === me ? 'Your turn' : nameOf(list[g.turn]) + '’s turn') + ' — check!';
       } else {
         text = list[g.turn] === me ? 'Your turn' : nameOf(list[g.turn]) + '’s turn';
       }
@@ -16658,6 +17261,15 @@
     }
     const outBy = (why) => list.filter((user, i) => g.out && g.out[i] === why);
     const winner = g.winner === me ? 'You win! 🎉' : nameOf(g.winner) + ' wins!';
+    if (g.type === 'chess') {
+      if (g.why === 'left') return (outBy('left')[0] === me ? 'You' : nameOf(outBy('left')[0])) + ' resigned. ' + winner;
+      if (g.why === 'mate') return 'Checkmate. ' + winner;
+      if (g.why === 'stalemate') return 'Stalemate — it’s a draw.';
+      if (g.why === 'draw-50') return 'Draw by the 50-move rule.';
+      if (g.why === 'draw-material') return 'Draw — not enough material to checkmate.';
+      if (g.why === 'draw-rep') return 'Draw by threefold repetition.';
+      if (g.why === 'agreed') return 'Draw agreed.';
+    }
     if (g.why === 'cancel' || !g.winner) return 'This game was cancelled.';
     if (g.winner === 'draw') return g.why === 'limit' ? 'Time’s up: it’s a draw.' : g.why === 'full' ? 'The board is full: it’s a draw.' : 'It’s a draw.';
     if (g.why === 'left') return namesOf(outBy('left')) + ' left. ' + winner;
@@ -17006,7 +17618,8 @@
     wr: ['#6aaa64', '#c9b458'],
     rps: ['#b06bff', '#ff4d6d'],
     slot: ['#ffd24d', '#7fd0ff'],
-    bs: ['#ff4d4f', '#cfd4dd']
+    bs: ['#ff4d4f', '#cfd4dd'],
+    chess: ['#f0dfb4', '#8b7fd1']
   };
   function seatColor(type, seat) {
     const colors = GAME_SEAT_COLORS[type] || SEAT_COLORS;
@@ -17041,6 +17654,111 @@
       stack.append(chip);
     }
     return stack;
+  }
+
+  // ---- Chess: premium board UI ----------------------------------------------------------
+  // Clean geometric glyphs, not chess-set art — every piece is a handful of circles, rects and
+  // simple paths so it stays crisp at any size and recolors per side with plain CSS.
+  const CHESS_GLYPH = {
+    p: '<circle cx="22.5" cy="13" r="6"/><path d="M15 33c0-7 3-12 7.5-12s7.5 5 7.5 12z"/><rect x="11" y="33" width="23" height="5" rx="2"/>',
+    r: '<rect x="12" y="10" width="4" height="6"/><rect x="20.5" y="10" width="4" height="6"/><rect x="29" y="10" width="4" height="6"/>' +
+      '<rect x="12" y="16" width="21" height="4"/><path d="M15 20h15l2 12H13z"/><rect x="10" y="33" width="25" height="5" rx="2"/>',
+    b: '<circle cx="22.5" cy="8" r="2.8"/><path d="M22.5 12c5.5 3 9 8.5 9 14 0 4.5-2.3 7.7-5.8 9.7l1.6 1.8c.9 1 .3 2.5-1 2.5h-7.6c-1.3 0-1.9-1.5-1-2.5l1.6-1.8C16.3 33.7 14 30.5 14 26c0-5.5 3.5-11 8.5-14z"/>' +
+      '<rect x="10" y="33" width="25" height="5" rx="2"/>',
+    n: '<path d="M30 34H15l.8-5.5c-3.4-.8-6.3-3-6.3-7 0-4 2.6-7 6-9l-2-3.2 3-2.3c3 0 6.5 1.3 8.5 4 2.6.6 4.5 3 4.5 6 0 2-.8 3.6-2 4.8l1.6 4 1.9 1.7-2.2 2z"/>' +
+      '<circle cx="14.6" cy="14.6" r="1.1" fill="var(--chess-eye,#0b0e16)"/><rect x="9" y="34" width="27" height="5" rx="2"/>',
+    q: '<circle cx="10" cy="9" r="2.3"/><circle cx="16.7" cy="6" r="2.3"/><circle cx="22.5" cy="5" r="2.3"/><circle cx="28.3" cy="6" r="2.3"/><circle cx="35" cy="9" r="2.3"/>' +
+      '<path d="M10 11l2.5 17h20L35 11l-6.5 6-6-9-6 9z"/><rect x="10" y="30" width="25" height="4" rx="1.5"/><rect x="9" y="34" width="27" height="5" rx="2"/>',
+    k: '<rect x="20.7" y="2" width="3.6" height="9" rx="1"/><rect x="17.5" y="5.3" width="10" height="3.2" rx="1"/>' +
+      '<path d="M22.5 12c6 3.2 10 8.8 10 14.3 0 4.6-2.3 7.8-5.9 9.8l1.7 1.9c.9 1 .2 2.5-1 2.5h-7.6c-1.2 0-1.9-1.5-1-2.5l1.7-1.9c-3.6-2-5.9-5.2-5.9-9.8 0-5.5 4-11.1 10-14.3z"/>' +
+      '<rect x="9" y="34" width="27" height="5" rx="2"/>'
+  };
+  function chessPieceSvg(piece) {
+    return '<svg viewBox="0 0 45 45" class="cp-svg" aria-hidden="true">' + (CHESS_GLYPH[piece.toLowerCase()] || '') + '</svg>';
+  }
+
+  // Captured material, worked out from what's missing off a full starting set — nothing extra
+  // to store or sync, the board string already says everything.
+  function chessCaptured(cells) {
+    const start = { P: 8, N: 2, B: 2, R: 2, Q: 1, p: 8, n: 2, b: 2, r: 2, q: 1 };
+    const have = { P: 0, N: 0, B: 0, R: 0, Q: 0, p: 0, n: 0, b: 0, r: 0, q: 0 };
+    cells.forEach((c) => { if (have[c] !== undefined) have[c]++; });
+    const value = { P: 1, N: 3, B: 3, R: 5, Q: 9 };
+    const takenFrom = (white) => {
+      const list = [];
+      'QRBNP'.forEach((k) => {
+        const key = white ? k : k.toLowerCase();
+        for (let i = 0; i < start[key] - have[key]; i++) list.push(k);
+      });
+      return list;
+    };
+    const byWhite = takenFrom(false);   // black pieces white has captured
+    const byBlack = takenFrom(true);
+    const pts = (list) => list.reduce((sum, k) => sum + value[k], 0);
+    return { byWhite: byWhite, byBlack: byBlack, edge: pts(byWhite) - pts(byBlack) };
+  }
+
+  // Click-to-move: first click selects one of your own pieces, second click plays it (or opens
+  // the promotion picker when there's more than one way to land on that square).
+  function chessSquareClick(cells, castle, ep, seat, canMove, sq) {
+    if (!canMove || game.chessPromo) return;
+    const piece = cells[sq];
+    if (game.chessSel === -1 || game.chessSel === undefined) {
+      if (chessOwn(piece, seat === 0)) { game.chessSel = sq; renderGame(); }
+      return;
+    }
+    if (game.chessSel === sq) { game.chessSel = -1; renderGame(); return; }
+    const options = chessPieceMoves(cells, game.chessSel, castle, ep)
+      .filter((m) => m.to === sq && !chessInCheck(chessApply(cells, castle, ep, m).b, seat === 0));
+    if (!options.length) {
+      game.chessSel = chessOwn(piece, seat === 0) ? sq : -1;
+      renderGame();
+      return;
+    }
+    const from = game.chessSel;
+    game.chessSel = -1;
+    if (options.length > 1) {
+      game.chessPromo = { from: from, to: sq };
+      renderGame();
+      return;
+    }
+    chessMove(from, sq, options[0].promo || '');
+  }
+
+  // The post-game review modal: accuracy for each side, and every move tagged by how much it
+  // cost against this same shallow engine.
+  function chessShowReview(g) {
+    const review = chessReview(g.hist || '');
+    const list = seatList(g);
+    openModal('Game review', (body) => {
+      if (!review || !review.marks.length) {
+        body.append(el('p', 'modal-note', 'No moves were played.'));
+        return;
+      }
+      const summary = el('div', 'chess-review-summary');
+      [['White', review.white, list[0]], ['Black', review.black, list[1]]].forEach(([label, stat, user]) => {
+        const card = el('div', 'chess-review-card');
+        card.append(el('div', 'chess-review-side', user ? nameOf(user) : label), el('div', 'chess-review-sub2', label));
+        card.append(el('div', 'chess-review-acc', stat.accuracy + '%'));
+        card.append(el('div', 'chess-review-sub', stat.blunders + ' blunder' + (stat.blunders === 1 ? '' : 's') + ' · ' +
+          stat.mistakes + ' mistake' + (stat.mistakes === 1 ? '' : 's')));
+        summary.append(card);
+      });
+      body.append(summary);
+      const rows = el('div', 'chess-review-list');
+      for (let i = 0; i < review.marks.length; i += 2) {
+        const row = el('div', 'chess-move-row');
+        row.append(el('span', 'chess-move-no', String(i / 2 + 1) + '.'));
+        [review.marks[i], review.marks[i + 1]].forEach((m) => {
+          if (!m) return;
+          const tag = el('span', 'chess-move-san tag-' + m.tag, m.san);
+          if (m.tag !== 'best') tag.title = m.tag.charAt(0).toUpperCase() + m.tag.slice(1);
+          row.append(tag);
+        });
+        rows.append(row);
+      }
+      body.append(rows);
+    }, 'chess-review');
   }
 
   const GAME_VIEW = {
@@ -19223,6 +19941,144 @@
           el('p', 'gs-note', 'The next round starts by itself in a few seconds.'));
       }
       if (controls.childNodes.length) board.append(controls);
+    },
+
+    chess(g, board) {
+      const seat = playSeat(g);
+      const flip = seat === 1;
+      const boardStr = g.b || CHESS_START;
+      const cells = boardStr.split('');
+      const castle = g.castle || '';
+      const ep = typeof g.ep === 'number' ? g.ep : -1;
+      const canMove = g.status === 'playing' && g.turn === seat && seat !== -1 && !isOut(g, seat);
+      const state = { b: boardStr, turn: g.turn, castle: castle, ep: ep, half: g.half || 0 };
+      const inCheck = chessInCheck(cells, g.turn === 0);
+      const kingSq = inCheck ? chessKingSquare(cells, g.turn === 0) : -1;
+      const lastMove = g.last ? chessParseMove(g.last) : null;
+
+      // Selection lives on the game object so it survives re-draws, the same trick ttt uses
+      if (game.chessGameId !== g.id) {
+        game.chessGameId = g.id;
+        game.chessSel = -1;
+        game.chessPromo = null;
+      }
+      if (!canMove) game.chessPromo = null;
+      let legalFromSel = [];
+      if (canMove && game.chessSel !== -1 && game.chessSel !== undefined) {
+        legalFromSel = chessPieceMoves(cells, game.chessSel, castle, ep)
+          .filter((m) => !chessInCheck(chessApply(cells, castle, ep, m).b, seat === 0));
+      }
+
+      const wrap = el('div', 'chess-wrap');
+      const boardWrap = el('div', 'chess-board-wrap');
+      const material = chessCaptured(cells);
+      const tray = (list) => {
+        const row = el('div', 'chess-tray');
+        list.forEach((k) => {
+          const icon = el('span', 'chess-tray-piece');
+          icon.innerHTML = chessPieceSvg(k);
+          row.append(icon);
+        });
+        return row;
+      };
+      // The far side of the board (from whoever's looking) sits on top; your own sits at the
+      // bottom, each tray showing what that side has captured.
+      const topTray = tray(flip ? material.byWhite : material.byBlack);
+      const bottomTray = tray(flip ? material.byBlack : material.byWhite);
+      if (material.edge !== 0) {
+        const whiteAhead = material.edge > 0;
+        (whiteAhead === flip ? topTray : bottomTray).append(el('span', 'chess-tray-edge', (whiteAhead ? '+' : '−') + Math.abs(material.edge)));
+      }
+      boardWrap.append(topTray);
+      const grid = el('div', 'chess-board');
+      for (let displayRow = 0; displayRow < 8; displayRow++) {
+        for (let displayCol = 0; displayCol < 8; displayCol++) {
+          const rank = flip ? displayRow : 7 - displayRow;
+          const file = flip ? 7 - displayCol : displayCol;
+          const sq = chessSq(file, rank);
+          const sqEl = el('button', 'chess-sq ' + ((file + rank) % 2 ? 'light' : 'dark'));
+          sqEl.type = 'button';
+          if (lastMove && (sq === lastMove.from || sq === lastMove.to)) sqEl.classList.add('last');
+          if (sq === kingSq) sqEl.classList.add('check');
+          if (game.chessSel === sq) sqEl.classList.add('sel');
+          const dest = legalFromSel.find((m) => m.to === sq);
+          if (dest) sqEl.classList.add(dest.capture ? 'cap' : 'dot');
+          const piece = cells[sq];
+          if (piece !== '.') {
+            const p = el('span', 'chess-piece ' + (chessWhite(piece) ? 'cp-w' : 'cp-b'));
+            p.innerHTML = chessPieceSvg(piece);
+            sqEl.append(p);
+          }
+          if (displayRow === 7) sqEl.append(el('span', 'chess-coord file', CHESS_FILES[file]));
+          if (displayCol === 0) sqEl.append(el('span', 'chess-coord rank', String(rank + 1)));
+          sqEl.disabled = !canMove;
+          sqEl.setAttribute('aria-label', chessName(sq) + (piece !== '.' ? ', ' + piece : ', empty'));
+          sqEl.addEventListener('click', () => chessSquareClick(cells, castle, ep, seat, canMove, sq));
+          grid.append(sqEl);
+        }
+      }
+      boardWrap.append(grid);
+      boardWrap.append(bottomTray);
+      if (game.chessPromo) {
+        const overlay = el('div', 'chess-promo');
+        overlay.append(el('div', 'chess-promo-label', 'Promote to'));
+        const row = el('div', 'chess-promo-row');
+        ['q', 'r', 'b', 'n'].forEach((kind) => {
+          const btn = el('button', 'chess-promo-btn');
+          btn.type = 'button';
+          const p = el('span', 'chess-piece ' + (seat === 0 ? 'cp-w' : 'cp-b'));
+          p.innerHTML = chessPieceSvg(kind);
+          btn.append(p);
+          btn.addEventListener('click', () => {
+            const pending = game.chessPromo;
+            game.chessPromo = null;
+            if (pending) chessMove(pending.from, pending.to, kind);
+          });
+          row.append(btn);
+        });
+        overlay.append(row);
+        boardWrap.append(overlay);
+      }
+      wrap.append(boardWrap);
+
+      const side = el('div', 'chess-side');
+      if (canMove && g.status === 'playing') {
+        const tipsBox = el('div', 'chess-tips');
+        tipsBox.append(el('div', 'gs-side-head', 'Free tips'));
+        chessTips(state).forEach((t, i) => {
+          const row = el('button', 'chess-tip');
+          row.type = 'button';
+          row.append(el('span', 'chess-tip-rank', i === 0 ? 'Best' : 'Also good'), el('span', 'chess-tip-san', t.san));
+          row.addEventListener('click', () => { game.chessSel = t.move.from; renderGame(); });
+          tipsBox.append(row);
+        });
+        side.append(tipsBox);
+      }
+      const movesBox = el('div', 'chess-moves');
+      const replay = chessReplay(g.hist || '');
+      for (let i = 0; i < replay.steps.length; i += 2) {
+        const row = el('div', 'chess-move-row');
+        row.append(el('span', 'chess-move-no', String(i / 2 + 1) + '.'), el('span', 'chess-move-san', replay.steps[i].san));
+        if (replay.steps[i + 1]) row.append(el('span', 'chess-move-san', replay.steps[i + 1].san));
+        movesBox.append(row);
+      }
+      side.append(el('div', 'gs-side-head', 'Moves'), movesBox);
+      if (g.status === 'playing' && seat !== -1 && !isOut(g, seat)) {
+        const drawRow = el('div', 'chess-draw-row');
+        if (typeof g.drawOffer === 'number' && g.drawOffer !== seat) {
+          drawRow.append(el('span', 'gs-note', nameOf(seatList(g)[g.drawOffer]) + ' offers a draw.'),
+            gameButton('Accept', 'primary', () => chessAnswerDraw(true)), gameButton('Decline', '', () => chessAnswerDraw(false)));
+        } else if (typeof g.drawOffer === 'number') {
+          drawRow.append(el('span', 'gs-note', 'Draw offer sent.'));
+        } else {
+          drawRow.append(gameButton('Offer draw', '', chessOfferDraw));
+        }
+        side.append(drawRow);
+      }
+      if (g.status === 'done' && g.hist) side.append(gameButton('Game review', 'primary', () => chessShowReview(g)));
+      wrap.append(side);
+      board.append(wrap);
+      if (inCheck && g.status === 'playing') board.append(el('p', 'gs-note', canMove ? 'You’re in check!' : nameOf(seatList(g)[g.turn]) + ' is in check.'));
     }
   };
 
@@ -20458,7 +21314,18 @@
         chip(48, 140, '#7b2cbf') +
         card(92, 30, -12, 'A', '♠︎', '#15151a') + card(140, 26, 9, 'K', '♥︎', '#d11f2f') +
         chip(236, 88, '#1b1b1f') + chip(278, 96, '#1f5fd6') + chip(254, 124, '#d62828') + '</svg>';
-    }
+    },
+
+    // A glowing king on a faint checkerboard — the premium look, in one card
+    chess: () => ART_TOP +
+      '<defs><linearGradient id="art-chess-bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#241c46"/><stop offset="1" stop-color="#08060f"/></linearGradient>' +
+      '<pattern id="art-chess-sq" width="40" height="40" patternUnits="userSpaceOnUse"><rect width="20" height="20" fill="#fff" opacity="0.05"/><rect x="20" y="20" width="20" height="20" fill="#fff" opacity="0.05"/></pattern>' +
+      '<radialGradient id="art-chess-glow" cx="0.72" cy="0.36" r="0.55"><stop offset="0" stop-color="#f0dfb4" stop-opacity="0.4"/><stop offset="1" stop-color="#f0dfb4" stop-opacity="0"/></radialGradient>' +
+      artGlow('art-chess-neon', 3.2) + '</defs>' +
+      '<rect width="320" height="180" fill="url(#art-chess-bg)"/><rect width="320" height="180" fill="url(#art-chess-sq)"/><rect width="320" height="180" fill="url(#art-chess-glow)"/>' +
+      '<g filter="url(#art-chess-neon)" fill="#f0dfb4" transform="translate(196 4) scale(2.6)">' + CHESS_GLYPH.k + '</g>' +
+      '<g fill="#8b7fd1" opacity="0.9" transform="translate(30 76) scale(1.9)">' + CHESS_GLYPH.n + '</g>' +
+      '<g fill="#8b7fd1" opacity="0.5" transform="translate(76 102) scale(1.25)">' + CHESS_GLYPH.p + '</g></svg>'
   };
 
   let artCount = 0;
