@@ -3311,25 +3311,32 @@
   .hm-wordrow span { font-size: 11.5px; color: rgba(255, 230, 210, 0.6); }
 
 
-  /* Guess Who (Marvel): comic-book red, cards that flip in 3D */
+  /* Guess Who: comic-book red, cards that flip in 3D. Not just Marvel any more — the universe
+     is per-game (g.board); everything here just draws whatever cast that game picked. */
   .game-screen[data-game="gw"] { --g-accent: #e62429; --g-glow: rgba(230, 36, 41, 0.45); --g-on: #ffffff; --g-bg1: #3d0b10; --g-bg2: #0a0304; }
-  .gw { display: grid; grid-template-columns: 290px minmax(0, 1fr); gap: 20px; align-items: start; width: 100%; max-width: 1180px; }
-  .gw-side { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
-  .gw-panel { padding: 12px; background: rgba(0, 0, 0, 0.38); border: 1px solid rgba(230, 36, 41, 0.3); border-radius: 16px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); }
+  .gw { display: grid; grid-template-columns: minmax(280px, 340px) minmax(0, 1fr); gap: 24px; align-items: start; width: 100%; max-width: 1700px; }
+  .gw-side { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+  .gw-panel {
+    padding: 14px 16px;
+    background: linear-gradient(160deg, rgba(255, 255, 255, 0.04), rgba(0, 0, 0, 0.42));
+    border: 1px solid rgba(230, 36, 41, 0.28);
+    border-radius: 18px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  }
   .gw-title { margin-bottom: 8px; font-size: 11px; font-weight: 800; letter-spacing: 0.8px; text-transform: uppercase; color: #ffb3b5; }
   .gw-mine { display: flex; align-items: center; gap: 12px; }
   .gw-mine-text { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
   .gw-mine-text .gw-title { margin: 0; }
   .gw-mine-text b { font-size: 17px; font-weight: 900; }
   .gw-opp { font-size: 12px; color: rgba(255, 255, 255, 0.6); }
-  .gw-qs { display: flex; flex-wrap: wrap; gap: 6px; max-height: 300px; overflow-y: auto; scrollbar-width: thin; }
-  .gw-q { padding: 6px 11px; background: rgba(255, 255, 255, 0.06); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.13); border-radius: 999px; font: 700 12px system-ui, sans-serif; text-align: left; cursor: pointer; transition: background 0.12s ease, border-color 0.12s ease, transform 0.12s ease; }
-  .gw-q:hover:not(:disabled) { background: rgba(230, 36, 41, 0.3); border-color: #e62429; transform: translateY(-1px); }
+  .gw-qs { display: flex; flex-wrap: wrap; gap: 7px; max-height: 340px; overflow-y: auto; scrollbar-width: thin; }
+  .gw-q { padding: 7px 12px; background: rgba(255, 255, 255, 0.06); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.13); border-radius: 999px; font: 700 12px system-ui, sans-serif; text-align: left; cursor: pointer; transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease; }
+  .gw-q:hover:not(:disabled) { background: rgba(230, 36, 41, 0.32); border-color: #e62429; transform: translateY(-1px); box-shadow: 0 4px 12px -4px rgba(230, 36, 41, 0.6); }
   .gw-q:disabled { opacity: 0.45; cursor: default; }
   .gw-q.yes { opacity: 1; background: rgba(76, 175, 80, 0.22); border-color: #66bb6a; color: #c8f7ca; }
   .gw-q.no { opacity: 1; background: rgba(229, 57, 53, 0.18); border-color: #ef5350; color: #ffc4c4; }
   .gw-tools { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
-  .gw-log { display: flex; flex-direction: column; gap: 5px; max-height: 210px; overflow-y: auto; font-size: 12.5px; scrollbar-width: thin; }
+  .gw-log { display: flex; flex-direction: column; gap: 5px; max-height: 240px; overflow-y: auto; font-size: 12.5px; scrollbar-width: thin; }
   .gw-log-row { padding: 6px 9px; background: rgba(255, 255, 255, 0.05); border-radius: 8px; line-height: 1.35; animation: pickerIn 0.2s ease-out; }
   .gw-log-row b.yes { color: #81c784; }
   .gw-log-row b.no { color: #ef7373; }
@@ -3340,45 +3347,59 @@
   .gw-question { margin: 6px 0 10px; font-size: 16px; font-weight: 800; line-height: 1.35; }
   .gw-log-row.pending { color: #fcd34d; animation: pulse 1.2s ease-in-out infinite; }
   .gw-log-empty { font-size: 12.5px; color: rgba(255, 255, 255, 0.45); }
-  .gw-main { display: flex; flex-direction: column; align-items: center; gap: 12px; min-width: 0; }
+  .gw-main { display: flex; flex-direction: column; align-items: center; gap: 14px; min-width: 0; }
   .gw-count { font-size: 13px; font-weight: 800; letter-spacing: 0.5px; color: #ffd6d7; }
-  .gw-board { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; width: min(760px, 100%); perspective: 1200px; }
+  .gw-board {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(132px, 1fr));
+    gap: 14px;
+    width: min(1520px, 100%);
+    padding: 18px;
+    border-radius: 26px;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgb(var(--ink) / 0.06), transparent 70%);
+    perspective: 1400px;
+  }
   .gw-card { position: relative; aspect-ratio: 3 / 4; padding: 0; background: none; border: 0; cursor: pointer; }
   .gw-inner { position: absolute; inset: 0; transform-style: preserve-3d; transition: transform 0.5s cubic-bezier(0.3, 1.25, 0.5, 1); }
-  .gw-card:hover .gw-inner { transform: translateY(-4px); }
+  .gw-card:hover .gw-inner { transform: translateY(-6px) scale(1.035); }
   .gw-card.flipped .gw-inner { transform: rotateY(180deg); }
-  .gw-card.flipped:hover .gw-inner { transform: rotateY(180deg) translateY(-3px); }
-  .gw-front, .gw-back { position: absolute; inset: 0; overflow: hidden; border-radius: 12px; -webkit-backface-visibility: hidden; backface-visibility: hidden; }
+  .gw-card.flipped:hover .gw-inner { transform: rotateY(180deg) translateY(-4px) scale(1.02); }
+  .gw-front, .gw-back { position: absolute; inset: 0; overflow: hidden; border-radius: 14px; -webkit-backface-visibility: hidden; backface-visibility: hidden; }
   .gw-front {
     display: flex;
     flex-direction: column;
     background: linear-gradient(160deg, var(--c1), var(--c2));
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.45), inset 0 0 0 2px rgba(255, 255, 255, 0.2);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.45), inset 0 0 0 2px rgba(255, 255, 255, 0.2), 0 0 0px 0px var(--c1), 0 0 0px 0px var(--c2);
+    transition: box-shadow 0.3s ease;
   }
   .gw-front::before { content: ''; position: absolute; inset: 0; background-image: radial-gradient(rgba(255, 255, 255, 0.16) 1px, transparent 1.6px); background-size: 7px 7px; pointer-events: none; }
-  .gw-front::after { content: ''; position: absolute; inset: 0; background: linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, 0.22) 45%, transparent 60%); transform: translateX(-120%); transition: transform 0.6s ease; pointer-events: none; }
+  .gw-front::after { content: ''; position: absolute; inset: 0; background: linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, 0.28) 45%, transparent 60%); transform: translateX(-120%); transition: transform 0.6s ease; pointer-events: none; }
   .gw-card:hover .gw-front::after { transform: translateX(120%); }
-  .gw-emblem { position: relative; flex: 1; display: grid; place-items: center; font-size: clamp(22px, 3.2vw, 40px); filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.55)); }
-  .gw-plate { position: relative; display: flex; flex-direction: column; gap: 1px; padding: 5px 4px 6px; background: rgba(0, 0, 0, 0.58); text-align: center; }
-  .gw-name { display: -webkit-box; overflow: hidden; -webkit-line-clamp: 2; -webkit-box-orient: vertical; color: #ffffff; font: 900 11px/1.15 system-ui, sans-serif; letter-spacing: 0.3px; text-transform: uppercase; overflow-wrap: anywhere; }
-  .gw-real { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: rgba(255, 255, 255, 0.65); font-size: 9px; }
+  .gw-card:not(.picked):not(.answer):hover .gw-front {
+    box-shadow: 0 12px 26px rgba(0, 0, 0, 0.5), inset 0 0 0 2px rgba(255, 255, 255, 0.32), 0 0 26px 3px var(--c1), 0 0 10px 1px var(--c2);
+  }
+  .gw-emblem { position: relative; flex: 1; display: grid; place-items: center; font-size: clamp(24px, 4.4vw, 58px); filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.55)); }
+  .gw-plate { position: relative; display: flex; flex-direction: column; gap: 1px; padding: 6px 5px 7px; background: rgba(0, 0, 0, 0.58); text-align: center; }
+  .gw-name { display: -webkit-box; overflow: hidden; -webkit-line-clamp: 2; -webkit-box-orient: vertical; color: #ffffff; font: 900 12px/1.15 system-ui, sans-serif; letter-spacing: 0.3px; text-transform: uppercase; overflow-wrap: anywhere; }
+  .gw-real { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: rgba(255, 255, 255, 0.65); font-size: 9.5px; }
   .gw-back { display: grid; place-items: center; background: repeating-linear-gradient(45deg, #7a0d12 0 8px, #5c080c 8px 16px); box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.18); transform: rotateY(180deg); }
   .gw-back::after { content: '?'; color: rgba(255, 255, 255, 0.35); font: 900 32px Georgia, serif; }
   .gw-card.wrong .gw-back::after { content: '✗'; color: #ff7b7b; }
   .gw-card.picked .gw-front { box-shadow: 0 0 0 3px #ffffff, 0 0 26px var(--c1); }
   .gw-card.picked .gw-inner { transform: translateY(-6px) scale(1.04); }
+  .gw-card.picked:hover .gw-front { box-shadow: 0 0 0 3px #ffffff, 0 0 34px var(--c1); }
   .gw-card.answer .gw-front { box-shadow: 0 0 0 3px #fcd34d, 0 0 34px rgba(252, 211, 77, 0.8); }
   .gw-card.answer .gw-inner { transform: scale(1.07); }
   .gw-board.guessing .gw-card:not(.flipped) { cursor: crosshair; }
   .gw-board.guessing .gw-card:not(.flipped) .gw-front { animation: gwPulse 1.2s ease-in-out infinite; }
   @keyframes gwPulse { 50% { box-shadow: 0 0 0 3px #e62429, 0 0 22px rgba(230, 36, 41, 0.8); } }
-  .gw-card.mini { width: 82px; flex-shrink: 0; cursor: default; }
-  .gw-card.big { width: 150px; cursor: default; }
+  .gw-card.mini { width: 84px; flex-shrink: 0; cursor: default; }
+  .gw-card.big { width: 160px; cursor: default; }
   .gw-card.mini:hover .gw-inner, .gw-card.big:hover .gw-inner { transform: none; }
   .gw-card.mini .gw-emblem { font-size: 30px; }
-  .gw-card.big .gw-emblem { font-size: 56px; }
+  .gw-card.big .gw-emblem { font-size: 58px; }
   .gw-card.big .gw-name { font-size: 14px; }
-  .gw-pickbox { display: flex; flex-direction: column; align-items: center; gap: 12px; width: 100%; }
+  .gw-pickbox { display: flex; flex-direction: column; align-items: center; gap: 14px; width: 100%; }
   .gw-headline { font-size: 22px; font-weight: 900; text-align: center; }
   .gw-reveal { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; margin-top: 4px; }
   .gw-reveal-one { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(252, 211, 77, 0.35); border-radius: 16px; animation: pickerIn 0.3s ease-out; }
@@ -5554,7 +5575,7 @@
   const pathOf = (r, kind) => r.base + '/' + r.rel[kind];
 
   // Shown in Settings; every release also renames RULES_PROBE (below)
-  const APP_VERSION = '1.10';
+  const APP_VERSION = '1.11';
   const APP_DATE = 'Sep 24';
 
   const MAX_LENGTH = 500;        // longest message allowed, in characters
@@ -5599,7 +5620,7 @@
   const SYNC_OVERLAP_MS = 5 * 60 * 1000;    // re-checks this much before the last sync, to be safe
   // Only this version's rules make this readable. Every update renames it, so once the new rules
   // are published, older copies of the file see "out of date" and stop.
-  const RULES_PROBE = 'rules_1_10';
+  const RULES_PROBE = 'rules_1_11';
   const BASE_TITLE = 'Mainframe';
   const PUSH_KEY = /^-[A-Za-z0-9_-]{1,40}$/;
   const SAFE_ID = /^[A-Za-z0-9_-]{1,40}$/;
@@ -7353,11 +7374,14 @@
   // The pictures live at gwpics/<card> and their version numbers at gwpicv/<card>. Only the
   // versions are read when a game opens; a picture is only downloaded when this device's copy is
   // out of date, and it's kept here afterwards. Only the developer can change them.
-  const gwPics = {};          // card -> { v, url }
+  const gwPics = {};          // card key -> { v, url }
   let gwPicsReady = false;
 
-  function gwPicKey(i) {
-    return GW_PIC_KEY + i;
+  // Marvel keeps its original bare-index keys (so pictures uploaded before other universes
+  // existed stay put); a new universe's cards get "board:index" so nothing collides.
+  const gwCardKey = (board, i) => (!board || board === 'marvel' ? String(i) : board + ':' + i);
+  function gwPicKey(board, i) {
+    return GW_PIC_KEY + gwCardKey(board, i);
   }
 
   function loadGwPics() {
@@ -7365,27 +7389,30 @@
     gwPicsReady = true;
     db.ref('gwpicv').on('value', (snap) => {
       const versions = snap.val() || {};
-      GW_MARVEL.forEach((c, i) => {
-        const want = Number(versions[i]) || 0;
-        if (!want) {
-          delete gwPics[i];
-          forget(gwPicKey(i));
-          return;
-        }
-        if (gwPics[i] && gwPics[i].v === want) return;
-        const cached = loadJSON(gwPicKey(i), null);
-        if (cached && cached.v === want && typeof cached.url === 'string') {
-          gwPics[i] = cached;
-          if (game && game.shown && game.type === 'gw') renderGame();
-          return;
-        }
-        db.ref('gwpics/' + i).once('value').then((pic) => {
-          const url = pic.val();
-          if (typeof url !== 'string' || !url.startsWith('data:image/')) return;
-          gwPics[i] = { v: want, url: url };
-          remember(gwPicKey(i), JSON.stringify(gwPics[i]));
-          if (game && game.shown && game.type === 'gw') renderGame();
-        }, () => {});
+      GW_UNI_ORDER.forEach((board) => {
+        gwUni(board).cast.forEach((c, i) => {
+          const key = gwCardKey(board, i);
+          const want = Number(versions[key]) || 0;
+          if (!want) {
+            delete gwPics[key];
+            forget(gwPicKey(board, i));
+            return;
+          }
+          if (gwPics[key] && gwPics[key].v === want) return;
+          const cached = loadJSON(gwPicKey(board, i), null);
+          if (cached && cached.v === want && typeof cached.url === 'string') {
+            gwPics[key] = cached;
+            if (game && game.shown && game.type === 'gw') renderGame();
+            return;
+          }
+          db.ref('gwpics/' + key).once('value').then((pic) => {
+            const url = pic.val();
+            if (typeof url !== 'string' || !url.startsWith('data:image/')) return;
+            gwPics[key] = { v: want, url: url };
+            remember(gwPicKey(board, i), JSON.stringify(gwPics[key]));
+            if (game && game.shown && game.type === 'gw') renderGame();
+          }, () => {});
+        });
       });
     }, () => {});
   }
@@ -7503,23 +7530,24 @@
     });
   }
 
-  function putGwPic(i, url) {
+  function putGwPic(board, i, url) {
     if (!db || !devMode) return;
     if (url && url.length > 40000) {
       showToast('That picture is too big even after shrinking.');
       return;
     }
+    const key = gwCardKey(board, i);
     const update = {};
-    update['gwpics/' + i] = url || null;
-    update['gwpicv/' + i] = url ? Date.now() : null;
+    update['gwpics/' + key] = url || null;
+    update['gwpicv/' + key] = url ? Date.now() : null;
     db.ref().update(update).then(
-      () => showToast(url ? 'Picture set for ' + GW_MARVEL[i].n + '.' : 'Picture removed.', true),
+      () => showToast(url ? 'Picture set for ' + gwCast(board)[i].n + '.' : 'Picture removed.', true),
       (err) => showToast("Couldn't save it: " + describe(err))
     );
   }
 
   // A link straight to an image: fetched here, shrunk here, and stored as a picture like any other
-  function putGwPicFromLink(i, link) {
+  function putGwPicFromLink(board, i, link) {
     const url = String(link || '').trim();
     if (!/^https:\/\//i.test(url)) {
       showToast('Paste an https link to an image.');
@@ -7529,59 +7557,74 @@
     const img = new Image();
     img.crossOrigin = 'anonymous';
     img.onload = () => {
-      makeCardPicture(img).then((data) => putGwPic(i, data), () => showToast("That image couldn't be read."));
+      makeCardPicture(img).then((data) => putGwPic(board, i, data), () => showToast("That image couldn't be read."));
     };
     img.onerror = () => showToast("That link didn't load. The site may not allow it; upload the file instead.");
     img.src = url;
   }
 
-  // The card editor: one row per character
-  function openGwCardEditor() {
+  // The card editor: a universe tab strip, then one row per character in that universe
+  function openGwCardEditor(focusBoard) {
+    let board = GW_UNI_ORDER.indexOf(focusBoard) !== -1 ? focusBoard : 'marvel';
     openModal('Guess Who cards', (body) => {
-      body.append(el('p', 'modal-note', 'Pictures go on every player’s board. They’re shrunk to a card and only downloaded again when you change one.'));
-      body.append(bulkBar('Or drop them here. A file named after a hero goes on that hero; the rest fill the empty cards in order.',
-        GW_MARVEL.map((c) => c.n), (i) => !!gwPics[i], (i, url) => putGwPic(i, url)));
-      const grid = el('div', 'dev-cards');
-      GW_MARVEL.forEach((c, i) => {
-        const row = el('div', 'dev-card');
-        takesDrop(row, (url) => putGwPic(i, url));
-        const shot = el('div', 'dev-card-pic');
-        if (gwPics[i]) shot.style.backgroundImage = 'url("' + gwPics[i].url + '")';
-        else shot.textContent = c.e;
-        row.append(shot);
-        const text = el('div', 'dev-card-text');
-        text.append(el('b', null, c.n), el('span', null, c.r));
-        row.append(text);
-        const picker = el('input');
-        picker.type = 'file';
-        picker.accept = 'image/*';
-        picker.hidden = true;
-        picker.addEventListener('change', () => {
-          const file = picker.files && picker.files[0];
-          picker.value = '';
-          if (!file) return;
-          makeCardPicture(file).then((url) => putGwPic(i, url), () => showToast("That picture couldn't be opened."));
+      const draw = () => {
+        body.replaceChildren();
+        body.append(el('p', 'modal-note', 'Pictures go on every player’s board. They’re shrunk to a card and only downloaded again when you change one.'));
+        const tabs = el('div', 'opt-row wrap');
+        GW_UNI_ORDER.forEach((key) => {
+          const uni = GW_UNIVERSES[key];
+          const inner = el('span', 'opt-label');
+          inner.append(el('span', 'opt-icon', uni.icon), el('span', null, uni.name));
+          tabs.append(optionTile(inner, uni.cast.length + ' cards', board === key, () => { board = key; draw(); }));
         });
-        const tools = el('div', 'dev-card-tools');
-        tools.append(button('Upload', 'primary', () => picker.click()));
-        tools.append(button('Paste link', '', () => {
-          openModal('Paste an image link', (inner) => {
-            const field = textField('Image link', '', 500);
-            inner.append(el('p', 'modal-note', 'A direct https link to a picture of ' + c.n + '.'), fieldLabel('Link'), field);
-            const row2 = el('div', 'modal-row');
-            row2.append(button('Cancel', '', closeModal), button('Use it', 'primary', () => {
-              closeModal();
-              putGwPicFromLink(i, field.value);
-            }));
-            inner.append(row2);
-            setTimeout(() => field.focus(), 0);
+        body.append(tabs);
+        const cast = gwUni(board).cast;
+        body.append(bulkBar('Or drop them here. A file named after a hero goes on that hero; the rest fill the empty cards in order.',
+          cast.map((c) => c.n), (i) => !!gwPics[gwCardKey(board, i)], (i, url) => putGwPic(board, i, url)));
+        const grid = el('div', 'dev-cards');
+        cast.forEach((c, i) => {
+          const row = el('div', 'dev-card');
+          takesDrop(row, (url) => putGwPic(board, i, url));
+          const shot = el('div', 'dev-card-pic');
+          const pic = gwPics[gwCardKey(board, i)];
+          if (pic) shot.style.backgroundImage = 'url("' + pic.url + '")';
+          else shot.textContent = c.e;
+          row.append(shot);
+          const text = el('div', 'dev-card-text');
+          text.append(el('b', null, c.n), el('span', null, c.r));
+          row.append(text);
+          const picker = el('input');
+          picker.type = 'file';
+          picker.accept = 'image/*';
+          picker.hidden = true;
+          picker.addEventListener('change', () => {
+            const file = picker.files && picker.files[0];
+            picker.value = '';
+            if (!file) return;
+            makeCardPicture(file).then((url) => putGwPic(board, i, url), () => showToast("That picture couldn't be opened."));
           });
-        }));
-        if (gwPics[i]) tools.append(button('Remove', 'danger', () => putGwPic(i, null)));
-        row.append(tools, picker);
-        grid.append(row);
-      });
-      body.append(grid);
+          const tools = el('div', 'dev-card-tools');
+          tools.append(button('Upload', 'primary', () => picker.click()));
+          tools.append(button('Paste link', '', () => {
+            openModal('Paste an image link', (inner) => {
+              const field = textField('Image link', '', 500);
+              inner.append(el('p', 'modal-note', 'A direct https link to a picture of ' + c.n + '.'), fieldLabel('Link'), field);
+              const row2 = el('div', 'modal-row');
+              row2.append(button('Cancel', '', closeModal), button('Use it', 'primary', () => {
+                closeModal();
+                putGwPicFromLink(board, i, field.value);
+              }));
+              inner.append(row2);
+              setTimeout(() => field.focus(), 0);
+            });
+          }));
+          if (pic) tools.append(button('Remove', 'danger', () => putGwPic(board, i, null)));
+          row.append(tools, picker);
+          grid.append(row);
+        });
+        body.append(grid);
+      };
+      draw();
     }, 'wide');
   }
 
@@ -8322,8 +8365,8 @@
       page.append(sectionTitle('Guess Who'));
       const gw = el('div', 'set-box');
       gw.append(settingRow('Card pictures',
-        'Put a real picture on any of the 24 cards. Everyone gets them, downloaded once and kept on the device after that.',
-        button('Edit cards', 'primary', openGwCardEditor)));
+        'Put a real picture on any card, across every universe. Everyone gets them, downloaded once and kept on the device after that.',
+        button('Edit cards', 'primary', () => openGwCardEditor())));
       page.append(gw);
 
       page.append(sectionTitle('Team Slots'));
@@ -13171,7 +13214,7 @@
     breach: (cfg) => ({ digits: cfg.digits }),
     bj: (cfg) => ({ start: cfg.chips }),
     hm: (cfg) => ({ laps: cfg.laps, lives: cfg.lives }),
-    gw: (cfg) => ({ board: 'marvel', miss: cfg.miss }),
+    gw: (cfg) => ({ board: cfg.board, miss: cfg.miss }),
     ll: (cfg) => ({ tturn: cfg.tturn * 1000, minlen: cfg.minlen, llives: cfg.llives }),
     wr: (cfg) => ({ theme: cfg.theme }),
     rps: (cfg) => ({ rounds: cfg.rounds, dbl: cfg.dbl }),
@@ -14629,40 +14672,135 @@
   // other player's questions from the facts below, so answers are always honest and instant.
   const GW_KEY = 'mainframe.guesswho.';
   const gwSecret = (id) => loadJSON(GW_KEY + id + '.' + me, null);
+  // A question applies everywhere unless a 3rd element lists which universe(s) it's specific to
+  // (Marvel already had a few of these — "original 6 Avengers" makes no sense in Dragon Ball).
   const GW_QUESTIONS = [
     ['f', 'Is it a woman?'], ['mask', 'Face hidden by a mask or helmet?'], ['fly', 'Can they fly?'], ['cape', 'Wear a cape?'],
-    ['alien', 'Not human? (god, alien, android…)'], ['villain', 'A villain?'], ['og', 'One of the original 6 Avengers?'],
-    ['gotg', 'A Guardian of the Galaxy?'], ['magic', 'Use magic?'], ['royal', 'Royalty?'], ['guns', 'Fight with guns?'],
-    ['blades', 'Fight with blades or claws?'], ['xmen', 'From the X-Men films?'], ['green', 'Green skin?'],
-    ['change', 'Transform or change size?'], ['soldier', 'A super soldier?'], ['suit', 'Powers from a tech suit?']
-  ];
-  const GW_MARVEL = [
-    { n: 'Iron Man', r: 'Tony Stark', e: '⚙️', c: ['#b3121b', '#e0a526'], t: ['mask', 'fly', 'og', 'suit'] },
-    { n: 'Captain America', r: 'Steve Rogers', e: '🛡️', c: ['#1d3a8a', '#c8102e'], t: ['og', 'soldier'] },
-    { n: 'Thor', r: 'God of Thunder', e: '🔨', c: ['#1f3b73', '#8fa6bd'], t: ['fly', 'cape', 'alien', 'og', 'royal'] },
-    { n: 'Hulk', r: 'Bruce Banner', e: '💪', c: ['#2e7d32', '#5e1b8a'], t: ['og', 'green', 'change'] },
-    { n: 'Black Widow', r: 'Natasha Romanoff', e: '⏳', c: ['#141414', '#b71c1c'], t: ['f', 'og', 'guns'] },
-    { n: 'Hawkeye', r: 'Clint Barton', e: '🏹', c: ['#4a148c', '#1f1f1f'], t: ['og'] },
-    { n: 'Spider-Man', r: 'Peter Parker', e: '🕷️', c: ['#c62828', '#1565c0'], t: ['mask'] },
-    { n: 'Black Panther', r: 'T’Challa', e: '🐾', c: ['#151525', '#6a1b9a'], t: ['mask', 'royal', 'blades'] },
-    { n: 'Doctor Strange', r: 'Stephen Strange', e: '🔮', c: ['#0d47a1', '#d84315'], t: ['fly', 'cape', 'magic'] },
-    { n: 'Captain Marvel', r: 'Carol Danvers', e: '⭐', c: ['#c62828', '#1a237e'], t: ['f', 'fly'] },
-    { n: 'Scarlet Witch', r: 'Wanda Maximoff', e: '✨', c: ['#7f0000', '#e53935'], t: ['f', 'fly', 'magic'] },
-    { n: 'Vision', r: 'Synthezoid', e: '💎', c: ['#9a1b1b', '#2e7d32'], t: ['fly', 'cape', 'alien'] },
-    { n: 'Ant-Man', r: 'Scott Lang', e: '🐜', c: ['#a31515', '#1c1c1c'], t: ['mask', 'change', 'suit'] },
-    { n: 'Star-Lord', r: 'Peter Quill', e: '🎧', c: ['#5d4037', '#b71c1c'], t: ['mask', 'fly', 'gotg', 'guns'] },
-    { n: 'Gamora', r: 'Daughter of Thanos', e: '🗡️', c: ['#1b5e20', '#4a148c'], t: ['f', 'alien', 'gotg', 'blades', 'green'] },
-    { n: 'Groot', r: 'I am Groot', e: '🌳', c: ['#4e342e', '#33691e'], t: ['alien', 'gotg'] },
-    { n: 'Rocket', r: 'Raccoon genius', e: '🦝', c: ['#5d4037', '#e08a00'], t: ['alien', 'gotg', 'guns'] },
-    { n: 'Loki', r: 'God of Mischief', e: '🐍', c: ['#1b5e20', '#b8901f'], t: ['cape', 'alien', 'villain', 'magic', 'royal'] },
-    { n: 'Thanos', r: 'The Mad Titan', e: '🧤', c: ['#4a148c', '#b8901f'], t: ['alien', 'villain'] },
-    { n: 'Falcon', r: 'Sam Wilson', e: '🦅', c: ['#a31515', '#37474f'], t: ['fly', 'guns', 'suit'] },
-    { n: 'Winter Soldier', r: 'Bucky Barnes', e: '🦾', c: ['#263238', '#6b7f8c'], t: ['guns', 'soldier'] },
-    { n: 'Nick Fury', r: 'Director of S.H.I.E.L.D.', e: '👁️', c: ['#1a1a1a', '#455a64'], t: ['guns'] },
-    { n: 'Deadpool', r: 'Wade Wilson', e: '⚔️', c: ['#a31515', '#111111'], t: ['mask', 'guns', 'blades', 'xmen'] },
-    { n: 'Wolverine', r: 'Logan', e: '🐺', c: ['#e0a800', '#1565c0'], t: ['blades', 'xmen'] }
+    ['alien', 'Not human? (god, alien, android…)'], ['villain', 'A villain?'], ['og', 'One of the original 6 Avengers?', ['marvel']],
+    ['gotg', 'A Guardian of the Galaxy?', ['marvel']], ['magic', 'Use magic?'], ['royal', 'Royalty?'], ['guns', 'Fight with guns?'],
+    ['blades', 'Fight with blades or claws?'], ['xmen', 'From the X-Men films?', ['marvel']], ['green', 'Green skin?'],
+    ['change', 'Transform or change size/form?'], ['soldier', 'A super soldier?', ['marvel']], ['suit', 'Powers from a tech suit?'],
+    ['saiyan', 'A Saiyan?', ['dbz']], ['ki', 'Fight using ki blasts?', ['dbz']],
+    ['gotham', 'From Gotham City?', ['dc']], ['kryptonian', 'Kryptonian, or powered by Krypton?', ['dc']],
+    ['robot', 'An animatronic, not a living person?', ['fnaf']], ['kid', 'A human child?', ['fnaf']]
   ];
   const gwText = (id) => (GW_QUESTIONS.find((q) => q[0] === id) || [id, id])[1];
+  // Which quick-question chips make sense for a given universe: the shared ones, plus that
+  // universe's own flavor questions (Marvel keeps its original four this way too).
+  const gwQuestions = (board) => GW_QUESTIONS.filter((q) => !q[2] || q[2].indexOf(board) !== -1);
+
+  // ---- Every playable cast. Each character is { n: name, r: role/subtitle, e: emoji shown until
+  // a developer uploads a real picture, c: [gradient start, end], t: tags matched against
+  // GW_QUESTIONS for Auto-flip and the quick-question chips }. ----
+  const GW_UNIVERSES = {
+    marvel: { name: 'Marvel', icon: '🦸', tagline: 'Live-action Marvel heroes and villains.', cast: [
+      { n: 'Iron Man', r: 'Tony Stark', e: '⚙️', c: ['#b3121b', '#e0a526'], t: ['mask', 'fly', 'og', 'suit'] },
+      { n: 'Captain America', r: 'Steve Rogers', e: '🛡️', c: ['#1d3a8a', '#c8102e'], t: ['og', 'soldier'] },
+      { n: 'Thor', r: 'God of Thunder', e: '🔨', c: ['#1f3b73', '#8fa6bd'], t: ['fly', 'cape', 'alien', 'og', 'royal'] },
+      { n: 'Hulk', r: 'Bruce Banner', e: '💪', c: ['#2e7d32', '#5e1b8a'], t: ['og', 'green', 'change'] },
+      { n: 'Black Widow', r: 'Natasha Romanoff', e: '⏳', c: ['#141414', '#b71c1c'], t: ['f', 'og', 'guns'] },
+      { n: 'Hawkeye', r: 'Clint Barton', e: '🏹', c: ['#4a148c', '#1f1f1f'], t: ['og'] },
+      { n: 'Spider-Man', r: 'Peter Parker', e: '🕷️', c: ['#c62828', '#1565c0'], t: ['mask'] },
+      { n: 'Black Panther', r: 'T’Challa', e: '🐾', c: ['#151525', '#6a1b9a'], t: ['mask', 'royal', 'blades'] },
+      { n: 'Doctor Strange', r: 'Stephen Strange', e: '🔮', c: ['#0d47a1', '#d84315'], t: ['fly', 'cape', 'magic'] },
+      { n: 'Captain Marvel', r: 'Carol Danvers', e: '⭐', c: ['#c62828', '#1a237e'], t: ['f', 'fly'] },
+      { n: 'Scarlet Witch', r: 'Wanda Maximoff', e: '✨', c: ['#7f0000', '#e53935'], t: ['f', 'fly', 'magic'] },
+      { n: 'Vision', r: 'Synthezoid', e: '💎', c: ['#9a1b1b', '#2e7d32'], t: ['fly', 'cape', 'alien'] },
+      { n: 'Ant-Man', r: 'Scott Lang', e: '🐜', c: ['#a31515', '#1c1c1c'], t: ['mask', 'change', 'suit'] },
+      { n: 'Star-Lord', r: 'Peter Quill', e: '🎧', c: ['#5d4037', '#b71c1c'], t: ['mask', 'fly', 'gotg', 'guns'] },
+      { n: 'Gamora', r: 'Daughter of Thanos', e: '🗡️', c: ['#1b5e20', '#4a148c'], t: ['f', 'alien', 'gotg', 'blades', 'green'] },
+      { n: 'Groot', r: 'I am Groot', e: '🌳', c: ['#4e342e', '#33691e'], t: ['alien', 'gotg'] },
+      { n: 'Rocket', r: 'Raccoon genius', e: '🦝', c: ['#5d4037', '#e08a00'], t: ['alien', 'gotg', 'guns'] },
+      { n: 'Loki', r: 'God of Mischief', e: '🐍', c: ['#1b5e20', '#b8901f'], t: ['cape', 'alien', 'villain', 'magic', 'royal'] },
+      { n: 'Thanos', r: 'The Mad Titan', e: '🧤', c: ['#4a148c', '#b8901f'], t: ['alien', 'villain'] },
+      { n: 'Falcon', r: 'Sam Wilson', e: '🦅', c: ['#a31515', '#37474f'], t: ['fly', 'guns', 'suit'] },
+      { n: 'Winter Soldier', r: 'Bucky Barnes', e: '🦾', c: ['#263238', '#6b7f8c'], t: ['guns', 'soldier'] },
+      { n: 'Nick Fury', r: 'Director of S.H.I.E.L.D.', e: '👁️', c: ['#1a1a1a', '#455a64'], t: ['guns'] },
+      { n: 'Deadpool', r: 'Wade Wilson', e: '⚔️', c: ['#a31515', '#111111'], t: ['mask', 'guns', 'blades', 'xmen'] },
+      { n: 'Wolverine', r: 'Logan', e: '🐺', c: ['#e0a800', '#1565c0'], t: ['blades', 'xmen'] }
+    ] },
+    dbz: { name: 'Dragon Ball', icon: '🐉', tagline: 'Saiyans, Namekians and everyone strong enough to blow up a planet.', cast: [
+      { n: 'Goku', r: 'Son Goku', e: '🔥', c: ['#ff7a1a', '#1a56db'], t: ['fly', 'alien', 'saiyan', 'ki', 'change'] },
+      { n: 'Vegeta', r: 'Prince of All Saiyans', e: '👑', c: ['#0a1a5c', '#e0a526'], t: ['fly', 'alien', 'saiyan', 'ki', 'royal', 'change'] },
+      { n: 'Gohan', r: 'Son Gohan', e: '📚', c: ['#5b2a86', '#1a56db'], t: ['fly', 'alien', 'saiyan', 'ki', 'change'] },
+      { n: 'Piccolo', r: 'Namekian Warrior', e: '👂', c: ['#6a1b9a', '#1b5e20'], t: ['fly', 'alien', 'green', 'magic', 'change'] },
+      { n: 'Trunks', r: 'Future Trunks', e: '⚔️', c: ['#5b2a86', '#78909c'], t: ['fly', 'alien', 'saiyan', 'ki', 'blades', 'change'] },
+      { n: 'Goten', r: 'Son Goten', e: '🎈', c: ['#ff7a1a', '#1a1a2e'], t: ['fly', 'alien', 'saiyan', 'ki', 'kid', 'change'] },
+      { n: 'Krillin', r: 'Earth’s Strongest Human', e: '💫', c: ['#c62828', '#f5d020'], t: ['fly', 'ki'] },
+      { n: 'Bulma', r: 'Capsule Corp genius', e: '🔧', c: ['#1565c0', '#e91e8c'], t: [] },
+      { n: 'Master Roshi', r: 'Turtle Hermit', e: '🐢', c: ['#e0a526', '#37474f'], t: ['ki', 'magic'] },
+      { n: 'Android 18', r: 'Lazuli', e: '🤖', c: ['#0a1a5c', '#f5d020'], t: ['fly', 'robot', 'f', 'ki'] },
+      { n: 'Android 17', r: 'Lapis', e: '🤖', c: ['#0a1a5c', '#4caf50'], t: ['fly', 'robot', 'ki'] },
+      { n: 'Cell', r: 'Perfect Bio-Android', e: '🦗', c: ['#1b5e20', '#4a148c'], t: ['fly', 'alien', 'robot', 'villain', 'ki', 'change'] },
+      { n: 'Frieza', r: 'Emperor of Universe 7', e: '❄️', c: ['#4a148c', '#e91e8c'], t: ['fly', 'alien', 'royal', 'villain', 'ki', 'change'] },
+      { n: 'Majin Buu', r: 'Innocent Buu', e: '🍬', c: ['#e91e8c', '#f5d020'], t: ['fly', 'alien', 'magic', 'ki', 'change'] },
+      { n: 'Broly', r: 'Legendary Super Saiyan', e: '💢', c: ['#1b5e20', '#0a1a5c'], t: ['fly', 'alien', 'saiyan', 'villain', 'ki', 'change'] },
+      { n: 'Beerus', r: 'God of Destruction', e: '🐱', c: ['#4a148c', '#e91e8c'], t: ['fly', 'alien', 'magic', 'ki'] },
+      { n: 'Whis', r: 'Angel Attendant', e: '👼', c: ['#1565c0', '#cfd8dc'], t: ['fly', 'alien', 'magic'] },
+      { n: 'Videl', r: 'Satan’s daughter', e: '🥋', c: ['#212121', '#e0a526'], t: ['fly', 'f', 'ki'] },
+      { n: 'Chi-Chi', r: 'Goku’s wife', e: '💍', c: ['#c62828', '#212121'], t: ['f'] },
+      { n: 'Yamcha', r: 'Desert Bandit', e: '🐺', c: ['#8d6e63', '#1a1a2e'], t: ['fly', 'ki'] },
+      { n: 'Tien Shinhan', r: 'Three-Eyed Warrior', e: '👁️', c: ['#1565c0', '#78909c'], t: ['fly', 'ki'] },
+      { n: 'Dr. Gero', r: 'Red Ribbon scientist', e: '🧪', c: ['#37474f', '#c62828'], t: ['villain', 'robot'] },
+      { n: 'Mr. Satan', r: 'World Martial Arts Champ', e: '🏆', c: ['#f5d020', '#c62828'], t: [] },
+      { n: 'Pan', r: 'Gohan’s daughter', e: '🎀', c: ['#5b2a86', '#f5d020'], t: ['fly', 'f', 'kid', 'ki'] }
+    ] },
+    dc: { name: 'DC', icon: '🦇', tagline: 'Heroes and villains from Gotham, Metropolis and beyond.', cast: [
+      { n: 'Superman', r: 'Clark Kent', e: '🔵', c: ['#0d47a1', '#c62828'], t: ['fly', 'alien', 'cape', 'kryptonian'] },
+      { n: 'Batman', r: 'Bruce Wayne', e: '🦇', c: ['#0a0a0a', '#37474f'], t: ['mask', 'cape', 'gotham', 'guns'] },
+      { n: 'Wonder Woman', r: 'Diana Prince', e: '⭐', c: ['#c62828', '#f5d020'], t: ['f', 'fly', 'royal', 'magic', 'blades'] },
+      { n: 'The Flash', r: 'Barry Allen', e: '⚡', c: ['#c62828', '#f5d020'], t: ['mask', 'change'] },
+      { n: 'Green Lantern', r: 'Hal Jordan', e: '💚', c: ['#1b5e20', '#0a0a0a'], t: ['fly', 'mask', 'magic'] },
+      { n: 'Aquaman', r: 'Arthur Curry', e: '🔱', c: ['#0d47a1', '#e0a526'], t: ['royal', 'blades'] },
+      { n: 'Cyborg', r: 'Victor Stone', e: '🤖', c: ['#37474f', '#c62828'], t: ['robot', 'guns', 'change'] },
+      { n: 'Joker', r: 'Clown Prince of Crime', e: '🃏', c: ['#4a148c', '#1b5e20'], t: ['villain', 'gotham', 'guns'] },
+      { n: 'Harley Quinn', r: 'Harleen Quinzel', e: '♠️', c: ['#c62828', '#0d47a1'], t: ['f', 'villain', 'gotham', 'blades'] },
+      { n: 'Lex Luthor', r: 'LexCorp CEO', e: '💼', c: ['#37474f', '#4a148c'], t: ['villain', 'suit'] },
+      { n: 'Bane', r: 'Venom-enhanced mercenary', e: '💪', c: ['#37474f', '#c62828'], t: ['mask', 'villain', 'gotham'] },
+      { n: 'Darkseid', r: 'Ruler of Apokolips', e: '👹', c: ['#37474f', '#c62828'], t: ['alien', 'villain', 'royal'] },
+      { n: 'Nightwing', r: 'Dick Grayson', e: '🐦', c: ['#c62828', '#37474f'], t: ['mask', 'gotham', 'blades'] },
+      { n: 'Supergirl', r: 'Kara Zor-El', e: '✨', c: ['#0d47a1', '#c62828'], t: ['f', 'fly', 'cape', 'kryptonian'] },
+      { n: 'Shazam', r: 'Billy Batson', e: '⚡', c: ['#c62828', '#f5d020'], t: ['fly', 'magic', 'cape', 'change'] },
+      { n: 'Green Arrow', r: 'Oliver Queen', e: '🏹', c: ['#1b5e20', '#37474f'], t: ['mask'] },
+      { n: 'Zatanna', r: 'Mistress of Magic', e: '🎩', c: ['#4a148c', '#0a0a0a'], t: ['f', 'magic', 'mask'] },
+      { n: 'Martian Manhunter', r: 'J’onn J’onzz', e: '👽', c: ['#1b5e20', '#c62828'], t: ['fly', 'alien', 'green', 'change'] },
+      { n: 'Catwoman', r: 'Selina Kyle', e: '🐈', c: ['#0a0a0a', '#37474f'], t: ['f', 'mask', 'gotham', 'blades'] },
+      { n: 'Two-Face', r: 'Harvey Dent', e: '🪙', c: ['#37474f', '#c62828'], t: ['villain', 'gotham', 'guns'] },
+      { n: 'Poison Ivy', r: 'Pamela Isley', e: '🌿', c: ['#1b5e20', '#4a148c'], t: ['f', 'villain', 'gotham', 'green'] },
+      { n: 'Deathstroke', r: 'Slade Wilson', e: '⚔️', c: ['#37474f', '#f5d020'], t: ['mask', 'villain', 'blades', 'soldier'] },
+      { n: 'Black Canary', r: 'Dinah Lance', e: '🎤', c: ['#0a0a0a', '#f5d020'], t: ['f', 'gotham', 'blades'] },
+      { n: 'Doctor Fate', r: 'Kent Nelson', e: '🪄', c: ['#f5d020', '#0d47a1'], t: ['fly', 'magic', 'cape', 'mask'] }
+    ] },
+    fnaf: { name: 'FNAF', icon: '🐻', tagline: 'Animatronics from Freddy Fazbear’s Pizza, games 1 through 6.', cast: [
+      { n: 'Freddy Fazbear', r: 'The Mascot', e: '🐻', c: ['#3e2723', '#5d4037'], t: ['robot'] },
+      { n: 'Bonnie', r: 'The Rabbit', e: '🐰', c: ['#4a148c', '#1a1a2e'], t: ['robot'] },
+      { n: 'Chica', r: 'The Chicken', e: '🐤', c: ['#f5d020', '#e0a526'], t: ['robot', 'f'] },
+      { n: 'Foxy', r: 'Pirate Fox', e: '🦊', c: ['#c62828', '#5d4037'], t: ['robot', 'blades'] },
+      { n: 'Golden Freddy', r: '???', e: '👻', c: ['#e0a526', '#3e2723'], t: ['robot', 'villain'] },
+      { n: 'Toy Freddy', r: 'New and Improved', e: '🧸', c: ['#5d4037', '#e0a526'], t: ['robot'] },
+      { n: 'Toy Bonnie', r: 'New and Improved', e: '💙', c: ['#1565c0', '#e0e0e0'], t: ['robot'] },
+      { n: 'Toy Chica', r: 'New and Improved', e: '💛', c: ['#f5d020', '#e0e0e0'], t: ['robot', 'f'] },
+      { n: 'Mangle', r: 'Funtime Foxy, damaged', e: '🔧', c: ['#e0e0e0', '#c62828'], t: ['robot', 'blades'] },
+      { n: 'Balloon Boy', r: '“Hi! Hello!”', e: '🎈', c: ['#c62828', '#1565c0'], t: ['robot', 'villain', 'kid'] },
+      { n: 'The Puppet', r: 'The Marionette', e: '🎭', c: ['#0a0a0a', '#e0e0e0'], t: ['robot', 'magic'] },
+      { n: 'Springtrap', r: 'William Afton, inside the suit', e: '🐰', c: ['#5d4037', '#6a7f3f'], t: ['robot', 'villain'] },
+      { n: 'Nightmare Freddy', r: 'Fredbear’s nightmare', e: '😈', c: ['#3e2723', '#c62828'], t: ['robot', 'villain'] },
+      { n: 'Nightmare Bonnie', r: 'Nightmare animatronic', e: '😈', c: ['#4a148c', '#c62828'], t: ['robot', 'villain'] },
+      { n: 'Nightmare Chica', r: 'Nightmare animatronic', e: '😈', c: ['#f5d020', '#c62828'], t: ['robot', 'villain', 'f'] },
+      { n: 'Nightmare Foxy', r: 'Nightmare animatronic', e: '😈', c: ['#c62828', '#3e2723'], t: ['robot', 'villain', 'blades'] },
+      { n: 'Funtime Freddy', r: 'with Bon-Bon', e: '🎪', c: ['#c62828', '#e0e0e0'], t: ['robot'] },
+      { n: 'Funtime Foxy', r: 'Circus fox', e: '🎪', c: ['#e91e8c', '#e0e0e0'], t: ['robot', 'f', 'blades'] },
+      { n: 'Ballora', r: 'Ballerina animatronic', e: '💃', c: ['#4a148c', '#0a0a0a'], t: ['robot', 'f'] },
+      { n: 'Circus Baby', r: 'Elizabeth Afton, inside the suit', e: '🍦', c: ['#e91e8c', '#1565c0'], t: ['robot', 'f', 'villain', 'kid'] },
+      { n: 'Ennard', r: 'Merged animatronic', e: '🔗', c: ['#0a0a0a', '#e91e8c'], t: ['robot', 'villain'] },
+      { n: 'Scrap Baby', r: 'What’s left of Baby', e: '💔', c: ['#e91e8c', '#5d4037'], t: ['robot', 'f', 'villain'] },
+      { n: 'Molten Freddy', r: 'Fused wreckage', e: '🌀', c: ['#3e2723', '#0a0a0a'], t: ['robot', 'villain'] },
+      { n: 'The Crying Child', r: 'Michael Afton, young', e: '😢', c: ['#1565c0', '#78909c'], t: ['kid'] }
+    ] }
+  };
+  const GW_UNI_ORDER = ['marvel', 'dbz', 'dc', 'fnaf'];
+  const gwUni = (board) => GW_UNIVERSES[board] || GW_UNIVERSES.marvel;
+  const gwCast = (board) => gwUni(board).cast;
   const GW_Q_MAX = 80;      // one question
   const GW_LOG_MAX = 1400;  // all of someone's questions together, so the game node stays small
 
@@ -14700,7 +14838,7 @@
   }
 
   function gwLock(idx) {
-    if (!game || !(idx >= 0 && idx < GW_MARVEL.length)) return;
+    if (!game || !(idx >= 0 && idx < gwCast(game.data && game.data.board).length)) return;
     const id = game.id;
     const salt = randomHex(8);
     sha256('gw:' + idx + ':' + salt).then((hash) => {
@@ -14756,7 +14894,7 @@
   function gwGuess(idx, left) {
     move((s, now) => {
       const seat = seatOf(s, me);
-      if (s.status !== 'playing' || s.turn !== seat || s.pending || !(idx >= 0 && idx < GW_MARVEL.length)) return null;
+      if (s.status !== 'playing' || s.turn !== seat || s.pending || !(idx >= 0 && idx < gwCast(s.board).length)) return null;
       s.pending = { s: seat, g: idx };
       s.left = s.left || {};
       s.left[seat] = left;
@@ -17519,7 +17657,7 @@
         text = (list[g.turn] === me ? 'Your turn' : nameOf(list[g.turn]) + '’s turn') + ' · starts with ' + (g.letter || 'a').toUpperCase();
       } else if (g.type === 'gw' && g.pending) {
         text = list[g.pending.s] === me ? 'Waiting for ' + nameOf(list[1 - g.pending.s]) + '’s answer…' :
-          nameOf(list[g.pending.s]) + (typeof g.pending.q === 'string' ? ' asks: “' + g.pending.q + '”' : ' guesses ' + GW_MARVEL[g.pending.g].n + '!');
+          nameOf(list[g.pending.s]) + (typeof g.pending.q === 'string' ? ' asks: “' + g.pending.q + '”' : ' guesses ' + gwCast(g.board)[g.pending.g].n + '!');
       } else if (g.type === 'breach' && g.pending) {
         text = 'Checking ' + (list[g.pending.s] === me ? 'your' : nameOf(list[g.pending.s]) + '’s') + ' guess…';
       } else if (g.type === 'chess' && chessInCheck((g.b || CHESS_START).split(''), g.turn === 0)) {
@@ -17578,7 +17716,7 @@
     if (g.why === 'left') return namesOf(outBy('left')) + ' left. ' + winner;
     if (g.why === 'wrong') {
       const loser = list.find((user) => user !== g.winner);
-      return (loser === me ? 'You' : nameOf(loser)) + ' guessed wrong' + (typeof g.xg === 'number' ? ' (' + GW_MARVEL[g.xg].n + ')' : '') + '. ' + winner;
+      return (loser === me ? 'You' : nameOf(loser)) + ' guessed wrong' + (typeof g.xg === 'number' ? ' (' + gwCast(g.board)[g.xg].n + ')' : '') + '. ' + winner;
     }
     if (g.why === 'kicked') return namesOf(outBy('kicked')) + ' got kicked. ' + winner;
     if (g.why === 'time') return namesOf(outBy('time')) + ' ran out of time. ' + winner;
@@ -17606,7 +17744,7 @@
     if (g.type === 'ttt') parts.push(g.size + '×' + g.size + ' board');
     if (g.type === 'c4') parts.push(c4Cols(g) + '×' + c4Rows(g) + ' board');
     if (g.type === 'breach') parts.push(g.digits + '-digit codes');
-    if (g.type === 'gw') parts.push('Marvel board', g.miss === 'turn' ? 'Wrong guess: lose a turn' : 'Wrong guess: you lose');
+    if (g.type === 'gw') parts.push(gwUni(g.board).name + ' board', g.miss === 'turn' ? 'Wrong guess: lose a turn' : 'Wrong guess: you lose');
     if (g.type === 'll') parts.push(Math.round((g.tturn || 15000) / 1000) + ' s a turn', g.llives + ' lives', g.minlen + '+ letters');
     if (g.type === 'wr') parts.push((WR_THEMES.find((t) => t[0] === g.theme) || WR_THEMES[0])[2] + ' words');
     if (g.type === 'rps') parts.push('First to ' + g.rounds, '×2 · ' + g.dbl + ' each');
@@ -18452,6 +18590,7 @@
       const alive = seat !== -1 && !isOut(g, seat);
       const secret = seat !== -1 ? gwSecret(game.id) : null;
       const mine = secret && g.commit && secret.hash === g.commit[seat] ? secret.idx : null;
+      const cast = gwCast(g.board);
 
       // Before it starts: pick your secret character
       if (g.status === 'setup') {
@@ -18461,8 +18600,8 @@
           box.append(el('div', 'gw-headline', 'Pick your secret character'),
             el('p', 'gs-note', 'Only you can see who you picked. It stays on this device, so play from here until the game ends.'));
           const grid = el('div', 'gw-board picking');
-          GW_MARVEL.forEach((c, i) => {
-            const card = gwCardEl(c, i, { picked: i === picked });
+          cast.forEach((c, i) => {
+            const card = gwCardEl(c, i, g.board, { picked: i === picked });
             card.addEventListener('click', () => {
               game.inputs.gwPick = i;
               renderGame();
@@ -18470,17 +18609,17 @@
             grid.append(card);
           });
           const row = el('div', 'gs-actions');
-          const lock = gameButton(picked >= 0 ? 'Lock in ' + GW_MARVEL[picked].n : 'Pick someone first', 'primary', () => gwLock(picked));
+          const lock = gameButton(picked >= 0 ? 'Lock in ' + cast[picked].n : 'Pick someone first', 'primary', () => gwLock(picked));
           lock.disabled = picked < 0;
           row.append(gameButton('Random', '', () => {
-            game.inputs.gwPick = Math.floor(Math.random() * GW_MARVEL.length);
+            game.inputs.gwPick = Math.floor(Math.random() * cast.length);
             renderGame();
           }), lock);
           box.append(grid, row);
         } else {
           const done = seat !== -1 && g.commit && g.commit[seat];
-          box.append(el('div', 'gw-headline', done ? (mine !== null ? 'You’re ' + GW_MARVEL[mine].n : 'Locked in') : 'Picking characters…'));
-          if (mine !== null) box.append(gwCardEl(GW_MARVEL[mine], mine, { big: true }));
+          box.append(el('div', 'gw-headline', done ? (mine !== null ? 'You’re ' + cast[mine].n : 'Locked in') : 'Picking characters…'));
+          if (mine !== null) box.append(gwCardEl(cast[mine], mine, g.board, { big: true }));
           box.append(el('p', 'gs-note', done ? 'Waiting for ' + nameOf(list[1 - seat]) + ' to pick…' : 'Both players are picking their secret characters…'));
         }
         board.append(box);
@@ -18502,16 +18641,16 @@
         const row = el('div', 'gs-actions');
         row.append(gameButton('✓ Yes', 'primary', () => gwAnswer(true)), gameButton('✗ No', 'danger', () => gwAnswer(false)));
         box.append(row);
-        if (mine !== null) box.append(el('p', 'gs-note', 'About ' + GW_MARVEL[mine].n + ' — only you know that.'));
+        if (mine !== null) box.append(el('p', 'gs-note', 'About ' + cast[mine].n + ' — only you know that.'));
         side.append(box);
       }
 
       // Your character, and how many faces the other player has left
       if (mine !== null) {
         const panel = el('div', 'gw-panel gw-mine');
-        panel.append(gwCardEl(GW_MARVEL[mine], mine, { mini: true }));
+        panel.append(gwCardEl(cast[mine], mine, g.board, { mini: true }));
         const text = el('div', 'gw-mine-text');
-        text.append(el('div', 'gw-title', 'Your character'), el('b', null, GW_MARVEL[mine].n));
+        text.append(el('div', 'gw-title', 'Your character'), el('b', null, cast[mine].n));
         const opp = 1 - seat;
         if (g.left && typeof g.left[opp] === 'number') text.append(el('span', 'gw-opp', nameOf(list[opp]) + ' has ' + g.left[opp] + ' left'));
         panel.append(text);
@@ -18520,6 +18659,7 @@
 
       // Questions (your turn: ask one, or make a guess)
       if (g.status === 'playing' && alive) {
+        const questions = gwQuestions(g.board);
         const asked = {};
         gwLog(g, seat).forEach((item) => { if (item.k) asked[item.k] = item.yes; });
         const panel = el('div', 'gw-panel');
@@ -18538,9 +18678,9 @@
             showToast('Type a question first — anything they can answer yes or no.');
             return;
           }
-          const preset = GW_QUESTIONS.find((q) => q[1].toLowerCase() === text.toLowerCase());
+          const preset = questions.find((q) => q[1].toLowerCase() === text.toLowerCase());
           field.value = '';
-          gwAsk(text, preset ? preset[0] : '', GW_MARVEL.length - flips.size);
+          gwAsk(text, preset ? preset[0] : '', cast.length - flips.size);
         });
         field.disabled = !myTurn || guessing;
         send.disabled = !myTurn || guessing;
@@ -18550,7 +18690,7 @@
         panel.append(ask);
         panel.append(el('div', 'gw-title small', 'Quick questions'));
         const qs = el('div', 'gw-qs');
-        GW_QUESTIONS.forEach(([id, text]) => {
+        questions.forEach(([id, text]) => {
           const done = Object.prototype.hasOwnProperty.call(asked, id);
           const btn = el('button', 'gw-q' + (done ? (asked[id] ? ' yes' : ' no') : ''), (done ? (asked[id] ? '✓ ' : '✗ ') : '') + text);
           btn.type = 'button';
@@ -18567,7 +18707,7 @@
         tools.append(gameButton('Auto-flip', 'small', () => {
           // Flips down everyone your answers rule out
           const answers = gwLog(g, seat);
-          GW_MARVEL.forEach((c, i) => {
+          cast.forEach((c, i) => {
             if (answers.some((a) => a.k && (c.t.indexOf(a.k) !== -1) !== a.yes) || misses.indexOf(i) !== -1) flips.add(i);
           });
           gwSaveFlips(g, flips);
@@ -18600,25 +18740,25 @@
         });
         gwMisses(g, s).forEach((idx) => {
           const row = el('div', 'gw-log-row');
-          row.append((list[s] === me ? 'You' : nameOf(list[s])) + ' guessed ' + GW_MARVEL[idx].n + ' ', el('b', 'no', 'Wrong'));
+          row.append((list[s] === me ? 'You' : nameOf(list[s])) + ' guessed ' + cast[idx].n + ' ', el('b', 'no', 'Wrong'));
           log.append(row);
         });
       });
       if (g.pending) log.append(el('div', 'gw-log-row pending', (list[g.pending.s] === me ? 'You' : nameOf(list[g.pending.s])) + ': ' +
-        (typeof g.pending.q === 'string' ? g.pending.q : 'Is it ' + GW_MARVEL[g.pending.g].n + '?') + ' …'));
+        (typeof g.pending.q === 'string' ? g.pending.q : 'Is it ' + cast[g.pending.g].n + '?') + ' …'));
       if (!log.childNodes.length) log.append(el('div', 'gw-log-empty', 'No questions yet.'));
       logPanel.append(log);
       side.append(logPanel);
 
       // The board
       const main = el('div', 'gw-main');
-      const upCount = GW_MARVEL.length - flips.size;
-      main.append(el('div', 'gw-count', g.status === 'done' ? 'Game over' : upCount + ' of ' + GW_MARVEL.length + ' still standing' +
+      const upCount = cast.length - flips.size;
+      main.append(el('div', 'gw-count', g.status === 'done' ? 'Game over' : upCount + ' of ' + cast.length + ' still standing' +
         (guessing ? ' · pick your guess' : '')));
       const grid = el('div', 'gw-board' + (guessing ? ' guessing' : ''));
       const answer = g.status === 'done' && g.reveal && seat !== -1 && g.reveal[1 - seat] ? Number(g.reveal[1 - seat].split(':')[0]) : -1;
-      GW_MARVEL.forEach((c, i) => {
-        const card = gwCardEl(c, i, { flipped: flips.has(i) && i !== answer, wrong: misses.indexOf(i) !== -1, answer: i === answer });
+      cast.forEach((c, i) => {
+        const card = gwCardEl(c, i, g.board, { flipped: flips.has(i) && i !== answer, wrong: misses.indexOf(i) !== -1, answer: i === answer });
         card.addEventListener('click', () => {
           if (guessing && !flips.has(i)) {
             openModal('Guess ' + c.n + '?', (body) => {
@@ -18650,10 +18790,10 @@
           if (!g.reveal[s] || !g.commit || !g.commit[s]) return;
           const [idx, salt] = g.reveal[s].split(':');
           const who = el('div', 'gw-reveal-one');
-          who.append(gwCardEl(GW_MARVEL[Number(idx)], Number(idx), { mini: true }));
+          who.append(gwCardEl(cast[Number(idx)], Number(idx), g.board, { mini: true }));
           const text = el('div', 'gw-mine-text');
           const check = el('span', 'gw-check', 'checking…');
-          text.append(el('div', 'gw-title', (list[s] === me ? 'You were' : nameOf(list[s]) + ' was')), el('b', null, GW_MARVEL[Number(idx)].n), check);
+          text.append(el('div', 'gw-title', (list[s] === me ? 'You were' : nameOf(list[s]) + ' was')), el('b', null, cast[Number(idx)].n), check);
           who.append(text);
           reveal.append(who);
           sha256('gw:' + idx + ':' + salt).then((hash) => {
@@ -21128,8 +21268,9 @@
     hmGuess(letter);
   }, true);
 
-  // A Guess Who card: the hero's colors and face, with a patterned back when flipped down
-  function gwCardEl(c, i, opts) {
+  // A Guess Who card: the hero's colors and face, with a patterned back when flipped down.
+  // board picks which universe's picture set (and dev editor) this card belongs to.
+  function gwCardEl(c, i, board, opts) {
     const o = opts || {};
     const card = el('button', 'gw-card' + (o.flipped ? ' flipped' : '') + (o.picked ? ' picked' : '') + (o.wrong ? ' wrong' : '') +
       (o.answer ? ' answer' : '') + (o.mini ? ' mini' : '') + (o.big ? ' big' : ''));
@@ -21142,9 +21283,10 @@
     const plate = el('span', 'gw-plate');
     plate.append(el('span', 'gw-name', c.n), el('span', 'gw-real', c.r));
     // A real picture if the developer has set one; the emblem otherwise
-    if (gwPics[i]) {
+    const pic = gwPics[gwPicKey(board, i)];
+    if (pic) {
       const shot = el('span', 'gw-photo');
-      shot.style.backgroundImage = 'url("' + gwPics[i].url + '")';
+      shot.style.backgroundImage = 'url("' + pic.url + '")';
       front.append(shot);
       card.classList.add('has-photo');
     } else {
@@ -21158,7 +21300,7 @@
       set.title = 'Developer: set this card’s picture';
       set.addEventListener('click', (event) => {
         event.stopPropagation();
-        openGwCardEditor();
+        openGwCardEditor(board);
       });
       front.append(set);
     }
@@ -21921,6 +22063,7 @@
       charges: [2, 3, 4, 5].indexOf(saved.charges) !== -1 ? saved.charges : 3,
       c4b: saved.c4b >= 0 && saved.c4b < C4_BOARDS.length ? saved.c4b : 0,
       miss: saved.miss === 'turn' ? 'turn' : 'lose',
+      board: GW_UNI_ORDER.indexOf(saved.board) !== -1 ? saved.board : 'marvel',
       tcat: CHESS_CATS.some((c) => c[0] === saved.tcat) ? saved.tcat : 'rapid',
       tinc: typeof saved.tinc === 'number' ? Math.max(0, Math.min(60, saved.tinc)) : 0
     };
@@ -21980,7 +22123,7 @@
         if (type === 'c4') parts.push(C4_BOARDS[cfg.c4b][0] + '×' + C4_BOARDS[cfg.c4b][1] + ' board');
         if (type === 'breach') parts.push(cfg.digits + ' digits');
         if (type === 'bj') parts.push((cfg.chips || 0).toLocaleString() + ' chips');
-        if (type === 'gw') parts.push('Marvel board', cfg.miss === 'turn' ? 'wrong guess loses a turn' : 'wrong guess loses');
+        if (type === 'gw') parts.push(gwUni(cfg.board).name + ' board', cfg.miss === 'turn' ? 'wrong guess loses a turn' : 'wrong guess loses');
         if (type === 'hm') parts.push(cfg.laps + (cfg.laps === 1 ? ' word' : ' words') + ' each', cfg.lives + ' lives');
         summary.textContent = parts.join(' · ');
       };
@@ -22254,9 +22397,14 @@
           miss.append(optionTile(inner, sub, cfg.miss === id, () => { cfg.miss = id; draw(); }));
         });
         grid.append(setupCard('Wrong guess', 'What happens if you guess the wrong hero.', miss));
-        const deck = el('div', 'opt-row');
-        deck.append(optionTile(el('span', 'opt-big', '🦸'), 'Marvel · 24 heroes', true, () => {}));
-        grid.append(setupCard('Board', 'Live-action Marvel heroes and villains.', deck));
+        const deck = el('div', 'opt-row wrap');
+        GW_UNI_ORDER.forEach((key) => {
+          const uni = GW_UNIVERSES[key];
+          const inner = el('span', 'opt-label');
+          inner.append(el('span', 'opt-icon', uni.icon), el('span', null, uni.name));
+          deck.append(optionTile(inner, uni.cast.length + ' characters', cfg.board === key, () => { cfg.board = key; draw(); }));
+        });
+        grid.append(setupCard('Board', gwUni(cfg.board).tagline, deck, 'wide'));
       }
       if (type === 'hm') {
         const laps = el('div', 'opt-row');
