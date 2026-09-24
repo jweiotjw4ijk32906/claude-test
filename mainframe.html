@@ -5575,7 +5575,7 @@
   const pathOf = (r, kind) => r.base + '/' + r.rel[kind];
 
   // Shown in Settings; every release also renames RULES_PROBE (below)
-  const APP_VERSION = '1.11';
+  const APP_VERSION = '1.12';
   const APP_DATE = 'Sep 24';
 
   const MAX_LENGTH = 500;        // longest message allowed, in characters
@@ -5620,7 +5620,7 @@
   const SYNC_OVERLAP_MS = 5 * 60 * 1000;    // re-checks this much before the last sync, to be safe
   // Only this version's rules make this readable. Every update renames it, so once the new rules
   // are published, older copies of the file see "out of date" and stop.
-  const RULES_PROBE = 'rules_1_11';
+  const RULES_PROBE = 'rules_1_12';
   const BASE_TITLE = 'Mainframe';
   const PUSH_KEY = /^-[A-Za-z0-9_-]{1,40}$/;
   const SAFE_ID = /^[A-Za-z0-9_-]{1,40}$/;
@@ -13555,7 +13555,7 @@
     const others = seatList(g).filter((user) => user !== me);
     startGame(g.type, {
       players: g.seats, limit: g.limit, ranked: g.ranked !== false, tmode: g.tmode, tmove: g.tmove, tbank: g.tbank, tpick: g.tpick,
-      digits: g.digits, chips: g.start, laps: g.laps, lives: g.lives, miss: g.miss,
+      digits: g.digits, chips: g.start, laps: g.laps, lives: g.lives, miss: g.miss, board: g.board,
       c4b: Math.max(0, C4_BOARDS.findIndex(([cc, rr]) => cc === c4Cols(g) && rr === c4Rows(g))),
       tturn: Math.round((g.tturn || 15000) / 1000), minlen: g.minlen, llives: g.llives,
       rounds: g.rounds, dbl: g.dbl, theme: g.theme,
@@ -21283,7 +21283,7 @@
     const plate = el('span', 'gw-plate');
     plate.append(el('span', 'gw-name', c.n), el('span', 'gw-real', c.r));
     // A real picture if the developer has set one; the emblem otherwise
-    const pic = gwPics[gwPicKey(board, i)];
+    const pic = gwPics[gwCardKey(board, i)];
     if (pic) {
       const shot = el('span', 'gw-photo');
       shot.style.backgroundImage = 'url("' + pic.url + '")';
@@ -22455,6 +22455,7 @@
           laps: cfg.laps,
           lives: cfg.lives,
           miss: cfg.miss,
+          board: cfg.board,
           tpick: cfg.tpick * 1000,
           c4b: cfg.c4b,
           urounds: cfg.urounds,
