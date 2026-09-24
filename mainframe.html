@@ -2644,12 +2644,20 @@
   .c4-slot { aspect-ratio: 1; border-radius: 50%; background: #14151c; box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.6); }
   .c4-slot.s0 { background: radial-gradient(circle at 35% 35%, #ff6b6e, #d63235); box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.25); animation: drop 0.3s ease-in; }
   .c4-slot.s1 { background: radial-gradient(circle at 35% 35%, #ffe28a, #f0b92e); box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.2); animation: drop 0.3s ease-in; }
+  .c4-slot.s2 { background: radial-gradient(circle at 35% 35%, #7fb0ff, #3b6fe0); box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.25); animation: drop 0.3s ease-in; }
+  .c4-slot.s3 { background: radial-gradient(circle at 35% 35%, #8ef0b0, #2fa860); box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.2); animation: drop 0.3s ease-in; }
+  .c4-slot.s4 { background: radial-gradient(circle at 35% 35%, #dcb3ff, #a855f7); box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.25); animation: drop 0.3s ease-in; }
+  .c4-slot.s5 { background: radial-gradient(circle at 35% 35%, #ffc98a, #f0812e); box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.2); animation: drop 0.3s ease-in; }
   @keyframes drop { from { transform: translateY(-40px); opacity: 0.4; } }
   .c4-slot.last { outline: 3px solid rgb(var(--ink) / 0.85); outline-offset: -3px; }
   .c4-slot.win { outline: 4px solid #8cd8a4; outline-offset: -4px; }
   .disc { display: inline-block; width: 12px; height: 12px; border-radius: 50%; vertical-align: -1px; }
   .disc.s0 { background: #ed4245; }
   .disc.s1 { background: #fcd34d; }
+  .disc.s2 { background: #4f8eff; }
+  .disc.s3 { background: #3ddc84; }
+  .disc.s4 { background: #c792ea; }
+  .disc.s5 { background: #ff9a3d; }
 
   /* Breach */
   .breach-setup { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 26px 34px; background: rgb(var(--ink) / 0.03); border: 1px solid rgb(var(--ink) / 0.07); border-radius: 20px; }
@@ -2990,6 +2998,10 @@
   .c4-slot { background: #070d26; box-shadow: inset 0 5px 9px rgba(0, 0, 0, 0.75), 0 1px 0 rgb(var(--ink) / 0.18); }
   .c4-slot.s0, .c4-preview.s0 { background: radial-gradient(circle at 34% 30%, #ffb3b3, #ff3b3b 42%, #b3171a); box-shadow: inset 0 0 0 4px rgba(0, 0, 0, 0.12), inset 0 -4px 0 rgba(0, 0, 0, 0.22), 0 2px 6px rgba(0, 0, 0, 0.4); animation: none; }
   .c4-slot.s1, .c4-preview.s1 { background: radial-gradient(circle at 34% 30%, #fff6c4, #ffd23f 42%, #c99400); box-shadow: inset 0 0 0 4px rgba(0, 0, 0, 0.1), inset 0 -4px 0 rgba(0, 0, 0, 0.2), 0 2px 6px rgba(0, 0, 0, 0.4); animation: none; }
+  .c4-slot.s2, .c4-preview.s2 { background: radial-gradient(circle at 34% 30%, #b3d4ff, #3b82ff 42%, #17469b); box-shadow: inset 0 0 0 4px rgba(0, 0, 0, 0.12), inset 0 -4px 0 rgba(0, 0, 0, 0.22), 0 2px 6px rgba(0, 0, 0, 0.4); animation: none; }
+  .c4-slot.s3, .c4-preview.s3 { background: radial-gradient(circle at 34% 30%, #c4f7d4, #3ddc84 42%, #1a8f4f); box-shadow: inset 0 0 0 4px rgba(0, 0, 0, 0.1), inset 0 -4px 0 rgba(0, 0, 0, 0.2), 0 2px 6px rgba(0, 0, 0, 0.4); animation: none; }
+  .c4-slot.s4, .c4-preview.s4 { background: radial-gradient(circle at 34% 30%, #ecd9ff, #c792ea 42%, #7a3fa0); box-shadow: inset 0 0 0 4px rgba(0, 0, 0, 0.12), inset 0 -4px 0 rgba(0, 0, 0, 0.22), 0 2px 6px rgba(0, 0, 0, 0.4); animation: none; }
+  .c4-slot.s5, .c4-preview.s5 { background: radial-gradient(circle at 34% 30%, #ffd9b3, #ff9a3d 42%, #c96400); box-shadow: inset 0 0 0 4px rgba(0, 0, 0, 0.1), inset 0 -4px 0 rgba(0, 0, 0, 0.2), 0 2px 6px rgba(0, 0, 0, 0.4); animation: none; }
   .c4-slot.last { outline: 0; animation: c4Drop 0.45s cubic-bezier(0.45, 0, 0.6, 1.35); box-shadow: 0 0 0 3px rgb(var(--ink) / 0.85), 0 0 18px rgb(var(--ink) / 0.4); }
   @keyframes c4Drop { from { transform: translateY(-340%); } }
   .c4-slot.win { outline: 0; box-shadow: 0 0 0 4px #ffffff, 0 0 26px 4px rgb(var(--ink) / 0.7); animation: winPulse 1s ease-in-out infinite; }
@@ -2997,6 +3009,10 @@
   .c4-col:hover .c4-preview { opacity: 1; transform: none; }
   .gs-piece.disc.s0, .disc.s0 { background: radial-gradient(circle at 34% 30%, #ffb3b3, #ff3b3b 45%, #b3171a); }
   .gs-piece.disc.s1, .disc.s1 { background: radial-gradient(circle at 34% 30%, #fff6c4, #ffd23f 45%, #c99400); }
+  .gs-piece.disc.s2, .disc.s2 { background: radial-gradient(circle at 34% 30%, #b3d4ff, #3b82ff 45%, #17469b); }
+  .gs-piece.disc.s3, .disc.s3 { background: radial-gradient(circle at 34% 30%, #c4f7d4, #3ddc84 45%, #1a8f4f); }
+  .gs-piece.disc.s4, .disc.s4 { background: radial-gradient(circle at 34% 30%, #ecd9ff, #c792ea 45%, #7a3fa0); }
+  .gs-piece.disc.s5, .disc.s5 { background: radial-gradient(circle at 34% 30%, #ffd9b3, #ff9a3d 45%, #c96400); }
 
   /* Breach: a hacker's terminal */
   .game-screen[data-game="breach"] .gs-note { color: rgba(198, 255, 226, 0.55); }
@@ -3509,7 +3525,7 @@
   .wr-theme-icon { font-size: 30px; line-height: 1; }
   .wr-theme-name { font-size: 16px; font-weight: 900; letter-spacing: 0.5px; }
   .wr-theme-sub { font-size: 12px; color: var(--text-muted); }
-  .wr-race { display: flex; gap: 18px; }
+  .wr-race { display: flex; flex-wrap: wrap; justify-content: center; gap: 18px; }
   .wr-side { display: flex; flex-direction: column; align-items: center; gap: 8px; }
   .wr-who { display: flex; align-items: center; gap: 6px; font-size: 13px; }
   .wr-left { font-size: 11px; font-weight: 800; color: var(--text-muted); }
@@ -5571,7 +5587,7 @@
   const pathOf = (r, kind) => r.base + '/' + r.rel[kind];
 
   // Shown in Settings; every release also renames RULES_PROBE (below)
-  const APP_VERSION = '1.14';
+  const APP_VERSION = '1.15';
   const APP_DATE = 'Sep 24';
 
   const MAX_LENGTH = 500;        // longest message allowed, in characters
@@ -5616,7 +5632,7 @@
   const SYNC_OVERLAP_MS = 5 * 60 * 1000;    // re-checks this much before the last sync, to be safe
   // Only this version's rules make this readable. Every update renames it, so once the new rules
   // are published, older copies of the file see "out of date" and stop.
-  const RULES_PROBE = 'rules_1_14';
+  const RULES_PROBE = 'rules_1_15';
   const BASE_TITLE = 'Mainframe';
   const PUSH_KEY = /^-[A-Za-z0-9_-]{1,40}$/;
   const SAFE_ID = /^[A-Za-z0-9_-]{1,40}$/;
@@ -12206,32 +12222,32 @@
   };
 
   const GAMES = {
-    ttt: { name: 'Infinite Tic-Tac-Toe', short: 'Tic-Tac-Toe', icon: '⭕', players: [2, 3, 4], clock: true,
-      desc: 'Keep only 3 marks: your 4th wipes your oldest. 2–4 players; the board grows with more.' },
-    c4: { name: 'Connect 4', short: 'Connect 4', icon: '🔴', players: [2], clock: true,
-      desc: 'Drop discs and line up four in a row, 1 vs 1. Nobody winning in time is a draw.' },
+    ttt: { name: 'Infinite Tic-Tac-Toe', short: 'Tic-Tac-Toe', icon: '⭕', players: [2, 3, 4, 5, 6], clock: true,
+      desc: 'Keep only 3 marks: your 4th wipes your oldest. 2–6 players; the board grows with more.' },
+    c4: { name: 'Connect 4', short: 'Connect 4', icon: '🔴', players: [2, 3, 4, 5, 6], clock: true,
+      desc: 'Drop discs and line up four in a row, in your own colour. 2–6 players; nobody winning in time is a draw.' },
     breach: { name: 'Breach', short: 'Breach', icon: '🔐', players: [2], clock: true, pick: 'code',
       desc: 'Crack the other player’s secret code (1–6 digits, repeats allowed) before they crack yours.' },
-    bj: { name: 'Blackjack', short: 'Blackjack', icon: '🃏', players: [2, 3, 4], clock: false,
+    bj: { name: 'Blackjack', short: 'Blackjack', icon: '🃏', players: [2, 3, 4, 5, 6], clock: false,
       desc: 'Everyone bets, then hit, stand or double down. Beat the others to take their chips.' },
-    hm: { name: 'Hangman', short: 'Hangman', icon: '🪢', players: [2, 3, 4], clock: true, pick: 'word',
+    hm: { name: 'Hangman', short: 'Hangman', icon: '🪢', players: [2, 3, 4, 5, 6], clock: true, pick: 'word',
       desc: 'Take turns picking a secret word while everyone else guesses letters. Most points after every round wins.' },
     gw: { name: 'Guess Who', short: 'Guess Who', icon: '🕵️', players: [2], clock: true, pick: 'character',
       desc: 'Marvel edition: pick a secret hero, ask yes/no questions and flip cards down. First to guess the other’s hero wins.' },
-    ll: { name: 'Last Letter', short: 'Last Letter', icon: '🔤', players: [2, 3, 4], clock: false, notimer: true,
+    ll: { name: 'Last Letter', short: 'Last Letter', icon: '🔤', players: [2, 3, 4, 5, 6], clock: false, notimer: true,
       desc: 'Your word has to start with the letter theirs ended on. Real words only, no repeats, and the clock is short.' },
-    wr: { name: 'Wordle Race', short: 'Wordle Race', icon: '🟩', players: [2], clock: false, notimer: true,
-      desc: 'Same word, same theme, six guesses each. First one there wins — and you watch their pattern fill in as they go.' },
+    wr: { name: 'Wordle Race', short: 'Wordle Race', icon: '🟩', players: [2, 3, 4, 5, 6], clock: false, notimer: true,
+      desc: 'Same word, same theme, six guesses each. First one there wins — and you watch everyone else’s pattern fill in as they go.' },
     rps: { name: 'Rock Paper Scissors', short: 'RPS', icon: '✊', players: [2], clock: false,
       desc: 'Both throws lock on your own device and show at once, so neither of you can be late. Play a ×2 to raise the stakes.' },
     slot: { name: 'Team Slots', short: 'Team Slots', icon: '🎰', players: [2], clock: false,
       desc: 'Stop the reel and whoever it lands on joins your team. Then card fights card down the line, the winners wait on the sideline and meet each other, and players decide who is stronger — once, for good, and fixable if it was a slip.' },
-    imp: { name: 'Guess The Word Imposter', short: 'Imposter', icon: '🕵', players: [3, 4], clock: true,
+    imp: { name: 'Guess The Word Imposter', short: 'Imposter', icon: '🕵', players: [3, 4, 5, 6], clock: true,
       desc: 'Everyone gets the word but one. Say a word each, twice round, then vote. The word sits in the game like every other secret here, so nobody go digging.' },
-    uno: { name: 'Uno', short: 'Uno', icon: '🃏', players: [2, 3, 4], clock: true,
+    uno: { name: 'Uno', short: 'Uno', icon: '🃏', players: [2, 3, 4, 5, 6], clock: true,
       desc: 'The whole deck — skips, reverses, draw twos and wilds. Empty your hand, and say UNO on your last card before somebody catches you.' },
-    court: { name: 'Court', short: 'Court', icon: '⚖', players: [3, 4], clock: false, notimer: true, noranked: true, openroom: true,
-      desc: 'Not a game, a room. Opening it seats nobody — take a seat yourself, judge, plaintiff or defence, lawyer once there are four. It starts the moment three of you are sat down. No rank, no leaderboard.' },
+    court: { name: 'Court', short: 'Court', icon: '⚖', players: [3, 4, 5, 6], clock: false, notimer: true, noranked: true, openroom: true,
+      desc: 'Not a game, a room. Opening it seats nobody — take a seat yourself, judge, plaintiff or defence, lawyer once there are four, jury beyond that. Three of you is enough to start the case, whenever you choose to. No rank, no leaderboard.' },
     pool: { name: 'Pool', short: 'Pool', icon: '🎱', players: [2], clock: true,
       desc: 'Eight ball on a full table. Only the angle, the power and the spin go up — both devices roll the same shot, so nothing is streamed to anyone.' },
     bs: { name: 'Buckshot Roulette', short: 'Buckshot', icon: '🔫', players: [2], clock: false,
@@ -12258,7 +12274,7 @@
   const PICK_CHOICES = [0, 30, 45, 60, 90, 120, 180, 300];             // choosing time: seconds (0 = no limit)
   const PAUSE_MAX_MS = 10 * 60 * 1000;                                 // nobody gets to freeze a game for longer
   const fmtPick = (sec) => (sec ? fmtSeconds(sec) : 'No limit');
-  const SEAT_COLORS = ['#8ab4f8', '#f6b87a', '#8cd8a4', '#f28fad'];
+  const SEAT_COLORS = ['#8ab4f8', '#f6b87a', '#8cd8a4', '#f28fad', '#c792ea', '#ffe066'];
   const KICK_WAIT_MS = 60000;   // 1 vs 1, you can only kick someone idle, or stuck on their turn this long
   const SHOW_MS = 10000;        // Blackjack: results stay up this long before the next round
   const CLAIM_GRACE_MS = 1000;  // time-outs are claimed a moment late, in case clocks differ a little
@@ -12280,7 +12296,7 @@
   function seatList(g) {
     const list = [];
     const players = g && g.players;
-    for (let i = 0; players && i < 4 && typeof players[i] === 'string'; i++) list.push(players[i]);
+    for (let i = 0; players && i < 6 && typeof players[i] === 'string'; i++) list.push(players[i]);
     return list;
   }
 
@@ -13343,7 +13359,7 @@
     },
     ttt: (s) => {
       s.b = '.'.repeat(s.size * s.size);
-      for (let i = 0; i < 4; i++) s['q' + i] = '';
+      for (let i = 0; i < seatList(s).length; i++) s['q' + i] = '';
       s.line = null;
     },
     c4: (s) => {
@@ -13383,11 +13399,21 @@
       if (s.status !== 'waiting' || list.indexOf(me) !== -1 || list.length >= s.seats) return null;
       s.players = Object.assign({}, list.concat([me]));
       s.gone = null;   // someone walked in, so it isn't closing any more
-      // Court is a room, not a match — three people is enough for a case, and a fourth can
-      // still wander in as a lawyer next round. Everything else waits for every seat.
-      const need = s.type === 'court' ? Math.min(3, s.seats) : s.seats;
-      if (list.length + 1 >= need) beginPlay(s);
+      // Court is a room, not a match — it waits for someone to choose to start the case, even
+      // once there are enough of you. Everything else begins the moment every seat is filled.
+      if (s.type !== 'court' && list.length + 1 >= s.seats) beginPlay(s);
       return s;
+    });
+  }
+
+  // Court only: three of you is enough for a case (a fourth can still wander in as lawyer
+  // next round), but nothing begins on its own — whoever's seated chooses the moment.
+  function beginCourt() {
+    move((s) => {
+      if (s.status !== 'waiting' || s.type !== 'court') return null;
+      const list = seatList(s);
+      if (list.indexOf(me) === -1 || list.length < Math.min(3, s.seats)) return null;
+      return beginPlay(s);
     });
   }
 
@@ -13773,6 +13799,7 @@
   // ---- Connect 4 ----
   // Three board sizes. The win is always four in a row; a bigger grid just means more room.
   const C4_BOARDS = [[7, 6, 'Classic'], [9, 7, 'Wide'], [11, 8, 'Huge']];
+  const C4_COLOR_NAMES = ['Red', 'Yellow', 'Blue', 'Green', 'Purple', 'Orange'];
   const c4Cols = (g) => g.cols || 7;
   const c4Rows = (g) => g.rows || 6;
   const C4_DIRS = [[0, 1], [1, 0], [1, 1], [1, -1]];
@@ -15229,6 +15256,7 @@
 
   const wrGuesses = (g, seat) => (g['g' + seat] || '').split(',').filter(Boolean);
   const wrDone = (g, seat) => wrGuesses(g, seat).length >= WR_ROWS;
+  const wrEveryoneDone = (g) => activeSeats(g).every((seat) => wrDone(g, seat));
 
   // Wordle's marks: 2 right place, 1 in the word, 0 not in it (repeats counted properly)
   function wrMarks(guess, answer) {
@@ -15281,21 +15309,23 @@
         s.solved = seat;
         return endGame(s, seatList(s)[seat], 'win');
       }
-      if (wrDone(s, 0) && wrDone(s, 1)) return endGame(s, 'draw', 'full');
+      if (wrEveryoneDone(s)) return endGame(s, 'draw', 'full');
       return s;
     });
   }
 
-  // Time ran out: whoever got closest takes it
+  // Time ran out: whoever got closest takes it — a tie for closest is a draw
   function wrClosest(s) {
     const answer = (s.word || '').toUpperCase();
-    const best = [0, 1].map((seat) => {
+    const seats = activeSeats(s);
+    const score = (seat) => {
       const guesses = wrGuesses(s, seat);
       if (!guesses.length) return -1;
       return Math.max.apply(null, guesses.map((guess) => wrMarks(guess, answer).reduce((sum, m) => sum + m, 0)));
-    });
-    if (best[0] === best[1]) return endGame(s, 'draw', 'limit');
-    return endGame(s, seatList(s)[best[0] > best[1] ? 0 : 1], 'limit');
+    };
+    const best = Math.max.apply(null, seats.map(score));
+    const top = seats.filter((seat) => score(seat) === best);
+    return endGame(s, top.length === 1 ? seatList(s)[top[0]] : 'draw', 'limit');
   }
 
 // ---- Team Slots: stop the reel, take whoever it lands on ------------------------------------
@@ -17585,7 +17615,7 @@
       else if (g.type === 'bj') sub.textContent = chips;
       else if ((g.type === 'breach' || g.type === 'gw') && g.status === 'setup') sub.textContent = g.type === 'gw' ? 'Locked in' : 'Code locked in';
       else if (g.type === 'ttt' && g.status === 'playing') sub.textContent = tttQueue(g, seat).length + ' of 3 marks';
-      else if (g.type === 'c4') sub.textContent = seat === 0 ? 'Red' : 'Yellow';
+      else if (g.type === 'c4') sub.textContent = C4_COLOR_NAMES[seat] || 'Red';
       else sub.textContent = g.status === 'waiting' ? 'Ready' : 'Waiting';
       text.append(sub);
       card.append(text);
@@ -17805,7 +17835,7 @@
     }
     const gone = typeof g.gone === 'number' && !list.length ? EMPTY_MS - (serverNow() - g.gone) : null;
     const waitText = gone !== null ? lobbyGoneText(gone) :
-      court ? 'Open the moment three of you take a seat — a fourth can join as lawyer.' :
+      court ? 'Three of you is enough to start the case, whenever you’re ready — extra seats join in as lawyer or jury.' :
         'It starts by itself once every seat is filled';
     const wait = el('p', 'lobby-wait', waitText);
     if (gone !== null) {
@@ -17838,6 +17868,9 @@
       }
       if (devMode && seatList(g).length < g.seats) row.append(gameButton('Fill seats & start', 'small', devFillSeats));
       if (seated) {
+        if (g.type === 'court' && seatList(g).length >= Math.min(3, g.seats)) {
+          row.append(gameButton('Start the case', 'primary', beginCourt));
+        }
         row.append(gameButton('Invite people', '', () => openInvitePicker(g)));
         row.append(gameButton(seatList(g).length === 1 ? 'Cancel game' : 'Leave', 'danger', leaveGame));
       }
@@ -18080,18 +18113,18 @@
   // ---- How each game looks ----
   // Seat colors, tuned to each game's look
   const GAME_SEAT_COLORS = {
-    imp: ['#ffb45c', '#7dd3fc', '#c4b5fd', '#86efac'],
+    imp: ['#ffb45c', '#7dd3fc', '#c4b5fd', '#86efac', '#fb7185', '#fde047'],
     pool: ['#f2c230', '#2f6bd8'],
-    court: ['#c9a15c', '#5d9aff', '#ff8a3d', '#9dffc4'],
-    uno: ['#e23b42', '#f4c224', '#37a852', '#2f7fe0'],
-    ttt: ['#ff4fa3', '#4fe3ff', '#9dff6b', '#ffb84f'],
-    c4: ['#ff4d4f', '#ffd23f'],
+    court: ['#c9a15c', '#5d9aff', '#ff8a3d', '#9dffc4', '#c792ea', '#ff6b6b'],
+    uno: ['#e23b42', '#f4c224', '#37a852', '#2f7fe0', '#a855f7', '#22d3ee'],
+    ttt: ['#ff4fa3', '#4fe3ff', '#9dff6b', '#ffb84f', '#c792ea', '#ffe066'],
+    c4: ['#ff4d4f', '#ffd23f', '#4f8eff', '#3ddc84', '#c792ea', '#ff9a3d'],
     breach: ['#3dff9e', '#4fc3ff'],
-    bj: ['#f4d27a', '#8ab4f8', '#f28fad', '#8cd8a4'],
-    hm: ['#ff8a3d', '#8ab4f8', '#9dff6b', '#f28fad'],
+    bj: ['#f4d27a', '#8ab4f8', '#f28fad', '#8cd8a4', '#c792ea', '#ff8a5c'],
+    hm: ['#ff8a3d', '#8ab4f8', '#9dff6b', '#f28fad', '#c792ea', '#ffe066'],
     gw: ['#e62429', '#4fc3ff'],
-    ll: ['#7fd0ff', '#ffb84f', '#9dff6b', '#f28fad'],
-    wr: ['#6aaa64', '#c9b458'],
+    ll: ['#7fd0ff', '#ffb84f', '#9dff6b', '#f28fad', '#c792ea', '#ff6b6b'],
+    wr: ['#6aaa64', '#c9b458', '#5d9aff', '#ff6b8a', '#b06bff', '#ff9a3d'],
     rps: ['#b06bff', '#ff4d6d'],
     slot: ['#ffd24d', '#7fd0ff'],
     bs: ['#ff4d4f', '#cfd4dd'],
@@ -18107,7 +18140,9 @@
     '<path d="M26 26L74 74M74 26L26 74"/>',
     '<circle cx="50" cy="50" r="27"/>',
     '<path d="M50 22L80 76H20Z"/>',
-    '<rect x="24" y="24" width="52" height="52" rx="8"/>'
+    '<rect x="24" y="24" width="52" height="52" rx="8"/>',
+    '<path d="M50 20L80 50L50 80L20 50Z"/>',
+    '<path d="M50 24V76M24 50H76"/>'
   ];
   function markSvg(seat) {
     return '<svg class="mark" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="11" stroke-linecap="round" ' +
@@ -18991,10 +19026,10 @@
       stage.append(head);
 
       const race = el('div', 'wr-race');
-      [0, 1].forEach((i) => {
+      list.forEach((user, i) => {
         const side = el('div', 'wr-side' + (i === seat ? ' mine' : ''));
         const who = el('div', 'wr-who');
-        who.append(avatarEl(list[i], 'sm'), nameEl('b', null, list[i]),
+        who.append(avatarEl(user, 'sm'), nameEl('b', null, user),
           el('span', 'wr-left', (WR_ROWS - wrGuesses(g, i).length) + ' left'));
         side.append(who);
         const grid = el('div', 'wr-grid');
@@ -19055,7 +19090,7 @@
         stage.append(pad);
         if (document.activeElement === document.body || !document.activeElement) setTimeout(() => field.focus(), 0);
       } else if (seat !== -1) {
-        stage.append(el('p', 'gs-note', 'Out of guesses. Waiting to see if ' + nameOf(list[1 - seat]) + ' gets it…'));
+        stage.append(el('p', 'gs-note', 'Out of guesses. Waiting to see who gets it…'));
       }
       board.append(stage);
     },
