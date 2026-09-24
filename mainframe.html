@@ -4052,7 +4052,8 @@
   .pool-wrap.placing .pool-svg { cursor: crosshair; }
   .pool-ball { transition: opacity 0.18s ease; }
   .pool-ball.gone { opacity: 0; }
-  .pool-line { stroke: #ffffff; stroke-opacity: 0.55; stroke-width: 2.4; stroke-dasharray: 9 8; }
+  .pool-line { stroke: #ffffff; stroke-opacity: 0.55; stroke-width: 2.4; stroke-dasharray: 9 8; transition: stroke 0.15s ease, stroke-opacity 0.15s ease; }
+  .pool-line.locked { stroke: #ffd27a; stroke-opacity: 0.95; stroke-dasharray: none; }
   .pool-ghost { fill: none; stroke: #ffffff; stroke-opacity: 0.75; stroke-width: 2.2; stroke-dasharray: 4 4; }
   .pool-obj { stroke: #9dffc4; stroke-opacity: 0.8; stroke-width: 3; stroke-linecap: round; }
   .pool-cut { stroke: #9dd8ff; stroke-opacity: 0.6; stroke-width: 2.4; stroke-linecap: round; stroke-dasharray: 6 6; }
@@ -4060,6 +4061,7 @@
   .pool-ghostcue.ok { fill-opacity: 0.55; stroke: #9dffc4; }
   .pool-ghostcue.no { fill-opacity: 0.12; stroke: #ff8a8a; }
   .pool-cuestick { transition: transform 0.08s linear; }
+  .pool-cuestick.locked rect:first-child { filter: drop-shadow(0 0 7px rgba(255, 210, 122, 0.65)); }
   .pool-wrap.rolling .pool-line, .pool-wrap.rolling .pool-cuestick { display: none; }
 
   .pool-note { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: center; }
@@ -4122,6 +4124,7 @@
   .pool-tip-ok { font-size: 13px; font-weight: 800; color: #9df0bd; }
   .pool-tip-bad { font-size: 13px; font-weight: 800; color: #ffbcbc; }
   .pool-tip-sub { font-size: 11.5px; color: var(--text-muted); }
+  .pool-tip-lock { font-size: 13px; font-weight: 800; color: #ffd27a; }
 
   @media (max-width: 620px) {
     .pool-who { flex: 1 1 100%; }
@@ -5568,7 +5571,7 @@
   const pathOf = (r, kind) => r.base + '/' + r.rel[kind];
 
   // Shown in Settings; every release also renames RULES_PROBE (below)
-  const APP_VERSION = '1.13';
+  const APP_VERSION = '1.14';
   const APP_DATE = 'Sep 24';
 
   const MAX_LENGTH = 500;        // longest message allowed, in characters
@@ -5613,7 +5616,7 @@
   const SYNC_OVERLAP_MS = 5 * 60 * 1000;    // re-checks this much before the last sync, to be safe
   // Only this version's rules make this readable. Every update renames it, so once the new rules
   // are published, older copies of the file see "out of date" and stop.
-  const RULES_PROBE = 'rules_1_13';
+  const RULES_PROBE = 'rules_1_14';
   const BASE_TITLE = 'Mainframe';
   const PUSH_KEY = /^-[A-Za-z0-9_-]{1,40}$/;
   const SAFE_ID = /^[A-Za-z0-9_-]{1,40}$/;
@@ -16428,7 +16431,7 @@
   };
   // What this device is in the middle of showing. None of it goes anywhere near the database.
   const poolAnim = { gid: '', sv: -1, at: 0, sim: null, busy: false };
-  const poolCue = { angle: 0, power: 62, spin: 0, key: '' };
+  const poolCue = { angle: 0, power: 62, spin: 0, key: '', locked: false };
 
   const poolSvgEl = (tag, attrs) => {
     const node = document.createElementNS('http://www.w3.org/2000/svg', tag);
@@ -19680,6 +19683,7 @@
       const key = (g.sv || 0) + ':' + g.turn + ':' + (g.hand ? 'h' : 's');
       if (canAct && poolCue.key !== key) {
         poolCue.key = key;
+        poolCue.locked = false;
         const cue = balls.find((b) => b.i === 0);
         const want = balls.filter((b) => b.i !== 0 && (!mine ? b.i !== 8 : poolLeft(balls, mine) === 0 ? b.i === 8 : poolBallGroup(b.i) === mine));
         if (cue && want.length) {
@@ -19780,6 +19784,14 @@
       stickLayer.append(stick);
 
       const tip = el('div', 'pool-tip');
+      let dragging = false;             // pulling the cue stick back right now
+      let powerSlider = null, powerReadout = null;
+      const setPower = (v) => {
+        poolCue.power = Math.max(8, Math.min(100, Math.round(v)));
+        if (powerSlider) powerSlider.value = String(poolCue.power);
+        if (powerReadout) powerReadout.textContent = poolCue.power + '%';
+        paintAim();
+      };
       const paintAim = () => {
         const info = placing ? null : poolAim(balls, poolCue.angle);
         if (!info) {
@@ -19791,11 +19803,13 @@
         const cx = info.cue.x + R;
         const cy = info.cue.y + R;
         line.setAttribute('opacity', '1');
+        line.classList.toggle('locked', !!poolCue.locked);
         line.setAttribute('x1', cx);
         line.setAttribute('y1', cy);
         line.setAttribute('x2', info.x + R);
         line.setAttribute('y2', info.y + R);
         stick.setAttribute('opacity', '1');
+        stick.classList.toggle('locked', !!poolCue.locked);
         const pull = 34 + poolCue.power * 0.9;
         stick.setAttribute('transform', 'translate(' + cx + ' ' + cy + ') rotate(' + (poolCue.angle + 180) + ') translate(' + pull + ' 0)');
         const show = info.ball && assist !== 'none';
@@ -19816,6 +19830,7 @@
           cutLine.setAttribute('y2', info.y + R + (tl ? info.ty / tl : 0) * 110 * tl);
         }
         tip.replaceChildren();
+        if (poolCue.locked) tip.append(el('span', 'pool-tip-lock', dragging ? '🔒 Pulling back…' : '🔒 Aim locked — safe to reach for “Take the shot”'));
         if (!info.ball) {
           tip.append(el('span', 'pool-tip-bad', 'Straight into the cushion — you need to hit a ball.'));
           return;
@@ -19828,11 +19843,26 @@
       };
 
       // ---- Pointer: aim across the cloth, or drop the cue ball on it ----
+      // Hovering points the cue at the mouse, same as always. Press down right on the cue ball
+      // to grab the stick instead: that locks the aim where it stood and turns the drag into a
+      // pull-back for power, so wandering the mouse over to "Take the shot" afterward can't bump
+      // it off target. Letting go leaves the power where you set it — nothing fires until that
+      // button gets a separate tap. (The grab has to be a small zone right on the cue ball, not
+      // just "behind" it: hovering there a moment earlier would already have pointed the cue at
+      // that exact spot, so a wider test would never see itself as anything but dead ahead.)
+      const POOL_GRAB_R = 70;      // table units from the cue ball that counts as "grab the stick"
+      const POOL_PULL_MAX = 260;   // table units of pull-back beyond that which reach 100% power
       const atPoint = (event) => {
         const box = svg.getBoundingClientRect();
         if (!box.width) return null;
         const scale = POOL_VW / box.width;
         return { x: (event.clientX - box.left) * scale - POOL_RAIL, y: (event.clientY - box.top) * scale - POOL_RAIL };
+      };
+      const nearCue = (at, cue) => Math.hypot(at.x - cue.x, at.y - cue.y) < POOL_GRAB_R;
+      const updatePower = (at, cue) => {
+        const rad = poolCue.angle * Math.PI / 180;
+        const back = -((at.x - cue.x) * Math.cos(rad) + (at.y - cue.y) * Math.sin(rad));
+        setPower(8 + Math.max(0, back) / POOL_PULL_MAX * 92);
       };
       const others = balls.filter((b) => b.i !== 0);
       svg.addEventListener('pointermove', (event) => {
@@ -19847,6 +19877,9 @@
         }
         const cue = balls.find((b) => b.i === 0);
         if (!cue) return;
+        if (dragging) { updatePower(at, cue); return; }
+        svg.style.cursor = !poolCue.locked && nearCue(at, cue) ? 'grab' : '';
+        if (poolCue.locked || nearCue(at, cue)) return;   // locked, or hovering the grab handle: leave the aim alone
         poolCue.angle = Math.atan2(at.y - cue.y, at.x - cue.x) * 180 / Math.PI;
         paintAim();
       });
@@ -19860,9 +19893,27 @@
         }
         const cue = balls.find((b) => b.i === 0);
         if (!cue) return;
+        if (nearCue(at, cue)) {
+          poolCue.locked = true;
+          dragging = true;
+          svg.setPointerCapture(event.pointerId);
+          svg.style.cursor = 'grabbing';
+          updatePower(at, cue);
+          return;
+        }
+        if (poolCue.locked) return;
         poolCue.angle = Math.atan2(at.y - cue.y, at.x - cue.x) * 180 / Math.PI;
         paintAim();
       });
+      const stopDrag = (event) => {
+        if (!dragging) return;
+        dragging = false;
+        svg.style.cursor = '';
+        try { svg.releasePointerCapture(event.pointerId); } catch (e) { /* already released */ }
+        renderGame();   // full re-render: brings in the "Re-aim" control now that aim is locked
+      };
+      svg.addEventListener('pointerup', stopDrag);
+      svg.addEventListener('pointercancel', stopDrag);
 
       // ---- The controls ----
       const bar = el('div', 'pool-bar');
@@ -19877,6 +19928,12 @@
             paintAim();
           }));
         });
+        if (poolCue.locked) {
+          nudge.append(gameButton('🔓 Re-aim', 'small pool-step', () => {
+            poolCue.locked = false;
+            renderGame();
+          }));
+        }
         bar.append(nudge);
 
         const powerBox = el('div', 'pool-power');
@@ -19893,11 +19950,9 @@
         });
         slider.value = String(poolCue.power);
         const readout = el('span', 'pool-read', poolCue.power + '%');
-        slider.oninput = () => {
-          poolCue.power = Number(slider.value);
-          readout.textContent = poolCue.power + '%';
-          paintAim();
-        };
+        powerSlider = slider;
+        powerReadout = readout;
+        slider.oninput = () => setPower(Number(slider.value));
         powerBox.append(slider, readout);
         bar.append(powerBox);
 
