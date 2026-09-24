@@ -4918,6 +4918,9 @@
     display: flex; align-items: center; gap: 14px; padding: 8px 12px;
     border-radius: 12px; background: var(--surface);
   }
+  .rank-tier-stack { display: flex; gap: 8px; flex: none; }
+  .rank-tier-item { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .rank-tier-item b { font-size: 10px; font-weight: 800; color: var(--text-muted); }
   .gs-rank { position: absolute; left: -6px; bottom: -6px; width: 24px; height: 28px; line-height: 0; pointer-events: none; }
   .gs-rank svg { width: 100%; height: 100%; filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.6)); }
   .lb-ranks { left: auto; right: 14px; }
@@ -5496,7 +5499,7 @@
   const pathOf = (r, kind) => r.base + '/' + r.rel[kind];
 
   // Shown in Settings; every release also renames RULES_PROBE (below)
-  const APP_VERSION = '1.7';
+  const APP_VERSION = '1.8';
   const APP_DATE = 'Sep 24';
 
   const MAX_LENGTH = 500;        // longest message allowed, in characters
@@ -5541,7 +5544,7 @@
   const SYNC_OVERLAP_MS = 5 * 60 * 1000;    // re-checks this much before the last sync, to be safe
   // Only this version's rules make this readable. Every update renames it, so once the new rules
   // are published, older copies of the file see "out of date" and stop.
-  const RULES_PROBE = 'rules_1_7';
+  const RULES_PROBE = 'rules_1_8';
   const BASE_TITLE = 'Mainframe';
   const PUSH_KEY = /^-[A-Za-z0-9_-]{1,40}$/;
   const SAFE_ID = /^[A-Za-z0-9_-]{1,40}$/;
@@ -12688,7 +12691,9 @@
 
   // ---- Rank badges, drawn in code ----
   // One silhouette for all of them, like Valorant's: a pointed shield with a chevron inside and
-  // a pip for each tier. The colours and the ornament on top are what tell them apart.
+  // a pip for each tier. The colours and the ornament on top say which ladder you're on; the
+  // chevrons, trim, glow and a crest at the very top say how far up its tiers you've climbed --
+  // tier 1 is the plain plate, tier 2 earns a bolder frame, tier 3 earns all of it plus the crest.
   const RANK_LOOK = {
     'Epsilon': { a: '#6a7082', b: '#101219', c: '#2b3040', style: 'broken', glow: 0, foot: '#07080c' },
     'Gamma': { a: '#a9cba0', b: '#243021', c: '#5f7d57', style: 'plain', glow: 0, foot: '#0d1310' },
@@ -12699,36 +12704,50 @@
     'Moyai': { a: '#c6ced9', b: '#2b3039', c: '#7c8592', style: 'moai', glow: 2, foot: '#14171d' },
     'Ascended': { a: '#ffffff', b: '#5d6572', c: '#e2e8f1', style: 'wings', glow: 3, foot: '#2b313b' },
     'Omega Ascended': { a: '#ffb42e', b: '#6f3000', c: '#ff7c00', style: 'wings', glow: 3, foot: '#3a1800' },
-    'Moyai Ascended': { a: '#ffffff', b: '#d8f4fb', c: '#cfe4ef', style: 'pearl', glow: 4, foot: '#a9c6d6' }
+    'Moyai Ascended': { a: '#bcd9e8', b: '#8fb3c9', c: '#6f93ab', style: 'pearl', glow: 3.2, foot: '#5f86a0' }
   };
 
   let rankArtCount = 0;
   function rankSvg(div, placing) {
     const d = RANK_DIVS[Math.max(0, Math.min(RANK_TOP, Number(div) || 0))];
     const look = placing ? { a: '#6a6e78', b: '#1c1f26', c: '#3b3f49', style: 'plain', glow: 0 } : RANK_LOOK[d.group];
+    const tier = placing ? 0 : (d.tier || 0);           // 0 = no sub-tiers: Epsilon, Moyai Ascended, placing
     rankArtCount += 1;
     const id = 'rk' + rankArtCount;
     const shield = 'M50 5 L91 27 V64 Q91 79 50 105 Q9 79 9 64 V27 Z';
+    const gem = (cx, cy, r) => `M${cx} ${(cy - r).toFixed(1)} L${(cx + r).toFixed(1)} ${cy} L${cx} ${(cy + r).toFixed(1)} L${(cx - r).toFixed(1)} ${cy} Z`;
     let art = '';
 
-    // The plate
-    art += `<path d="${shield}" fill="url(#${id}f)" stroke="${look.c}" stroke-width="3"/>`;
-    art += `<path d="M50 12 L84 30 V63 Q84 74 50 96 Q16 74 16 63 V30 Z" fill="none" stroke="${look.a}" stroke-opacity="0.45" stroke-width="1.6"/>`;
+    // The plate -- a shade thicker at higher tiers, like it's been better forged
+    const plateW = 3 + (tier > 1 ? (tier - 1) * 0.4 : 0);
+    art += `<path d="${shield}" fill="url(#${id}f)" stroke="${look.c}" stroke-width="${plateW}"/>`;
+    // Trim: a thin line at tier 1, a bolder one at tier 2, and a second inset line joins it at tier 3
+    art += `<path d="M50 12 L84 30 V63 Q84 74 50 96 Q16 74 16 63 V30 Z" fill="none" stroke="${look.a}" ` +
+      `stroke-opacity="${tier >= 2 ? 0.85 : 0.45}" stroke-width="${tier >= 2 ? 1.9 : 1.6}"/>`;
+    if (tier >= 3) {
+      art += `<path d="M50 18 L78 34 V61 Q78 70 50 89 Q22 70 22 61 V34 Z" fill="none" stroke="${look.a}" stroke-opacity="0.5" stroke-width="1.2"/>`;
+    }
 
-    // The chevron: one bar, two for the middle ranks, three at the top
-    const bars = look.style === 'pearl' ? 0 :
-      d.group === 'Epsilon' ? 1 : Math.min(3, 1 + Math.floor(RANK_GROUPS.findIndex(([n]) => n === d.group) / 4));
+    // The chevron: one bar at tier 1, two at tier 2, three at tier 3 -- Epsilon and an unranked
+    // placeholder never carry a tier of their own, so they always show a single bar.
+    const bars = look.style === 'pearl' ? 0 : (tier || 1);
     for (let i = 0; i < bars; i++) {
       const y = 40 + i * 13;
       art += `<path d="M28 ${y + 12} L50 ${y} L72 ${y + 12} L72 ${y + 20} L50 ${y + 8} L28 ${y + 20} Z" fill="${look.a}"/>`;
     }
 
     if (look.style === 'broken') {
-      // Corrupted: the plate is cracked and a piece has fallen out
+      // Corrupted: the plate is cracked and a piece has fallen out, an error-red glint in the crack
       art += '<path d="M50 5 L57 34 L44 44 L54 62 L45 105" fill="none" stroke="#0b0c10" stroke-width="3.4" stroke-linejoin="bevel"/>';
+      art += '<path d="M50 5 L57 34 L44 44 L54 62 L45 105" fill="none" stroke="#c0392b" stroke-width="0.9" stroke-opacity="0.55" stroke-linejoin="bevel"/>';
       art += '<path d="M66 20 L80 26 L74 40 Z" fill="#0b0c10" opacity="0.85"/>';
       art += '<rect x="16" y="52" width="26" height="3" fill="#0b0c10" opacity="0.7"/>';
       art += '<rect x="58" y="70" width="22" height="3" fill="#0b0c10" opacity="0.7"/>';
+    }
+    if (look.style === 'plain') {
+      // Nothing hides a plain plate -- so at the higher tiers it earns one clean cut facet instead
+      if (tier >= 2) art += `<path d="M50 17 L61 27 L50 37 L39 27 Z" fill="none" stroke="${look.a}" stroke-opacity="0.6" stroke-width="1.5"/>`;
+      if (tier >= 3) art += `<path d="M50 17 V37 M39 27 H61" stroke="${look.a}" stroke-opacity="0.4" stroke-width="1.1"/>`;
     }
     if (look.style === 'spikes') {
       art += `<path d="M9 34 L-2 44 L9 50 Z M91 34 L102 44 L91 50 Z" fill="${look.c}"/>`;
@@ -12747,38 +12766,56 @@
       art += `<circle cx="20" cy="24" r="2" fill="${look.a}"/><circle cx="82" cy="30" r="1.6" fill="${look.a}"/><circle cx="74" cy="86" r="1.6" fill="${look.a}"/>`;
     }
     if (look.style === 'wings') {
+      if (tier >= 3) {
+        // A second, larger pair peeking out behind -- the same trick Moyai Ascended uses, muted
+        art += `<g fill="${look.a}" opacity="0.4">` +
+          '<path d="M7 29 q-19 10 -16 29 q10 -9 18 -7 q-13 10 -9 25 q11 -11 19 -9 z"/>' +
+          '<path d="M93 29 q19 10 16 29 q-10 -9 -18 -7 q13 10 9 25 q-11 -11 -19 -9 z"/></g>';
+      }
       art += `<g fill="${look.a}" opacity="0.95">` +
         '<path d="M12 36 q-13 6 -11 20 q7 -6 12 -5 q-8 7 -6 17 q8 -8 13 -7 z"/>' +
         '<path d="M88 36 q13 6 11 20 q-7 -6 -12 -5 q8 7 6 17 q-8 -8 -13 -7 z"/></g>';
       art += `<path d="M50 2 l4 8 -4 8 -4 -8 z" fill="${look.a}"/>`;
     }
     if (look.style === 'pearl') {
-      // Everything the ladder has been building to: the stone head lifted into the light.
+      // Everything the ladder has been building to: the stone head lifted into the light and
+      // carved in pearl instead of basalt -- the same silhouette as Moyai below it, transfigured.
+      // Kept deliberately more saturated than white-on-white, so the shield and the face inside
+      // it still read as shapes -- shine is a highlight here, not the whole badge.
       let rays = '';
       for (let i = 0; i < 16; i++) {
         const angle = (i * 22.5) * Math.PI / 180;
         rays += `<line x1="${(50 + Math.cos(angle) * 42).toFixed(1)}" y1="${(55 + Math.sin(angle) * 44).toFixed(1)}" ` +
-          `x2="${(50 + Math.cos(angle) * (i % 2 ? 54 : 60)).toFixed(1)}" y2="${(55 + Math.sin(angle) * (i % 2 ? 57 : 64)).toFixed(1)}"/>`;
+          `x2="${(50 + Math.cos(angle) * (i % 2 ? 52 : 57)).toFixed(1)}" y2="${(55 + Math.sin(angle) * (i % 2 ? 55 : 60)).toFixed(1)}"/>`;
       }
-      art = '<g stroke="#eafaff" stroke-width="2.6" stroke-linecap="round" opacity="0.9">' + rays + '</g>' +
-        '<g stroke="#9fd9ea" stroke-width="1.2" stroke-linecap="round" opacity="0.7">' + rays + '</g>' + art;
-      // Wings
-      art += '<g fill="#ffffff" opacity="0.96">' +
-        '<path d="M9 32 q-18 9 -15 27 q10 -9 17 -7 q-12 10 -8 24 q11 -11 18 -9 z"/>' +
-        '<path d="M91 32 q18 9 15 27 q-10 -9 -17 -7 q12 10 8 24 q-11 -11 -18 -9 z"/></g>' +
-        '<g fill="#bfeaf6" opacity="0.8">' +
-        '<path d="M13 38 q-12 7 -10 19 q7 -7 12 -5 q-8 8 -5 17 q8 -8 13 -6 z"/>' +
-        '<path d="M87 38 q12 7 10 19 q-7 -7 -12 -5 q8 8 5 17 q-8 -8 -13 -6 z"/></g>';
-      // The head, in pearl
-      art += '<g><path d="M50 27 q17 0 17 21 v17 q0 17 -17 17 q-17 0 -17 -17 V48 q0 -21 17 -21 Z" fill="#f4fbff"/>' +
-        '<path d="M50 27 q17 0 17 21 v17 q0 17 -17 17 V27 Z" fill="#d7ecf6" opacity="0.75"/>' +
-        '<path d="M35 46 q7 -6 14 0 M51 46 q7 -6 14 0" stroke="#7fa6bb" stroke-width="3.4" fill="none" stroke-linecap="round"/>' +
-        '<rect x="45.5" y="50" width="9" height="19" rx="3.5" fill="#bcd9e8"/>' +
-        '<rect x="39" y="73" width="22" height="5" rx="2.5" fill="#7fa6bb"/></g>';
-      // Halo
-      art += '<ellipse cx="50" cy="15" rx="21" ry="6.4" fill="none" stroke="#eafaff" stroke-width="4"/>' +
+      art = '<g stroke="#eafaff" stroke-width="2.4" stroke-linecap="round" opacity="0.85">' + rays + '</g>' +
+        '<g stroke="#9fd9ea" stroke-width="1.1" stroke-linecap="round" opacity="0.65">' + rays + '</g>' + art;
+      // Wings, two-tone so they read as feathers, not a haze
+      art += '<g fill="#eafaff" opacity="0.9">' +
+        '<path d="M11 34 q-16 8 -13 24 q9 -8 15 -6 q-10 9 -7 21 q10 -10 16 -8 z"/>' +
+        '<path d="M89 34 q16 8 13 24 q-9 -8 -15 -6 q10 9 7 21 q-10 -10 -16 -8 z"/></g>' +
+        '<g fill="#9fc3d8" opacity="0.75">' +
+        '<path d="M14 40 q-11 6 -9 17 q6 -6 11 -5 q-7 7 -5 15 q7 -7 12 -6 z"/>' +
+        '<path d="M86 40 q11 6 9 17 q-6 -6 -11 -5 q7 7 5 15 q-7 -7 -12 -6 z"/></g>';
+      // The head, carved in mother-of-pearl -- a real light side and shadow side, not one flat tone
+      art += `<g><path d="M50 27 q17 0 17 21 v17 q0 17 -17 17 q-17 0 -17 -17 V48 q0 -21 17 -21 Z" fill="url(#${id}h)" stroke="#6f93ab" stroke-width="1.2"/>` +
+        '<path d="M50 27 q17 0 17 21 v17 q0 17 -17 17 V27 Z" fill="#5f86a0" opacity="0.35"/>' +
+        '<ellipse cx="42" cy="39" rx="9" ry="4.5" fill="#ffffff" opacity="0.6" transform="rotate(-25 42 39)"/>' +
+        '<path d="M35 46 q7 -6 14 0 M51 46 q7 -6 14 0" stroke="#4f7994" stroke-width="3.4" fill="none" stroke-linecap="round"/>' +
+        '<path d="M35 44.6 q7 -6 14 0 M51 44.6 q7 -6 14 0" stroke="#ffffff" stroke-width="1" fill="none" stroke-linecap="round" opacity="0.8"/>' +
+        '<rect x="45.5" y="50" width="9" height="19" rx="3.5" fill="#8bb2c8"/>' +
+        '<rect x="39" y="73" width="22" height="5" rx="2.5" fill="#4f7994"/>' +
+        '<rect x="39" y="72" width="22" height="1.1" fill="#ffffff" opacity="0.7"/></g>';
+      // A halo strung with pearls
+      art += '<ellipse cx="50" cy="15" rx="21" ry="6.4" fill="none" stroke="#6f93ab" stroke-width="4"/>' +
         '<ellipse cx="50" cy="15" rx="21" ry="6.4" fill="none" stroke="#ffffff" stroke-width="1.6"/>' +
         '<ellipse cx="50" cy="15" rx="15" ry="4" fill="none" stroke="#bfeaf6" stroke-width="1.4" opacity="0.9"/>';
+      let beads = '';
+      for (let i = 0; i < 8; i++) {
+        const a = (i * 45) * Math.PI / 180;
+        beads += `<circle cx="${(50 + Math.cos(a) * 21).toFixed(1)}" cy="${(15 + Math.sin(a) * 6.4).toFixed(1)}" r="1.5" fill="#ffffff" stroke="#6f93ab" stroke-width="0.5"/>`;
+      }
+      art += `<g opacity="0.95">${beads}</g>`;
       // Sparks
       art += '<g fill="#ffffff">' +
         '<path d="M22 24 l2.2 4.6 4.6 2.2 -4.6 2.2 -2.2 4.6 -2.2 -4.6 -4.6 -2.2 4.6 -2.2 z" opacity="0.95"/>' +
@@ -12798,6 +12835,9 @@
         '<path d="M90 34 q16 8 13 24 q-9 -8 -15 -6 q10 9 7 21 q-10 -10 -16 -8 z"/></g>';
     }
 
+    // A gem above the tip -- one unmistakable "this is as far as this tier goes" tell
+    if (tier >= 3) art += `<path d="${gem(50, -3, 5)}" fill="${look.a}" stroke="${look.c}" stroke-width="1"/>`;
+
     // Tier pips under the plate
     if (d.tier) {
       let pips = '';
@@ -12808,17 +12848,28 @@
       art += pips;
     }
 
-    const blur = look.glow ? `<filter id="${id}g" x="-40%" y="-40%" width="180%" height="180%">` +
-      `<feGaussianBlur stdDeviation="${1.4 * look.glow}" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>` : '';
+    const tierBoost = tier === 3 ? 1 : tier === 2 ? 0.4 : 0;
+    const effGlow = (look.glow || 0) + tierBoost;
+    // Pearl carries the highest base glow of any rank, but a tight, modest blur -- bright without
+    // washing out the shield and the face inside it into a blob at the small sizes badges mostly
+    // render at.
+    const blurMul = look.style === 'pearl' ? 0.55 : 1.4;
+    const blur = effGlow ? `<filter id="${id}g" x="-45%" y="-45%" width="190%" height="190%">` +
+      `<feGaussianBlur stdDeviation="${(blurMul * effGlow).toFixed(2)}" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>` : '';
+    const headGrad = look.style === 'pearl'
+      ? `<linearGradient id="${id}h" x1="0" y1="0" x2="1" y2="1">` +
+        '<stop offset="0" stop-color="#ffffff"/><stop offset="0.35" stop-color="#dceaf2"/>' +
+        '<stop offset="0.7" stop-color="#a9c6d6"/><stop offset="1" stop-color="#8bb2c8"/></linearGradient>'
+      : '';
     return `<svg viewBox="-16 -10 132 142" fill="none" aria-hidden="true">` +
       `<defs><linearGradient id="${id}f" x1="0" y1="0" x2="0" y2="1">` +
       (look.style === 'pearl'
-        ? '<stop offset="0" stop-color="#ffffff"/><stop offset="0.32" stop-color="#e8fbff"/>' +
-          '<stop offset="0.62" stop-color="#cfe4ef"/><stop offset="1" stop-color="#a9c6d6"/>'
+        ? '<stop offset="0" stop-color="#ffffff"/><stop offset="0.3" stop-color="#dceaf2"/>' +
+          '<stop offset="0.62" stop-color="#a9c6d6"/><stop offset="1" stop-color="#749fba"/>'
         : `<stop offset="0" stop-color="${look.c}"/><stop offset="0.55" stop-color="${look.b}"/>` +
           `<stop offset="1" stop-color="${look.foot || '#0a0b0f'}"/>`) +
-      `</linearGradient>${blur}</defs>` +
-      (look.glow ? `<g filter="url(#${id}g)">${art}</g>` : art) + '</svg>';
+      `</linearGradient>${headGrad}${blur}</defs>` +
+      (effGlow ? `<g filter="url(#${id}g)">${art}</g>` : art) + '</svg>';
   }
 
   // The badge with its name next to it
@@ -12853,9 +12904,22 @@
     const grid = el('div', 'rank-ladder');
     RANK_GROUPS.slice().reverse().forEach(([name, tiers]) => {
       const row = el('div', 'rank-row');
-      const art = el('span', 'rank-art lg');
-      art.innerHTML = rankSvg(RANK_DIVS.findIndex((d) => d.group === name && d.tier === tiers), false);
-      row.append(art);
+      if (tiers > 1) {
+        // Show all three so the climb inside the group actually shows: each tier is its own look.
+        const stack = el('div', 'rank-tier-stack');
+        for (let t = 1; t <= tiers; t++) {
+          const item = el('div', 'rank-tier-item');
+          const art = el('span', 'rank-art');
+          art.innerHTML = rankSvg(RANK_DIVS.findIndex((d) => d.group === name && d.tier === t), false);
+          item.append(art, el('b', null, String(t)));
+          stack.append(item);
+        }
+        row.append(stack);
+      } else {
+        const art = el('span', 'rank-art lg');
+        art.innerHTML = rankSvg(RANK_DIVS.findIndex((d) => d.group === name && d.tier === tiers), false);
+        row.append(art);
+      }
       const text = el('div', 'rank-text');
       text.append(el('b', null, name), el('span', null, tiers > 1 ? name + ' 1 → ' + name + ' 3' : 'No tiers'));
       row.append(text);
