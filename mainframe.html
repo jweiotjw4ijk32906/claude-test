@@ -2789,6 +2789,36 @@
     box-sizing: border-box;
     min-width: 0;
   }
+  /* Connect 4: on a wide screen, flank the board with tall player cards instead of stacking
+     them in a strip up top — that strip was eating vertical room the board could use instead.
+     Seat order (not .me) decides left/right, so a spectator with no seat never collides with it.
+     The center track gets a real floor (460px) so the board can never end up smaller than the
+     shared stacked layout would've given it; the breakpoint sits comfortably above the width
+     that floor plus both side columns' own floors actually needs, so that's never in question.
+     Below 1250px there's not enough width to do this well, so it falls back to the shared layout. */
+  @media (min-width: 1250px) {
+    .game-screen[data-game="c4"] .gs-stage {
+      display: grid;
+      grid-template-columns: minmax(160px, 220px) minmax(460px, 1fr) minmax(160px, 220px);
+      grid-template-areas: "p0 status p1" "p0 board p1" "p0 actions p1";
+      align-items: center;
+      row-gap: 18px;
+      column-gap: 28px;
+    }
+    .game-screen[data-game="c4"] .gs-players { display: contents; }
+    .game-screen[data-game="c4"] .gs-player { grid-area: p1; flex-direction: column; width: 100%; padding: 22px 16px; }
+    .game-screen[data-game="c4"] .gs-player:first-of-type { grid-area: p0; }
+    .game-screen[data-game="c4"] .gs-player::before { left: 14px; right: 14px; top: -1px; bottom: auto; width: auto; height: 3px; border-radius: 0 0 3px 3px; }
+    .game-screen[data-game="c4"] .gs-pic .avatar { --size: 64px; }
+    .game-screen[data-game="c4"] .gs-ptext { align-items: center; }
+    .game-screen[data-game="c4"] .gs-ptop { flex-direction: column; gap: 5px; }
+    .game-screen[data-game="c4"] .gs-pname, .game-screen[data-game="c4"] .gs-psub { text-align: center; }
+    .game-screen[data-game="c4"] .gs-clock { margin: 4px 0 0; padding: 7px 18px; font-size: 21px; border-radius: 12px; }
+    .game-screen[data-game="c4"] .gs-status { grid-area: status; justify-self: center; }
+    .game-screen[data-game="c4"] .gs-board { grid-area: board; }
+    .game-screen[data-game="c4"] .gs-actions { grid-area: actions; }
+    .game-screen[data-game="c4"] .c4-frame { --c4-chrome: 240px; }
+  }
   .gs-backdrop { position: absolute; inset: -80px; z-index: 0; opacity: 0.2; filter: blur(46px) saturate(1.5); pointer-events: none; }
   .gs-backdrop .art { width: 100%; height: 100%; }
   .gs-head, .gs-main { position: relative; z-index: 1; }
@@ -2910,15 +2940,40 @@
   .ttt-cell.win { background: rgb(var(--ink) / 0.08); border-color: currentColor; box-shadow: 0 0 30px -4px currentColor, inset 0 0 22px rgb(var(--ink) / 0.08); animation: winPulse 1.2s ease-in-out infinite; }
   @keyframes winPulse { 50% { transform: scale(1.05); } }
 
-  /* Connect 4: a glossy board on legs, and a preview disc over the column you point at */
-  .c4-frame { --cols: 7; --rows: 6; --c4w: max(280px, min(760px, 92vw, calc((100vh - 430px) * var(--cols) / var(--rows)))); position: relative; padding: calc(var(--c4w) / var(--cols) + 22px) 0 26px; }
-  .c4-frame::before, .c4-frame::after { content: ''; position: absolute; bottom: 0; width: 22px; height: 34px; background: linear-gradient(#1a3aa3, #0f2566); border-radius: 0 0 8px 8px; }
-  .c4-frame::before { left: 22px; }
-  .c4-frame::after { right: 22px; }
+  /* Connect 4: a glossy board on legs, and a preview disc over the column you point at.
+     --c4-chrome is how much viewport height everything except the board's own box eats up
+     (header, status pill, action buttons, gaps and stage padding — NOT the frame's own
+     padding, which the width formula below accounts for separately since it scales with
+     the board: the frame reserves a cell-sized strip above the grid for the hover-preview
+     disc, plus a fixed 22px, plus up to 48px below for the legs, i.e. height(w) = w/cols +
+     22 + w*rows/cols + 48 = w*(rows+1)/cols + 70 — solving height(w) <= 100vh - chrome for w
+     gives the (rows+1)-and-70 shape here. Missing this the first time round is exactly what
+     let the board grow past the point the action buttons still fit on screen without scrolling.
+     The wide side-flanked layout above frees a lot of vertical room (no more player strip up
+     top), so it gets its own smaller chrome number, and the board grows into the space freed. */
+  .c4-frame {
+    --cols: 7; --rows: 6; --c4-chrome: 293px;
+    --c4w: max(280px, min(960px, 92vw, calc((100vh - var(--c4-chrome) - 70px) * var(--cols) / (var(--rows) + 1))));
+    position: relative;
+    max-width: 100%;
+    padding: calc(var(--c4w) / var(--cols) + 22px) 0 clamp(26px, calc(var(--c4w) * 0.061), 48px);
+  }
+  .c4-frame::before, .c4-frame::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    width: clamp(16px, calc(var(--c4w) * 0.04), 30px);
+    height: clamp(26px, calc(var(--c4w) * 0.061), 48px);
+    background: linear-gradient(#1a3aa3, #0f2566);
+    border-radius: 0 0 8px 8px;
+  }
+  .c4-frame::before { left: clamp(16px, calc(var(--c4w) * 0.04), 30px); }
+  .c4-frame::after { right: clamp(16px, calc(var(--c4w) * 0.04), 30px); }
   .c4 {
     position: relative;
     z-index: 1;
     width: var(--c4w);
+    max-width: 100%;
     grid-template-columns: repeat(var(--cols, 7), 1fr);
     gap: 10px;
     padding: 14px;
@@ -5499,7 +5554,7 @@
   const pathOf = (r, kind) => r.base + '/' + r.rel[kind];
 
   // Shown in Settings; every release also renames RULES_PROBE (below)
-  const APP_VERSION = '1.9';
+  const APP_VERSION = '1.10';
   const APP_DATE = 'Sep 24';
 
   const MAX_LENGTH = 500;        // longest message allowed, in characters
@@ -5544,7 +5599,7 @@
   const SYNC_OVERLAP_MS = 5 * 60 * 1000;    // re-checks this much before the last sync, to be safe
   // Only this version's rules make this readable. Every update renames it, so once the new rules
   // are published, older copies of the file see "out of date" and stop.
-  const RULES_PROBE = 'rules_1_9';
+  const RULES_PROBE = 'rules_1_10';
   const BASE_TITLE = 'Mainframe';
   const PUSH_KEY = /^-[A-Za-z0-9_-]{1,40}$/;
   const SAFE_ID = /^[A-Za-z0-9_-]{1,40}$/;
